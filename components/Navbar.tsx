@@ -123,7 +123,7 @@ export default function Navbar() {
                     Sign in
                 </Link>
                 <Link
-                    href="/register-admin"
+                    href="/register"
                     className="w-full flex justify-center text-black rounded-xl py-2 px-4 bg-white">
                     Get Started
                 </Link>
@@ -161,7 +161,7 @@ export default function Navbar() {
                 Sign in
             </Link>
             <Link
-                href="/register-admin"
+                href="/register"
                 className="text-black rounded-xl py-2 px-4 bg-white">
                 Get Started
             </Link>
