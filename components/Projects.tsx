@@ -4,7 +4,7 @@ export default function Projects() {
     return (
         <div className="flex w-full flex-col items-center mb-30 gap-10 px-6 md:px-12 lg:px-20" id="projects">
             <div className="flex flex-col gap-5 text-left md:text-center">
-                <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+                <h1 className="text-3xl font-medium leading-tight text-white">
                         Some featured projects
                     </h1>
                 <p className="text-lg text-gray-300 max-w-2xl">

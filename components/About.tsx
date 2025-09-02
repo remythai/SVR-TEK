@@ -9,7 +9,7 @@ export default function About() {
                 <div className="mt-5 sm:mt-10 lg:mt-0">
                 <div className="space-y-6 sm:space-y-8">
                     <div className="space-y-2 md:space-y-4">
-                    <h1 className="text-2xl md:text-3xl font-bold text-white">
+                    <h1 className="text-3xl font-medium text-white">
                         Our mission is to empower start-ups
                     </h1>
                     <p className="text-gray-500">
@@ -65,7 +65,7 @@ export default function About() {
                 <div className="mt-5 sm:mt-10 lg:mt-0">
                 <div className="space-y-6 sm:space-y-8">
                     <div className="space-y-2 md:space-y-4">
-                    <h1 className="font-bold text-2xl md:text-3xl text-white">
+                    <h1 className="text-3xl font-medium text-white">
                         Our vision is to simplify start-ups processes
                     </h1>
                     <p className="text-gray-500">

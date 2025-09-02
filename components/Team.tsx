@@ -1,9 +1,9 @@
 export default function Team() {
     return (
         <div className="my-30 px-6 md:px-12 lg:px-20">
-            <div className="flex flex-col gap-5">
-                <h1 className="text-3xl font-medium text-white text-center">Meet Our Team</h1>
-                <p className="text-gray-500 text-center">The people behind the product, passionate about what they do.</p>
+            <div className="flex flex-col gap-5 text-left md:text-center">
+                <h1 className="text-3xl font-medium text-white">Meet Our Team</h1>
+                <p className="text-gray-500">The people behind the product, passionate about what they do.</p>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-10 mt-12">
                 <div className="md:max-w-80 w-full bg-black text-white rounded-2xl">
