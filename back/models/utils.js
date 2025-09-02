@@ -38,4 +38,21 @@ export async function create(sql, tableName, data) {
   return await sql`INSERT INTO ${sql.unsafe(tableName)} (${sql.unsafe(columns)}) VALUES (${sql.unsafe(formattedValues)}) RETURNING *;`;
 }
 
-export default { getAll, getById, getByField, getImageById ,create };
+// ------------
+// -- Update --
+// ------------
+
+export async function update(sql, tableName, data, id) {
+  const keys = Object.keys(data);
+  const values = Object.values(data);
+
+  const formattedValues = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
+
+  values.push(id);
+
+  const query = `UPDATE ${tableName} SET ${formattedValues} WHERE id = $${values.length}`;
+
+  return sql.query(query, values);
+}
+
+export default { getAll, getById, getByField, create, update };
