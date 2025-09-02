@@ -17,7 +17,6 @@ export default async function Projects() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-[85rem]">
                 <div>
-                    {displayedStartups[0].name}
                     <img className="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image.jpg" />
                 </div>
                 <div>
@@ -35,7 +34,6 @@ export default async function Projects() {
                 <div>
                     <img className="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-5.jpg" />
                 </div>
-                
             </div>
             <Link
                 href="/projects"
