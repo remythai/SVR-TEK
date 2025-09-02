@@ -14,7 +14,7 @@ export async function getNews() {
     const response = await axios.request(config);
     return response.data;
   } catch (error: any) {
-    console.error('Erreur lors de la récupération des startups:', error.message);
+    console.error('error:', error.message);
     return [];
   }
 }
@@ -33,7 +33,7 @@ export async function getNew(newId: string) {
     const response = await axios.request(config);
     return response.data;
   } catch (error: any) {
-    console.error(`Erreur lors de la récupération de la startup ${newId}:`, error.message);
+    console.error(`error:`, error.message);
     return null;
   }
 }

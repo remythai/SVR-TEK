@@ -14,7 +14,7 @@ export async function getStartups() {
     const response = await axios.request(config);
     return response.data;
   } catch (error: any) {
-    console.error('Erreur lors de la récupération des startups:', error.message);
+    console.error('error:', error.message);
     return [];
   }
 }
@@ -33,7 +33,7 @@ export async function getStartup(startupId: string) {
     const response = await axios.request(config);
     return response.data;
   } catch (error: any) {
-    console.error(`Erreur lors de la récupération de la startup ${startupId}:`, error.message);
+    console.error(`error:`, error.message);
     return null;
   }
 }
@@ -53,14 +53,14 @@ export async function getFounderImage(startupId: string, founderId: string) {
     const data = response.data;
 
     if (typeof data === 'object' && data.detail) {
-      console.error(`Erreur API:`, data.detail);
+      console.error(`error:`, data.detail);
       return null;
     }
 
     return data;
 
   } catch (error: any) {
-    console.error(`Erreur lors de la récupération de l'image du fondateur ${founderId}:`, error.message);
+    console.error(`error:`, error.message);
     return null;
   }
 }
