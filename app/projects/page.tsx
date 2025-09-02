@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { getStartups, getFounderImage } from "../requests/startups";
+import { getStartups } from "../requests/startups";
 import FilterForm from "@/components/FilterForm";
 import SearchBar from "@/components/SearchBar";
+import { Building } from "lucide-react";
 
 interface SearchParams {
   sector?: string;
@@ -72,48 +73,29 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
       <div className="flex flex-wrap items-center justify-center gap-8 pt-6 max-w-[85rem]">
         {await Promise.all(
           filteredStartups.map(async (startup: any) => {
-            let image = null;
-
-            if (startup.founders && startup.founders.length > 0) {
-              const founderId = startup.founders[0].id;
-              image = await getFounderImage(startup.id, founderId);
-            }
-
-            if (!image) {
-              image =
-                "https://images.unsplash.com/photo-1590650516494-0c8e4a4dd67e?w=600&h=400&auto=format&fit=crop&q=60";
-            }
-
             return (
-              <Link
-                href="#"
-                key={startup.id}
-                className="md:max-w-[315px] w-full hover:-translate-y-0.5 transition duration-300 bg-white rounded-xl shadow-md flex flex-col overflow-hidden"
-              >
-                <img
-                  className="w-full h-48 object-cover"
-                  src={image}
-                  alt={startup.name}
-                />
-                <div className="p-4 flex flex-col gap-1">
-                  <h3 className="text-base text-gray-900 font-medium">
+              <Link href="#" key={startup.id} className="relative flex flex-col bg-white shadow-sm border border-slate-200 rounded-lg w-[430px] p-6">
+                <div className="flex items-center mb-4">
+                    <Building />
+                    <h5 className="ml-3 text-slate-800 text-xl font-semibold">
                     {startup.name}
-                  </h3>
-                  <p className="text-xs text-indigo-600 font-medium">
-                    {startup.sector}
-                  </p>
-                  {startup.location && (
-                    <p className="text-xs text-gray-500">
-                      📍 {startup.location}
-                    </p>
-                  )}
-                  {startup.maturity && (
-                    <p className="text-xs text-gray-500">
-                      🚀 {startup.maturity}
-                    </p>
-                  )}
+                    </h5>
                 </div>
-              </Link>
+                <p className="block text-slate-600 leading-normal font-light mb-4">
+                    {startup.name}
+                    {startup.sector}
+                    {startup.location}
+                    {startup.maturity}
+                </p>
+                <div>
+                    <a href="#" className="text-slate-800 font-semibold text-sm hover:underline flex items-center">
+                    Learn More
+                    <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                    </a>
+                </div>
+            </Link>
             );
           })
         )}

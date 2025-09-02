@@ -1,6 +1,10 @@
 import Link from "next/link";
+import { getStartups } from "../app/requests/startups";
 
-export default function Projects() {
+export default async function Projects() {
+    const startups = await getStartups();
+    const displayedStartups = startups.slice(0, 6);
+
     return (
         <div className="flex w-full flex-col items-center mb-30 gap-10 px-6 md:px-12 lg:px-20" id="projects">
             <div className="flex flex-col gap-5 text-left md:text-center">
@@ -13,6 +17,7 @@ export default function Projects() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-[85rem]">
                 <div>
+                    {displayedStartups[0].name}
                     <img className="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image.jpg" />
                 </div>
                 <div>
