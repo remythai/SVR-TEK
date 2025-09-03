@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getStartups } from "../app/requests/startups";
+import { Building } from "lucide-react";
 
 export default async function Projects() {
     const startups = await getStartups();
@@ -15,25 +16,32 @@ export default async function Projects() {
                     Explore our curated selection of projects. Discover innovative startups, meet their founders, and stay updated on their latest achievements.
                 </p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-[85rem]">
-                <div>
-                    <img className="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image.jpg" />
-                </div>
-                <div>
-                    <img className="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-1.jpg" />
-                </div>
-                <div>
-                    <img className="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-2.jpg" />
-                </div>
-                <div>
-                    <img className="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-3.jpg" />
-                </div>
-                <div>
-                    <img className="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-4.jpg" />
-                </div>
-                <div>
-                    <img className="h-auto max-w-full rounded-lg" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-5.jpg" />
-                </div>
+            <div className="flex flex-wrap items-center justify-center gap-8 pt-6 max-w-[85rem]">
+                {displayedStartups.map((startup: any) => (
+                    <Link
+                        href={`/projects/${startup.id}`}
+                        key={startup.id}
+                        className="relative flex flex-col border border-secondary-200 shadow-sm rounded-lg w-[430px] p-6 hover:scale-105 transition-transform duration-300"
+                    >
+                        <div className="flex items-center mb-4">
+                            <Building />
+                            <h5 className="ml-3 text-slate-800 text-xl font-semibold">
+                                {startup.name}
+                            </h5>
+                        </div>
+                        <p className="block text-slate-600 leading-normal font-light mb-4">
+                            {startup.sector} • {startup.location} • {startup.maturity}
+                        </p>
+                        <div>
+                            <p className="text-slate-800 font-semibold text-sm hover:underline flex items-center">
+                                Learn More
+                                <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </p>
+                        </div>
+                    </Link>
+                ))}
             </div>
             <Link
                 href="/projects"
