@@ -112,17 +112,27 @@ export const login = async (req, res) => {
 
   try {
     const existingUser = await Users.getByEmail(sql, email);
-    if (existingUser.length <= 0) {
-      return res.status(409).json({ error: "No account with this email" });
+    if (existingUser.length === 0) {
+      return res.status(404).json({ error: "No account with this email" });
     }
 
-    if (bcrypt.compare(password, existingUser.hashedPassword)) {
-      res.status(201).json({
-        success: true,
-        user: { id: existingUser.id, name: existingUser.name, email: existingUser.email }
-      });
+    const user = existingUser[0]; // récupère l’utilisateur trouvé
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Wrong password" });
     }
-    res.status(500).json({ error: "Wrong Password" });
+
+    res.status(200).json({
+      success: true,
+      user: { id: user.id, name: user.name, email: user.email }
+    });
+  } catch (err) {
+    console.error("DB error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 // ------------
 // -- Delete --
 // ------------
@@ -130,14 +140,14 @@ export const login = async (req, res) => {
 export const deleteById = async (req, res) => {
   const sql = req.app.get("db");
   const { id } = req.params;
-  
+
   try {
     const result = await Users.deleteById(sql, id);
-    
+
     if (result.count === 0) {
       return res.status(404).json({ error: "User not found" });
     }
-    
+
     res.status(200).json({ message: "User deleted successfully" });
   } catch (err) {
     console.error("DB error:", err);
