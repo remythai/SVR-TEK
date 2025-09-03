@@ -14,6 +14,10 @@ export async function getByField(sql, tableName, fieldName, value) {
   return await sql`SELECT * FROM ${sql.unsafe(tableName)} WHERE ${sql.unsafe(fieldName)} = ${value}`;
 }
 
+export async function getImageById(sql, tableName, tableId) {
+    return await sql`SELECT image FROM ${sql.unsafe(tableName)} WHERE id = ${tableId}`;
+}
+
 // ------------
 // -- Create --
 // ------------
@@ -34,4 +38,4 @@ export async function create(sql, tableName, data) {
   return await sql`INSERT INTO ${sql.unsafe(tableName)} (${sql.unsafe(columns)}) VALUES (${sql.unsafe(formattedValues)}) RETURNING *;`;
 }
 
-export default { getAll, getById, getByField, create };
+export default { getAll, getById, getByField, getImageById ,create };

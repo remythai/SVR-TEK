@@ -15,7 +15,7 @@ export async function getById(sql, id) {
 }
   
 export async function getNewsImage(sql, newsId) {
-    return await sql`SELECT image FROM news WHERE id = ${newsId}`;
+  return (await dbUtils.getImageById(sql, TABLE_NAME, newsId))
 }
 
 // ------------
