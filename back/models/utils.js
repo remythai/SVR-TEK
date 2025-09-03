@@ -55,4 +55,12 @@ export async function update(sql, tableName, data, id) {
   return sql.query(query, values);
 }
 
+// ------------
+// -- Delete --
+// ------------
+
+export async function deleteById(sql, tableName, id) {
+  return await sql`DELETE FROM ${sql.unsafe(tableName)} WHERE id = ${id}`;
+}
+
 export default { getAll, getById, getByField, create, update };

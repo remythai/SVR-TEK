@@ -1,13 +1,29 @@
+import * as dbUtils from './utils.js';
+
+const TABLE_NAME = 'events';
+
+// ----------
+// -- Read --
+// ----------
+
 export async function getAll(sql) {
-    return await sql`SELECT * FROM events`;
+  return await dbUtils.getAll(sql, TABLE_NAME);
 }
-  
+
 export async function getById(sql, id) {
-    return await sql`SELECT * FROM events WHERE id = ${id}`;
+  return await dbUtils.getById(sql, TABLE_NAME, id);
+}
+
+export async function getEventImage(sql, newsId) {
+  return (await dbUtils.getImageById(sql, TABLE_NAME, newsId))
+}
+
+// ------------
+// -- Delete --
+// ------------
+
+export async function deleteById(sql, id) {
+    return await sql`DELETE FROM events WHERE id = ${id}`;
 }
   
-export async function getEventImage(sql, eventsId) {
-    return await sql`SELECT image FROM events WHERE id = ${eventsId}`;
-}
-  
-export default { getAll, getById, getEventImage };
+export default { getAll, getById, getEventImage, deleteById };
