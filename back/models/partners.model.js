@@ -21,7 +21,6 @@ export async function getById(sql, id) {
 export async function create(sql, data) {
   return await dbUtils.create(sql, TABLE_NAME, data);
 }
-<<<<<<< HEAD
 
 // ------------
 // -- Delete --
@@ -38,7 +37,3 @@ export async function update(sql, data, id) {
 }
 
 export default { getAll, getById, create, deleteById, update };
-=======
-  
-export default { getAll, getById, create };
->>>>>>> 2bb4f01 (refacto & feat: reafacto with utils functions and add create)
