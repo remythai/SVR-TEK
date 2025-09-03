@@ -37,4 +37,10 @@ router.put("/:id", usersController.update);
 
 router.put("/changePassword", usersController.changePassword)
 
+// ------------
+// -- Delete --
+// ------------
+
+router.delete("/:id", usersController.deleteById);
+
 export default router;
