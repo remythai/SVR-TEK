@@ -1,6 +1,6 @@
 import * as dbUtils from './utils.js';
 
-const TABLE_NAME = 'parteners';
+const TABLE_NAME = 'partners';
 
 // ----------
 // -- Read --
@@ -22,4 +22,4 @@ export async function create(sql, data) {
   return await dbUtils.create(sql, TABLE_NAME, data);
 }
   
-export default { getAll, getById };
+export default { getAll, getById, create };
