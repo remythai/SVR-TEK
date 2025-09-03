@@ -39,5 +39,13 @@ export async function register(sql, { name, email, password }) {
   return user;
 }
 
-export default { getAll, getById, getByEmail, getUserImage, register, create };
+// ------------
+// -- Delete --
+// ------------
+
+export async function deleteById(sql, id) {
+  return (await dbUtils.deleteById(sql, TABLE_NAME, id));
+}
+
+export default { getAll, getById, getByEmail, getUserImage, register, create, deleteById };
 

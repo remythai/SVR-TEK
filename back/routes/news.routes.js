@@ -17,4 +17,10 @@ router.get("/:id/image", newsController.getNewsImage);
 
 router.post("/", newsController.create);
 
+// ------------
+// -- Delete --
+// ------------
+
+router.delete("/:id", newsController.deleteById);
+
 export default router;

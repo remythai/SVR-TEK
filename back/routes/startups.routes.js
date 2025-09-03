@@ -17,4 +17,10 @@ router.get("/:startup_id/founders/:founder_id/image", startupsController.getFoun
 
 router.post("/", startupsController.create);
 
+// ------------
+// -- Delete --
+// ------------
+
+router.delete("/:id", startupsController.deleteById);
+
 export default router;

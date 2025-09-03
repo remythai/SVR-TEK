@@ -19,4 +19,10 @@ router.get("/:id/image", usersController.getUserImage);
 router.post("/", usersController.create);
 router.post("/register", usersController.register);
 
+// ------------
+// -- Delete --
+// ------------
+
+router.delete("/:id", usersController.deleteById);
+
 export default router;
