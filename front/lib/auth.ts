@@ -11,10 +11,10 @@ export const auth = betterAuth({
     database: drizzleAdapter(db, {
         provider: "pg",
         schema: {
-          user: authUsers,
-          account: authAccounts,
-          session: authSessions,
-          verification: authVerifications,
+        user: authUsers,
+        account: authAccounts,
+        session: authSessions,
+        verification: authVerifications,
       },
     }),
     plugins: [nextCookies()]
