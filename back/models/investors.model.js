@@ -18,4 +18,12 @@ export async function getInvestorImage(sql, newsId) {
   return (await dbUtils.getImageById(sql, TABLE_NAME, newsId))
 }
 
-export default { getAll, getById, getInvestorImage };
+// ------------
+// -- Create --
+// ------------
+
+export async function create(sql, data) {
+  return await dbUtils.create(sql, TABLE_NAME, data);
+}
+
+export default { getAll, getById, getInvestorImage, create };
