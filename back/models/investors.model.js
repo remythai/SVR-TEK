@@ -1,3 +1,11 @@
+import * as dbUtils from './utils.js';
+
+const TABLE_NAME = 'investors';
+
+// ----------
+// -- Read --
+// ----------
+
 export async function getAll(sql) {
   return await dbUtils.getAll(sql, TABLE_NAME);
 }
