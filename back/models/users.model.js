@@ -1,19 +1,26 @@
 import bcrypt from "bcrypt";
+import * as dbUtils from './utils.js';
+
+const TABLE_NAME = 'users';
+
+// ----------
+// -- Read --
+// ----------
 
 export async function getAll(sql) {
-    return await sql`SELECT * FROM users`;
+  return await dbUtils.getAll(sql, TABLE_NAME);
 }
-  
+
 export async function getById(sql, id) {
-    return await sql`SELECT * FROM users WHERE id = ${id}`;
+  return await dbUtils.getById(sql, TABLE_NAME, id);
 }
-  
+
 export async function getByEmail(sql, email) {
     return await sql`SELECT * FROM users WHERE email = ${email}`;
 }
 
-export async function getUserImage(sql, userId) {
-    return await sql`SELECT * FROM users WHERE id = ${userId}`;
+export async function getUserImage(sql, newsId) {
+  return (await dbUtils.getImageById(sql, TABLE_NAME, newsId))
 }
   
 export async function create(sql, { name, email, password }) {
