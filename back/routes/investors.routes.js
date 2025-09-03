@@ -17,4 +17,10 @@ router.get("/:id/image", investorsController.getInvestorImage);
 
 router.post("/", investorsController.create);
 
+// ------------
+// -- Delete --
+// ------------
+
+router.delete("/:id", investorsController.deleteById);
+
 export default router;

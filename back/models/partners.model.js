@@ -21,5 +21,13 @@ export async function getById(sql, id) {
 export async function create(sql, data) {
   return await dbUtils.create(sql, TABLE_NAME, data);
 }
-  
-export default { getAll, getById, create };
+
+// ------------
+// -- Delete --
+// ------------
+
+export async function deleteById(sql, id) {
+  return (await dbUtils.deleteById(sql, TABLE_NAME, id));
+}
+
+export default { getAll, getById, create, deleteById };
