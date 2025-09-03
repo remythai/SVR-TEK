@@ -33,5 +33,11 @@ export async function create(sql, data) {
 export async function deleteById(sql, id) {
     return (await dbUtils.deleteById(sql, TABLE_NAME, id));
 }
+
+// Update
+
+export async function update(sql, data, id) {
+  return (await dbUtils.update(sql, TABLE_NAME, data, id));
+}
   
-export default { getAll, getById, getEventImage, deleteById, create };
+export default { getAll, getById, getEventImage, deleteById, create, update };

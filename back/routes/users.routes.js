@@ -26,4 +26,8 @@ router.post("/login", usersController.login);
 
 router.delete("/:id", usersController.deleteById);
 
+// Update
+
+router.put("/:id", usersController.update);
+
 export default router;

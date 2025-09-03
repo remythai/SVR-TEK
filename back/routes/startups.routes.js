@@ -23,4 +23,8 @@ router.post("/", startupsController.create);
 
 router.delete("/:id", startupsController.deleteById);
 
+// Update
+
+router.put("/:id", startupsController.update);
+
 export default router;
