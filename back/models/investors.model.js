@@ -1,6 +1,6 @@
 import * as dbUtils from './utils.js';
 
-const TABLE_NAME = 'news';
+const TABLE_NAME = 'investors';
 
 // ----------
 // -- Read --
