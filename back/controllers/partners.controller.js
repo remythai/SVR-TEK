@@ -40,6 +40,7 @@ export const create = async (req, res) => {
     res.status(500).json({ error: err });
   }
 };
+<<<<<<< HEAD
 
 // ------------
 // -- Delete --
@@ -83,3 +84,5 @@ export const update = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 }
+=======
+>>>>>>> 2bb4f01 (refacto & feat: reafacto with utils functions and add create)

@@ -16,6 +16,7 @@ router.get("/:id", partnersController.getById);
 
 router.post("/", partnersController.create);
 
+<<<<<<< HEAD
 // ------------
 // -- Delete --
 // ------------
@@ -26,4 +27,6 @@ router.delete("/:id", partnersController.deleteById);
 
 router.put("/:id", partnersController.update);
 
+=======
+>>>>>>> 2bb4f01 (refacto & feat: reafacto with utils functions and add create)
 export default router;
