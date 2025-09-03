@@ -20,4 +20,10 @@ router.post("/", usersController.create);
 router.post("/register", usersController.register);
 router.post("/login", usersController.login);
 
+// ------------
+// -- Delete --
+// ------------
+
+router.delete("/:id", usersController.deleteById);
+
 export default router;

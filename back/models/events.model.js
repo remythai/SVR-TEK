@@ -15,7 +15,7 @@ export async function getEventImage(sql, eventsId) {
 // ------------
 
 export async function deleteById(sql, id) {
-    return await sql`DELETE FROM events WHERE id = ${id}`;
+    return (await dbUtils.deleteById(sql, TABLE_NAME, id));
 }
   
 export default { getAll, getById, getEventImage, deleteById };

@@ -123,6 +123,22 @@ export const login = async (req, res) => {
       });
     }
     res.status(500).json({ error: "Wrong Password" });
+// ------------
+// -- Delete --
+// ------------
+
+export const deleteById = async (req, res) => {
+  const sql = req.app.get("db");
+  const { id } = req.params;
+  
+  try {
+    const result = await Users.deleteById(sql, id);
+    
+    if (result.count === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    res.status(200).json({ message: "User deleted successfully" });
   } catch (err) {
     console.error("DB error:", err);
     res.status(500).json({ error: "Server error" });

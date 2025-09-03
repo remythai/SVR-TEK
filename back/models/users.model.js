@@ -31,6 +31,14 @@ export async function create(sql, data) {
   return await dbUtils.create(sql, TABLE_NAME, data);
 }
 
+// ------------
+// -- Delete --
+// ------------
+
+export async function deleteById(sql, id) {
+  return (await dbUtils.deleteById(sql, TABLE_NAME, id));
+}
+
 export async function register(sql, { name, email, password }) {
   const [user] = await sql`
     INSERT INTO users (name, email, password)
@@ -55,4 +63,4 @@ export async function login(sql, { email, password }) {
   return { id: user.id, name: user.name, email: user.email };
 }
 
-export default { getAll, getById, getByEmail, getUserImage, create, login, register };
+export default { getAll, getById, getByEmail, getUserImage, create, login, register, deleteById };

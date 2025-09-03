@@ -30,4 +30,12 @@ export async function create(sql, data) {
   return await dbUtils.create(sql, TABLE_NAME, data);
 }
 
-export default { getAll, getById, getFounderImage, create};
+// ------------
+// -- Delete --
+// ------------
+
+export async function deleteById(sql, id) {
+  return (await dbUtils.deleteById(sql, TABLE_NAME, id));
+}
+
+export default { getAll, getById, getFounderImage, create, deleteById};
