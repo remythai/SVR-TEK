@@ -9,7 +9,7 @@ export default function About() {
                 <div className="mt-5 sm:mt-10 lg:mt-0">
                 <div className="space-y-6 sm:space-y-8">
                     <div className="space-y-2 md:space-y-4">
-                    <h1 className="text-3xl font-medium text-white">
+                    <h1 className="text-3xl font-medium text-secondary-100">
                         Our mission is to empower start-ups
                     </h1>
                     <p className="text-gray-500">
@@ -18,7 +18,7 @@ export default function About() {
                     </div>
                     <ul className="space-y-2 sm:space-y-4">
                     <li className="flex gap-x-3">
-                        <span className="mt-0.5 size-5 flex justify-center items-center rounded-full bg-orange-400/40 text-orange-400">
+                        <span className="mt-0.5 size-5 flex justify-center items-center rounded-full bg-secondary-500 text-secondary-100">
                         <svg className="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         </span>
                         <div className="grow">
@@ -29,7 +29,7 @@ export default function About() {
                     </li>
 
                     <li className="flex gap-x-3">
-                        <span className="mt-0.5 size-5 flex justify-center items-center rounded-full bg-orange-400/40 text-orange-400">
+                        <span className="mt-0.5 size-5 flex justify-center items-center rounded-full bg-secondary-500 text-secondary-100">
                         <svg className="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         </span>
                         <div className="grow">
@@ -40,7 +40,7 @@ export default function About() {
                     </li>
 
                     <li className="flex gap-x-3">
-                        <span className="mt-0.5 size-5 flex justify-center items-center rounded-full bg-orange-400/40 text-orange-400">
+                        <span className="mt-0.5 size-5 flex justify-center items-center rounded-full bg-secondary-500 text-secondary-100">
                         <svg className="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         </span>
                         <div className="grow">
@@ -65,7 +65,7 @@ export default function About() {
                 <div className="mt-5 sm:mt-10 lg:mt-0">
                 <div className="space-y-6 sm:space-y-8">
                     <div className="space-y-2 md:space-y-4">
-                    <h1 className="text-3xl font-medium text-white">
+                    <h1 className="text-3xl font-medium text-secondary-100">
                         Our vision is to simplify start-ups processes
                     </h1>
                     <p className="text-gray-500">
@@ -74,7 +74,7 @@ export default function About() {
                     </div>
                     <ul className="space-y-2 sm:space-y-4">
                     <li className="flex gap-x-3">
-                        <span className="mt-0.5 size-5 flex justify-center items-center rounded-full bg-orange-400/40 text-orange-400">
+                        <span className="mt-0.5 size-5 flex justify-center items-center rounded-full bg-secondary-500 text-secondary-100">
                         <svg className="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         </span>
                         <div className="grow">
@@ -85,7 +85,7 @@ export default function About() {
                     </li>
 
                     <li className="flex gap-x-3">
-                        <span className="mt-0.5 size-5 flex justify-center items-center rounded-full bg-orange-400/40 text-orange-400">
+                        <span className="mt-0.5 size-5 flex justify-center items-center rounded-full bg-secondary-500 text-secondary-100">
                         <svg className="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         </span>
                         <div className="grow">
@@ -96,7 +96,7 @@ export default function About() {
                     </li>
 
                     <li className="flex gap-x-3">
-                        <span className="mt-0.5 size-5 flex justify-center items-center rounded-full bg-orange-400/40 text-orange-400">
+                        <span className="mt-0.5 size-5 flex justify-center items-center rounded-full bg-secondary-500 text-secondary-100">
                         <svg className="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         </span>
                         <div className="grow">

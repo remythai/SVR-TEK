@@ -2,8 +2,8 @@ export default function Team() {
     return (
         <div className="my-30 px-6 md:px-12 lg:px-20">
             <div className="flex flex-col gap-5 text-left md:text-center">
-                <h1 className="text-3xl font-medium text-white">Meet Our Team</h1>
-                <p className="text-gray-500">The people behind the product, passionate about what they do.</p>
+                <h1 className="text-3xl font-medium text-secondary-100">Meet Our Team</h1>
+                <p>The people behind the product, passionate about what they do.</p>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-10 mt-12">
                 <div className="md:max-w-80 w-full bg-black text-white rounded-2xl">
@@ -12,8 +12,8 @@ export default function Team() {
                         <div className="absolute bottom-0 z-10 h-60 w-full bg-gradient-to-t pointer-events-none from-black to-transparent"></div>
                     </div>
                     <div className="px-4 pb-6 text-center">
-                        <p className="mt-4 text-lg">John Doe</p>
-                        <p className="text-sm font-medium bg-gradient-to-r from-[#8B5CF6] via-[#9938CA] to-[#E0724A] text-transparent bg-clip-text">Content Marketing</p>
+                        <p className="mt-4 text-lg">Bylel jourdin</p>
+                        <p className="text-sm font-medium bg-gradient-to-r from-[#8B5CF6] via-[#9938CA] to-[#E0724A] text-transparent bg-clip-text">Jeb incubator's Manager</p>
                     </div>
                 </div>
                 <div className="md:max-w-80 w-full bg-black text-white rounded-2xl">
@@ -22,8 +22,8 @@ export default function Team() {
                         <div className="absolute bottom-0 z-10 h-60 w-full bg-gradient-to-t pointer-events-none from-black to-transparent"></div>
                     </div>
                     <div className="px-4 pb-6 text-center">
-                        <p className="mt-4 text-lg">John Doe</p>
-                        <p className="text-sm font-medium bg-gradient-to-r from-[#8B5CF6] via-[#9938CA] to-[#E0724A] text-transparent bg-clip-text">Content Marketing</p>
+                        <p className="mt-4 text-lg">Javier barrera</p>
+                        <p className="text-sm font-medium bg-gradient-to-r from-[#8B5CF6] via-[#9938CA] to-[#E0724A] text-transparent bg-clip-text">Jeb incubator's Manager</p>
                     </div>
                 </div>
                 <div className="md:max-w-80 w-full bg-black text-white rounded-2xl">
@@ -32,8 +32,8 @@ export default function Team() {
                         <div className="absolute bottom-0 z-10 h-60 w-full bg-gradient-to-t pointer-events-none from-black to-transparent"></div>
                     </div>
                     <div className="px-4 pb-6 text-center">
-                        <p className="mt-4 text-lg">John Doe</p>
-                        <p className="text-sm font-medium bg-gradient-to-r from-[#8B5CF6] via-[#9938CA] to-[#E0724A] text-transparent bg-clip-text">Content Marketing</p>
+                        <p className="mt-4 text-lg">Elena Enka</p>
+                        <p className="text-sm font-medium bg-gradient-to-r from-[#8B5CF6] via-[#9938CA] to-[#E0724A] text-transparent bg-clip-text">Jeb incubator's Manager</p>
                     </div>
                 </div>
             </div>

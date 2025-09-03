@@ -37,7 +37,7 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
         <select
           value={currentFilters.sector}
           onChange={(e) => handleFilterChange('sector', e.target.value)}
-          className="appearance-none bg-white border border-gray-300 rounded-full px-4 py-2 pr-8 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          className="appearance-none bg-white border border-secondary-300 rounded-full px-4 py-2 pr-8 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-secondary-100 focus:border-transparent"
         >
           <option value="">Tous les secteurs</option>
           <option value="fintech">Fintech</option>
@@ -57,7 +57,7 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
         <select
           value={currentFilters.maturity}
           onChange={(e) => handleFilterChange('maturity', e.target.value)}
-          className="appearance-none bg-white border border-gray-300 rounded-full px-4 py-2 pr-8 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          className="appearance-none bg-white border border-secondary-300 rounded-full px-4 py-2 pr-8 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-secondary-100 focus:border-transparent"
         >
           <option value="">Toutes les maturités</option>
           <option value="seed">Seed</option>
@@ -76,7 +76,7 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
         <select
           value={currentFilters.location}
           onChange={(e) => handleFilterChange('location', e.target.value)}
-          className="appearance-none bg-white border border-gray-300 rounded-full px-4 py-2 pr-8 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          className="appearance-none bg-white border border-secondary-300 rounded-full px-4 py-2 pr-8 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-secondary-100 focus:border-transparent"
         >
           <option value="">Toutes les localisations</option>
           <option value="paris">Paris</option>

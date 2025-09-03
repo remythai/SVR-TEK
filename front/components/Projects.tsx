@@ -8,10 +8,10 @@ export default async function Projects() {
     return (
         <div className="flex w-full flex-col items-center mb-30 gap-10 px-6 md:px-12 lg:px-20" id="projects">
             <div className="flex flex-col gap-5 text-left md:text-center">
-                <h1 className="text-3xl font-medium leading-tight text-white">
+                <h1 className="text-3xl font-medium leading-tight text-secondary-100">
                         Some featured projects
                     </h1>
-                <p className="text-lg text-gray-300 max-w-2xl">
+                <p className="text-lg max-w-2xl">
                     Explore our curated selection of projects. Discover innovative startups, meet their founders, and stay updated on their latest achievements.
                 </p>
             </div>
@@ -37,7 +37,7 @@ export default async function Projects() {
             </div>
             <Link
                 href="/projects"
-                className="px-6 py-3 text-sm font-medium rounded-md bg-orange-400/30 hover:bg-orange-400/50 transition text-orange-400">
+                className="px-6 py-3 text-sm font-medium rounded-md bg-secondary-300 text-white hover:bg-secondary-200 transition-colors duration-300">
                     See all projects
             </Link>
         </div>

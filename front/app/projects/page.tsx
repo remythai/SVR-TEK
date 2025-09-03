@@ -74,7 +74,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
         {await Promise.all(
           filteredStartups.map(async (startup: any) => {
             return (
-              <Link href="#" key={startup.id} className="relative flex flex-col bg-white shadow-sm border border-slate-200 rounded-lg w-[430px] p-6">
+              <Link href="#" key={startup.id} className="relative flex flex-col border border-secondary-200 shadow-sm rounded-lg w-[430px] p-6 hover:scale-105 transition-transform duration-300">
                 <div className="flex items-center mb-4">
                     <Building />
                     <h5 className="ml-3 text-slate-800 text-xl font-semibold">

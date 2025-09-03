@@ -4,6 +4,7 @@ import Banner from "@/components/Banner";
 import About from "@/components/About";
 import Team from "@/components/Team";
 import Trusted from "@/components/Trusted";
+import Contact from "@/components/Contact";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <Banner />
       <Team />
       <Trusted />
+      <Contact />
     </div>
   );
 }
