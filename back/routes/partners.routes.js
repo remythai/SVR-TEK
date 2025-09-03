@@ -22,4 +22,8 @@ router.post("/", partnersController.create);
 
 router.delete("/:id", partnersController.deleteById);
 
+// Update
+
+router.put("/:id", partnersController.update);
+
 export default router;

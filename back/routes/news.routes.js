@@ -23,4 +23,8 @@ router.post("/", newsController.create);
 
 router.delete("/:id", newsController.deleteById);
 
+// Update
+
+router.put("/:id", newsController.update);
+
 export default router;
