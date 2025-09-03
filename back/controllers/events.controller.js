@@ -35,3 +35,25 @@ export const getEventImage = async (req, res) => {
     res.status(500).json({ error: "Servor error" });
   }
 };
+
+// ------------
+// -- Delete --
+// ------------
+
+export const deleteById = async (req, res) => {
+  const sql = req.app.get("db");
+  const { id } = req.params;
+  
+  try {
+    const result = await Events.deleteById(sql, id);
+    
+    if (result.count === 0) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+    
+    res.status(200).json({ message: "Event deleted successfully" });
+  } catch (err) {
+    console.error("DB error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
