@@ -19,6 +19,14 @@ export async function getEventImage(sql, newsId) {
 }
 
 // ------------
+// -- Create --
+// ------------
+
+export async function create(sql, data) {
+  return await dbUtils.create(sql, TABLE_NAME, data);
+}
+
+// ------------
 // -- Delete --
 // ------------
 
@@ -26,4 +34,4 @@ export async function deleteById(sql, id) {
     return (await dbUtils.deleteById(sql, TABLE_NAME, id));
 }
   
-export default { getAll, getById, getEventImage, deleteById };
+export default { getAll, getById, getEventImage, deleteById, create };

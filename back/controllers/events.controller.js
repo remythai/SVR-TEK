@@ -1,5 +1,9 @@
 import Events from "../models/events.model.js";
 
+// ----------
+// -- Read --
+// ----------
+
 export const getAll = async (req, res) => {
   const sql = req.app.get("db");
   try {
@@ -33,6 +37,21 @@ export const getEventImage = async (req, res) => {
   } catch (err) {
     console.error("DB error:", err);
     res.status(500).json({ error: "Servor error" });
+  }
+};
+
+// ------------
+// -- Create --
+// ------------
+
+export const create = async (req, res) => {
+  const sql = req.app.get("db");
+  try {
+    const [newEvents] = await Events.create(sql, req.body);
+    res.status(201).json(newEvents);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Erreur serveur" });
   }
 };
 
