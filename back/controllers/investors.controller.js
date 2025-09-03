@@ -54,3 +54,25 @@ export const create = async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 };
+
+// ------------
+// -- Delete --
+// ------------
+
+export const deleteById = async (req, res) => {
+  const sql = req.app.get("db");
+  const { id } = req.params;
+  
+  try {
+    const result = await Investor.deleteById(sql, id);
+    
+    if (result.count === 0) {
+      return res.status(404).json({ error: "Investor not found" });
+    }
+    
+    res.status(200).json({ message: "Investor deleted successfully" });
+  } catch (err) {
+    console.error("DB error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};

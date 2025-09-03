@@ -16,4 +16,10 @@ router.get("/:id", partnersController.getById);
 
 router.post("/", partnersController.create);
 
+// ------------
+// -- Delete --
+// ------------
+
+router.delete("/:id", partnersController.deleteById);
+
 export default router;
