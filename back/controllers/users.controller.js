@@ -10,6 +10,10 @@ import jwt from "jsonwebtoken";
 // -- Read --
 // ----------
 
+// ----------
+// -- Read --
+// ----------
+
 export const getAll = async (req, res) => {
   const sql = req.app.get("db");
   try {
