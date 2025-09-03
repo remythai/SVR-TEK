@@ -1,6 +1,10 @@
 import Users from "../models/users.model.js";
 import bcrypt from "bcryptjs";
 
+// ----------
+// -- Read --
+// ----------
+
 export const getAll = async (req, res) => {
   const sql = req.app.get("db");
   try {
@@ -55,6 +59,21 @@ export const getUserImage = async (req, res) => {
   }
 };
 
+// ------------
+// -- Create --
+// ------------
+
+export const create = async (req, res) => {
+  const sql = req.app.get("db");
+  try {
+    const [newUser] = await Users.create(sql, req.body);
+    res.status(201).json(newUser);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+}
+
 export const register = async (req, res) => {
   const sql = req.app.get("db");
   const { name, email, password } = req.body;
@@ -71,7 +90,7 @@ export const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await Users.create(sql, { name, email, password: hashedPassword });
+    const newUser = await Users.register(sql, { name, email, password: hashedPassword });
 
     res.status(201).json({
       success: true,

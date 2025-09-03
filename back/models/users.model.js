@@ -1,20 +1,36 @@
+import * as dbUtils from './utils.js';
+
+const TABLE_NAME = 'users';
+
+// ----------
+// -- Read --
+// ----------
+
 export async function getAll(sql) {
-    return await sql`SELECT * FROM users`;
+  return await dbUtils.getAll(sql, TABLE_NAME);
 }
-  
+
 export async function getById(sql, id) {
-    return await sql`SELECT * FROM users WHERE id = ${id}`;
+  return await dbUtils.getById(sql, TABLE_NAME, id);
 }
-  
+
 export async function getByEmail(sql, email) {
     return await sql`SELECT * FROM users WHERE email = ${email}`;
 }
 
-export async function getUserImage(sql, userId) {
-    return await sql`SELECT * FROM users WHERE id = ${userId}`;
+export async function getUserImage(sql, newsId) {
+  return (await dbUtils.getImageById(sql, TABLE_NAME, newsId))
 }
-  
-export async function create(sql, { name, email, password }) {
+
+// ------------
+// -- Create --
+// ------------
+
+export async function create(sql, data) {
+  return await dbUtils.create(sql, TABLE_NAME, data);
+}
+
+export async function register(sql, { name, email, password }) {
   const [user] = await sql`
     INSERT INTO users (name, email, password)
     VALUES (${name}, ${email}, ${password})
@@ -23,5 +39,5 @@ export async function create(sql, { name, email, password }) {
   return user;
 }
 
-export default { getAll, getById, getByEmail, getUserImage, create };
+export default { getAll, getById, getByEmail, getUserImage, register, create };
 
