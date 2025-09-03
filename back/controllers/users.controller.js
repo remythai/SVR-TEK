@@ -82,17 +82,17 @@ export const create = async (req, res) => {
 export const register = async (req, res) => {
   const sql = req.app.get("db");
   const { name, email, password } = req.body;
-
+  
   if (!name || !email || !password) {
     return res.status(400).json({ error: "Missing required fields" });
   }
-
+  
   try {
     const existingUser = await Users.getByEmail(sql, email);
     if (existingUser.length > 0) {
       return res.status(409).json({ error: "Email already in use" });
     }
-
+    
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await Users.register(sql, { name, email, password: hashedPassword });
