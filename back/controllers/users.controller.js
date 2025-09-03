@@ -100,7 +100,7 @@ export const login = async (req, res) => {
     if (bcrypt.compare(password, existingUser.hashedPassword)) {
       res.status(201).json({
         success: true,
-        user: { id: newUser.id, name: newUser.name, email: newUser.email }
+        user: { id: existingUser.id, name: existingUser.name, email: existingUser.email }
       });
     }
     res.status(500).json({ error: "Wrong Password" });
