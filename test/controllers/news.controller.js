@@ -1,5 +1,9 @@
 import News from "../models/news.model.js";
 
+// ----------
+// -- Read --
+// ----------
+
 export const getAll = async (req, res) => {
   const sql = req.app.get("db");
   try {
@@ -33,5 +37,20 @@ export const getNewsImage = async (req, res) => {
   } catch (err) {
     console.error("DB error:", err);
     res.status(500).json({ error: "Servor error" });
+  }
+};
+
+// ------------
+// -- Create --
+// ------------
+
+export const create = async (req, res) => {
+  const sql = req.app.get("db");
+  try {
+    const [newNews] = await News.create(sql, req.body);
+    res.status(201).json(newNews);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Erreur serveur" });
   }
 };
