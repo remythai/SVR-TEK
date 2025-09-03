@@ -1,5 +1,9 @@
 import Startup from "../models/startups.model.js";
 
+// ----------
+// -- Read --
+// ----------
+
 export const getAll = async (req, res) => {
   const sql = req.app.get("db");
   try {
@@ -31,6 +35,21 @@ export const getFounderImage = async (req, res) => {
     res.status(200).json({ image: image[0].image });
   } catch (err) {
     console.error("DB error:", err);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+};
+
+// ------------
+// -- Create --
+// ------------
+
+export const create = async (req, res) => {
+  const sql = req.app.get("db");
+  try {
+    const [newStartup] = await Startup.create(sql, req.body);
+    res.status(201).json(newStartup);
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Erreur serveur" });
   }
 };

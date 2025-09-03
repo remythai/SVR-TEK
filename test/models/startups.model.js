@@ -1,9 +1,17 @@
+import * as dbUtils from './utils.js';
+
+const TABLE_NAME = 'startups';
+
+// ----------
+// -- Read --
+// ----------
+
 export async function getAll(sql) {
-  return await sql`SELECT * FROM startups`;
+  return await dbUtils.getAll(sql, TABLE_NAME);
 }
 
 export async function getById(sql, id) {
-  return await sql`SELECT * FROM startups WHERE id = ${id}`;
+  return await dbUtils.getById(sql, TABLE_NAME, id);
 }
 
 export async function getFounderImage(sql, founderId) {
@@ -14,4 +22,12 @@ export async function getFounderImage(sql, founderId) {
   `;
 }
 
-export default { getAll, getById, getFounderImage };
+// ------------
+// -- Create --
+// ------------
+
+export async function create(sql, data) {
+  return await dbUtils.create(sql, TABLE_NAME, data);
+}
+
+export default { getAll, getById, getFounderImage, create};

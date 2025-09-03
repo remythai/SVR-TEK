@@ -7,4 +7,6 @@ router.get("/", startupsController.getAll);
 router.get("/:id", startupsController.getById);
 router.get("/:startup_id/founders/:founder_id/image", startupsController.getFounderImage);
 
+router.post("/", startupsController.create);
+
 export default router;
