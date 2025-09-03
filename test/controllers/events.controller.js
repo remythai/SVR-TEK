@@ -12,7 +12,7 @@ export const getAll = async (req, res) => {
 
 export const getById = async (req, res) => {
   const sql = req.app.get("db");
-  const { id } = req.params.events_id;
+  const { id } = req.params;
   try {
     const events = await Events.getById(sql, id);
     if (!events[0]) return res.status(404).json({ error: "Event not found" });
@@ -24,10 +24,10 @@ export const getById = async (req, res) => {
 
 export const getEventImage = async (req, res) => {
   const sql = req.app.get("db");
-  const { events_id } = req.params.events_id;
+  const { id } = req.params;
 
   try {
-    const image = await Events.getEventImage(sql, events_id);
+    const image = await Events.getEventImage(sql, id);
     if (!image[0]) return res.status(404).json({ error: "Event not found" });
     res.status(200).json({ image: image[0].image });
   } catch (err) {

@@ -27,7 +27,7 @@ export const getInvestorImage = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const image = await Startup.getInvestorImage(sql, id);
+    const image = await Investor.getInvestorImage(sql, id);
     if (!image[0]) return res.status(404).json({ error: "Investor not found" });
     res.status(200).json({ image: image[0].image });
   } catch (err) {

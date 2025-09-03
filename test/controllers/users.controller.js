@@ -24,7 +24,7 @@ export const getById = async (req, res) => {
 
 export const getByEmail = async (req, res) => {
     const sql = req.app.get("db");
-    const { email } = req.params.email;
+    const { email } = req.params;
   
     try {
       const users = await Users.getByEmail(sql, email);

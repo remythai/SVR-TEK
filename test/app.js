@@ -6,6 +6,7 @@ import investorsRoutes from "./routes/investors.routes.js";
 import partnersRoutes from "./routes/partners.routes.js";
 import newsRoutes from "./routes/news.routes.js";
 import eventsRoutes from "./routes/events.routes.js"
+import usersRoutes from "./routes/users.routes.js"
 
 dotenv.config();
 
@@ -25,5 +26,6 @@ app.use("/investors", investorsRoutes);
 app.use("/partners", partnersRoutes);
 app.use("/news", newsRoutes);
 app.use("/events", eventsRoutes)
+app.use("/users", usersRoutes)
 
 export default app;
