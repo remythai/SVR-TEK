@@ -1,86 +1,127 @@
 "use client";
 
-import React from "react";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { signUp } from "@/server/users";
+import { set, z } from "zod";
 
-export default function Home () {
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-    const [state, setState] = React.useState("login");
+const formSchema = z.object({
+    name: z.string().min(2).max(50),
+    email: z.string().min(2).max(50),
+    password: z.string().min(6).max(50),
+})
 
-    const [data, setData] = React.useState({
+export default function Register() {
+    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
         name: "",
         email: "",
         password: "",
-    });
+        },
+    })
 
-    const onChangeHandler = (e) => {
-        setData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    };
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        setIsLoading(true);
+        const { success, message } = await signUp(values.name, values.email, values.password);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+        if (success) {
+            toast.success("Account created successfully!");
+            router.push('/dashboard');
+            form.reset();
+        } else {
+            toast.error(`Error: ${message}`);
+        }
+        setIsLoading(false);
+    }
 
-
-    };
-
-    return (
-        <div className="flex justify-center items-center w-full h-[70vh]">
-            <form
-                onSubmit={handleSubmit}
-                className="w-full sm:w-[350px] text-center border border-zinc-300/60 dark:border-zinc-700 rounded-2xl px-8 bg-white dark:bg-zinc-900"
-            >
-                <h1 className="text-zinc-900 dark:text-white text-3xl mt-10 font-medium">
-                    {state === "login" ? "Login" : "Register"}
-                </h1>
-                <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-2 pb-6">
-                    Please {state === "login" ? "sign in" : "sign up"} to continue
-                </p>
-
-                {state !== "login" && (
-                    <div className="flex items-center w-full mt-4 bg-white dark:bg-zinc-800 border border-zinc-300/80 dark:border-zinc-700 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-500 dark:text-zinc-400" viewBox="0 0 24 24" >
-                            <path d="M20 21a8 8 0 0 0-16 0" />
-                            <circle cx="12" cy="7" r="4" />
-                        </svg>
-                        <input type="text" placeholder="Name" className="bg-transparent text-zinc-600 dark:text-zinc-200 placeholder-zinc-500 dark:placeholder-zinc-400 outline-none text-sm w-full h-full" name="name" value={data.name} onChange={onChangeHandler} required />
-                    </div>
-                )}
-
-                <div className="flex items-center w-full mt-4 bg-white dark:bg-zinc-800 border border-zinc-300/80 dark:border-zinc-700 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-500 dark:text-zinc-400" viewBox="0 0 24 24" >
-                        <rect width="20" height="16" x="2" y="4" rx="2" />
-                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                    </svg>
-                    <input type="email" placeholder="Email id" className="bg-transparent text-zinc-600 dark:text-zinc-200 placeholder-zinc-500 dark:placeholder-zinc-400 outline-none text-sm w-full h-full" name="email" value={data.email} onChange={onChangeHandler} required />
-                </div>
-
-                <div className="flex items-center mt-4 w-full bg-white dark:bg-zinc-800 border border-zinc-300/80 dark:border-zinc-700 h-12 rounded-full overflow-hidden pl-6 gap-2">
-                    {/* Lock Icon */}
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-500 dark:text-zinc-400" viewBox="0 0 24 24" >
-                        <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
-                    <input type="password" placeholder="Password" className="bg-transparent text-zinc-600 dark:text-zinc-200 placeholder-zinc-500 dark:placeholder-zinc-400 outline-none text-sm w-full h-full" name="password" value={data.password} onChange={onChangeHandler} required />
-                </div>
-
-                <div className="mt-5 text-left">
-                    <a className="text-sm text-indigo-500 dark:text-indigo-400" href="#" >
-                        Forgot password?
-                    </a>
-                </div>
-
-                <button type="submit" className="mt-2 w-full h-11 rounded-full text-white bg-indigo-500 hover:opacity-90 transition-opacity" >
-                    {state === "login" ? "Login" : "Create Account"}
-                </button>
-
-                <p className="text-zinc-500 dark:text-zinc-400 text-sm mt-3 mb-11">
-                    {state === "login"
-                        ? "Don't have an account? "
-                        : "Already have an account? "}
-                    <button type="button" className="text-indigo-500 dark:text-indigo-400" onClick={() => setState((prev) => prev === "login" ? "register" : "login")} >
-                        {state === "login" ? "Register" : "Login"}
-                    </button>
-                </p>
-            </form>
+  return (
+    <>
+      <div className="flex min-h-[70vh] flex-col justify-center px-6 py-12 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">Register a new account</h2>
         </div>
-    );
-};
+
+        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+
+            <div>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>name</FormLabel>
+                    <FormControl>
+                        <Input placeholder="shadcn" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+            </div>
+
+            <div>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                        <Input placeholder="shadcn" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+            </div>
+
+            <div>
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                        <Input placeholder="********" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+        />
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+              >
+                {isLoading ? "..." : "Register"}
+              </button>
+            </div>
+          </form>
+          </Form>
+        </div>
+      </div>
+    </>
+  )
+}
