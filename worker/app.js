@@ -1,20 +1,8 @@
 import 'dotenv/config'; 
 import { Resend } from 'resend';
-import fs from 'fs';
-import path from 'path';
+import utils from './src/utils.js';
 
 const resend = new Resend(process.env.RESEND_KEY);
-
-const logDir = path.resolve('./logs');
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir, { recursive: true });
-}
-
-function writeLog(message) {
-  const logFile = path.join(logDir, 'email.log');
-  const timestamp = new Date().toISOString();
-  fs.appendFileSync(logFile, `[${timestamp}] ${message}\n`);
-}
 
 export async function sendTempPassEmail(name, email, temp_password) {
   try {
@@ -46,17 +34,67 @@ export async function sendTempPassEmail(name, email, temp_password) {
     });
 
     if (error) {
-      writeLog(`❌ Error sending email to ${email}: ${error.message}`);
+      utils.writeLog(`❌ Error sending email to ${email}: ${error.message}`, "email");
       return;
     }
 
-    writeLog(`✅ Email sent to ${email}, ID: ${data.id}`);
+    utils.writeLog(`✅ Email sent to ${email}, ID: ${data.id}`, "email");
     
   } catch (error) {
-    writeLog(`❌ Exception for ${email}: ${error.message}`);
+    utils.writeLog(`❌ Exception for ${email}: ${error.message}`, "email");
   }
 }
 
-sendTempPassEmail("Antton", "antton.ducos@gmail.com", "NEW_PASSWORD")
+// sendTempPassEmail("Antton", "antton.ducos@gmail.com", "NEW_PASSWORD")
+
+
+const ancient_api_key = process.env.ANCIENT_API_KEY;
+const ancient_api_url = process.env.ANCIENT_API_URL;
+
+const api_url = 'http://localhost:8000/';
 
 export default { sendTempPassEmail };
+
+async function workitout() {
+  try {
+    const data = await utils.getByField("partners");
+
+    const transformedData = data.map(({ id, ...rest }) => ({
+      ...rest,
+      id_legacy: id
+    }));
+
+    const localResponse = await fetch(api_url + "partners");
+    const localData = await localResponse.json();
+
+    const existingLegacyIds = new Set(localData.map(p => p.id_legacy));
+
+    const newPartners = [];
+    const skippedPartners = [];
+
+    for (const p of transformedData) {
+      if (existingLegacyIds.has(p.id_legacy)) {
+        skippedPartners.push(p);
+      } else {
+        newPartners.push(p);
+      }
+    }
+
+    skippedPartners.forEach(p => {
+      utils.writeLog(`ℹ️ Partner already existing (id_legacy=${p.id_legacy}, name=${p.name})`, "partners");
+    });
+
+    for (const item of newPartners) {
+      utils.addInField("partners", item);
+    }
+
+    return { inserted: newPartners, skipped: skippedPartners };
+
+  } catch (error) {
+    console.error("Erreur:", error);
+  }
+}
+
+
+// Exemple d'utilisation
+workitout()
