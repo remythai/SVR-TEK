@@ -50,7 +50,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                 <div className="w-8 h-8 bg-gradient-to-r from-purple-300 to-pink-300 rounded-lg flex items-center justify-center">
                   <Target className="w-5 h-5 text-white" />
                 </div>
-                <h2>Project&apos;s description</h2>
+                Project&apos;s description
               </h2>
               <p className="text-gray-700 leading-relaxed text-lg">{project.description}</p>
               {project.needs && (
@@ -173,12 +173,12 @@ export default async function ProjectPage({ params }: { params: { id: string } }
 
         {project.founders && project.founders.length > 0 && (
           <div className="bg-white rounded-2xl shadow-lg p-8 border border-purple-100">
-            <h2 className="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-3">
+            <div className="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-3">
               <div className="w-8 h-8 bg-gradient-to-r from-purple-300 to-pink-300 rounded-lg flex items-center justify-center">
                 <Users className="w-5 h-5 text-white" />
               </div>
               Fondators
-            </h2>
+            </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {project.founders.map((founder) => (
