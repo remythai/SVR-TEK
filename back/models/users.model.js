@@ -1,4 +1,5 @@
 import * as dbUtils from './utils.js';
+import bcrypt from "bcrypt";
 
 const TABLE_NAME = 'users';
 
@@ -32,11 +33,26 @@ export async function create(sql, data) {
 
 export async function register(sql, { name, email, password }) {
   const [user] = await sql`
-    INSERT INTO users (name, email, password)
-    VALUES (${name}, ${email}, ${password})
-    RETURNING id, name, email
+  INSERT INTO users (name, email, password)
+  VALUES (${name}, ${email}, ${password})
+  RETURNING id, name, email
   `;
   return user;
+}
+
+export async function login(sql, { email, password }) {
+  const [user] = await sql`
+  SELECT id, name, email, password 
+  FROM users 
+  WHERE email = ${email}
+  `;
+  
+  if (!user) return null;
+  
+  const valid = await bcrypt.compare(password, user.password);
+  if (!valid) return null;
+  
+  return { id: user.id, name: user.name, email: user.email };
 }
 
 // ------------
@@ -47,5 +63,4 @@ export async function deleteById(sql, id) {
   return (await dbUtils.deleteById(sql, TABLE_NAME, id));
 }
 
-export default { getAll, getById, getByEmail, getUserImage, register, create, deleteById };
-
+export default { getAll, getById, getByEmail, getUserImage, register, create, login , deleteById };
