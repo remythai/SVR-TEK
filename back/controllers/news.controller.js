@@ -19,7 +19,7 @@ export const getById = async (req, res) => {
   const { id } = req.params;
   try {
     const news = await News.getById(sql, id);
-    if (!news[0]) return res.status(404).json({ error: "New not found" });
+    if (!news[0]) return res.status(404).json({ error: "News not found" });
     res.status(200).json(news[0]);
   } catch (err) {
     res.status(500).json({ error: "Server error" });
@@ -83,10 +83,9 @@ export const deleteById = async (req, res) => {
 export const update = async (req, res) => {
   const sql = req.app.get("db");
   const { id } = req.params;
-  const data = req.body;
   
   try {
-    const result = await News.update(sql, data, id);
+    const result = await News.update(sql, id);
     
     if (result.count === 0) {
       return res.status(404).json({ error: "News not found" });
