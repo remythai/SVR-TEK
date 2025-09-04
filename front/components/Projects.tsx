@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getStartups } from "../app/requests/startups";
+import { getStartups, Startup } from "../app/requests/startups";
 import { Building } from "lucide-react";
 
 export default async function Projects() {
@@ -17,20 +17,20 @@ export default async function Projects() {
                 </p>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-8 pt-6 max-w-[85rem]">
-                {displayedStartups.map((startup: any) => (
+                {displayedStartups.map((Startup: Startup) => (
                     <Link
-                        href={`/projects/${startup.id}`}
-                        key={startup.id}
+                        href={`/projects/${Startup.id}`}
+                        key={Startup.id}
                         className="relative flex flex-col border border-secondary-200 shadow-sm rounded-lg w-[430px] p-6 hover:scale-105 transition-transform duration-300"
                     >
                         <div className="flex items-center mb-4">
                             <Building />
                             <h5 className="ml-3 text-slate-800 text-xl font-semibold">
-                                {startup.name}
+                                {Startup.name}
                             </h5>
                         </div>
                         <p className="block text-slate-600 leading-normal font-light mb-4">
-                            {startup.sector} • {startup.location} • {startup.maturity}
+                            {Startup.sector} • {Startup.address} • {Startup.maturity}
                         </p>
                         <div>
                             <p className="text-slate-800 font-semibold text-sm hover:underline flex items-center">

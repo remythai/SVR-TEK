@@ -5,7 +5,7 @@ export default function Contact() {
                 <div className="container px-6 py-12 mx-auto">
                     <div className="flex flex-col gap-5 mb-20">
                         <h1 className="text-3xl font-medium text-secondary-100 text-center">Contact us</h1>
-                        <p className="text-center">Let's get in touch</p>
+                        <p className="text-center">Let&apos;s get in touch</p>
                     </div>
                     <div className="grid grid-cols-1 gap-12 mt-10 md:grid-cols-2 lg:grid-cols-3">
                         <div className="flex flex-col items-center text-center">

@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Hero() {
     return (
@@ -16,19 +17,19 @@ export default function Hero() {
                 </p>
 
                 <div className="mt-8 flex items-center gap-4">
-                    <a
-                    href="/register"
-                    className="px-6 py-3 text-sm font-medium rounded-full bg-secondary-300 text-white hover:bg-secondary-200 transition-colors duration-300"
-                    >
-                    Join us
-                    </a>
-                    <a
+                    <Link
+                      href="/register"
+                      className="px-6 py-3 text-sm font-medium rounded-full bg-secondary-300 text-white hover:bg-secondary-200 transition-colors duration-300"
+                      >
+                      Join us
+                    </Link>
+                    <Link
                     href="/projects"
                     className="text-sm text-secondary-100 font-medium hover:underline flex items-center gap-1"
                     >
                     Projects
                     <ArrowRight className="w-[10px]"/>
-                    </a>
+                    </Link>
                 </div>
                 </div>
 

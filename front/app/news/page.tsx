@@ -1,6 +1,14 @@
 import Link from "next/link";
 import { getNews } from "../requests/news";
 
+interface News {
+  id: number;
+  title: string;
+  location?: string;
+  news_date: string;
+  category: string;
+}
+
 export default async function news() {
 
     const news = await getNews();
@@ -11,7 +19,7 @@ export default async function news() {
                 Discover our upcoming news
             </h1>
             <div className="flex flex-wrap items-center justify-center gap-8 pt-6 max-w-[85rem]">
-                {news.map((news: any) => (
+                {news.map((news: News) => (
                 <Link
                     href={`/news/${news.id}`}
                     key={news.id}

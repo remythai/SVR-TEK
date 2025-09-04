@@ -1,47 +1,63 @@
 import axios from "axios";
 import { Buffer } from "buffer";
 
-export async function getEvents() {
+export interface Event {
+  id: number;
+  name: string;
+  dates: string;
+  location?: string;
+  event_type: string;
+}
+
+export async function getEvents(): Promise<Event[]> {
   const config = {
     method: 'get',
     maxBodyLength: Infinity,
     url: 'https://api.jeb-incubator.com/events',
     headers: {
-      'X-Group-Authorization': process.env.GROUP_TOKEN
+      'X-Group-Authorization': process.env.GROUP_TOKEN as string
     }
   };
 
   try {
-    const response = await axios.request(config);
+    const response = await axios.request<Event[]>(config);
     return response.data;
-  } catch (error: any) {
-    console.error('error:', error.message);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error('Axios error:', error.message);
+    } else {
+      console.error('Unexpected error:', error);
+    }
     return [];
   }
 }
 
-export async function getEvent(eventId: string) {
+export async function getEvent(eventId: string): Promise<Event | null> {
   const config = {
     method: 'get',
     maxBodyLength: Infinity,
     url: `https://api.jeb-incubator.com/events/${eventId}`,
     headers: {
-      'X-Group-Authorization': process.env.GROUP_TOKEN
+      'X-Group-Authorization': process.env.GROUP_TOKEN as string
     }
   };
 
   try {
-    const response = await axios.request(config);
+    const response = await axios.request<Event>(config);
     return response.data;
-  } catch (error: any) {
-    console.error('error:', error.message);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error('Axios error:', error.message);
+    } else {
+      console.error('Unexpected error:', error);
+    }
     return null;
   }
 }
 
-export async function getEventImage(eventId: string | number) {
+export async function getEventImage(eventId: string | number): Promise<string | null> {
   try {
-    const res = await axios.get(
+    const res = await axios.get<ArrayBuffer>(
       `https://api.jeb-incubator.com/events/${eventId}/image`,
       {
         headers: {
@@ -56,10 +72,14 @@ export async function getEventImage(eventId: string | number) {
 
     const contentType = res.headers["content-type"] || "image/png";
     const base64 = Buffer.from(res.data).toString("base64");
-    // Retourne une data URL exploitable par <Image />
+
     return `data:${contentType};base64,${base64}`;
-  } catch (e) {
-    console.error("getEventImage error:", e);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error:", error.message);
+    } else {
+      console.error("Unexpected error:", error);
+    }
     return null;
   }
 }

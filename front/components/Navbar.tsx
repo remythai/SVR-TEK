@@ -131,7 +131,7 @@ export default function Navbar() {
               { href: "#about", label: "About" },
             ].map(({ href, label }) => (
               <li key={href} className="border-b pb-3">
-                <a
+                <Link
                   href={href}
                   onClick={() => {
                     setIsOpen(false);
@@ -141,7 +141,7 @@ export default function Navbar() {
                 >
                   {label}
                 <ArrowRight className="" size={16} />
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

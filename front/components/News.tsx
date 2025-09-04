@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getNews } from "../app/requests/news";
+import { getNews, NewsItem } from "../app/requests/news";
 
 export default async function News() {
     const news = await getNews();
@@ -19,15 +19,15 @@ export default async function News() {
                 </div>
 
                 <div className="flex flex-wrap items-center justify-center gap-8 pt-6 max-w-[85rem]">
-                {displayedNews.map((news: any) => (
+                {displayedNews.map((newsItem: NewsItem) => (
                 <Link
-                    href={`/news/${news.id}`}
-                    key={news.id}
+                    href={`/news/${newsItem.id}`}
+                    key={newsItem.id}
                     className="relative flex flex-col bg-secondary-500/30 hover:scale-105 transform duration-300 shadow-sm rounded-lg w-[430px] justify-between"
                 >
-                    {news.location && (
+                    {newsItem.location && (
                         <iframe
-                            src={`https://www.google.com/maps?q=${encodeURIComponent(news.location)}&output=embed`}
+                            src={`https://www.google.com/maps?q=${encodeURIComponent(newsItem.location)}&output=embed`}
                             width="100%"
                             height="200"
                             style={{ border: 0 }}
@@ -39,16 +39,16 @@ export default async function News() {
                     <div className="p-5">
                         <div className="flex items-center mb-4">
                             <h5 className="text-slate-800 text-xl font-semibold">
-                                {news.title.length > 25 ? news.title.slice(0, 25) + "..." : news.title}
+                                {newsItem.title.length > 25 ? newsItem.title.slice(0, 25) + "..." : newsItem.title}
                             </h5>
                         </div>
                         <p className="block text-slate-600 leading-normal font-light mb-4">
-                        {news.news_date} <br />
+                        {newsItem.news_date} <br />
                         </p>
                         <div>
                             <div className="flex justify-between">
                                 <div className="bg-secondary-500 text-secondary-100 px-3 py-1 rounded-full">
-                                    {news.category}
+                                    {newsItem.category}
                                 </div>
                                 <p className="text-slate-800 font-semibold text-sm hover:underline flex items-center text-right">
                                     Learn More

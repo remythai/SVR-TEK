@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 export default function Admin() {
@@ -9,11 +10,11 @@ export default function Admin() {
         password: "",
     });
 
-    const onChangeHandler = (e) => {
+    const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
     };
 
@@ -59,9 +60,9 @@ export default function Admin() {
             </div>
 
             <div className="mt-5 text-left">
-                <a className="text-sm text-indigo-500 dark:text-indigo-400" href="#" >
+                <Link className="text-sm text-indigo-500 dark:text-indigo-400" href="#" >
                     Forgot password?
-                </a>
+                </Link>
             </div>
 
             <button type="submit" className="mt-2 w-full h-11 rounded-full text-white bg-indigo-500 hover:opacity-90 transition-opacity" >

@@ -4,12 +4,20 @@ import { getEvents, getEventImage } from "../app/requests/events";
 import { Calendar } from "lucide-react";
 import Image from "next/image";
 
+interface Event {
+  id: number;
+  name: string;
+  description?: string;
+  dates?: string;
+  event_type?: string;
+}
+
 export default async function Events() {
   const events = await getEvents();
   const displayedEvents = events.slice(0, 6);
 
   const eventsWithImages = await Promise.all(
-    displayedEvents.map(async (event: any) => {
+    displayedEvents.map(async (event: Event) => {
       const imageUrl = await getEventImage(event.id);
       return { ...event, imageUrl };
     })
@@ -27,19 +35,19 @@ export default async function Events() {
       </div>
 
       <div className="flex flex-wrap items-center justify-center gap-8 pt-6 max-w-[85rem]">
-        {eventsWithImages.map((event: any) => (
+        {eventsWithImages.map((event) => (
           <Link
             href={`/events/${event.id}`}
             key={event.id}
             className="relative flex flex-col border border-secondary-200 shadow-sm rounded-lg w-[430px] hover:scale-105 transition-transform duration-300 h-[450px] justify-between"
           >
               <Image
-                src={event.imageUrl}
+                src={event.imageUrl || "/defaultImage.webp"}
                 alt={event.name || "Event image"}
                 width={400}
                 height={200}
                 className="w-full h-[290px] object-cover rounded-md"
-                unoptimized 
+                unoptimized
               />
             <div className="fle flex-col items-start p-5">
                 <div className="flex items-center mb-4">

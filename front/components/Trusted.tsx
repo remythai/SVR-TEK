@@ -3,7 +3,7 @@ export default function Trusted() {
         <div>
             <div className="flex flex-col gap-5 mb-20">
                 <h1 className="text-3xl font-medium text-secondary-100 text-center">Our partners</h1>
-                <p className="text-center">Trusted by the world's most innovative companies.</p>
+                <p className="text-center">Trusted by the world&apos;s most innovative companies.</p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mt-16 w-max mx-auto">
                 <div className="h-16 w-44 sm:w-60 sm:h-20 border border-secondary-500 border-t-0 border-l-0"></div>

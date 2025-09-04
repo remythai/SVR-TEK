@@ -1,9 +1,11 @@
 import { getStartup, getFounderImage } from "@/app/requests/startups";
 import Image from "next/image";
 import { Mail, Phone, MapPin, Globe, Calendar, Users, Target, Building2, TrendingUp, AlertCircle } from "lucide-react";
+import Link from "next/link";
 
 export default async function ProjectPage({ params }: { params: { id: string } }) {
-  const project = await getStartup(params.id);
+  const {id} = await params;
+  const project = await getStartup(id);
 
   if (!project) {
     return (
@@ -11,7 +13,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
         <div className="text-center p-8 bg-white rounded-2xl shadow-lg border border-purple-100">
           <AlertCircle className="w-16 h-16 text-purple-300 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-800">Projet introuvable</h2>
-          <p className="text-gray-600 mt-2">Le projet que vous recherchez n'existe pas ou a été supprimé.</p>
+          <p className="text-gray-600 mt-2">Le projet que vous recherchez n&apos;existe pas ou a été supprimé.</p>
         </div>
       </div>
     );
@@ -48,10 +50,9 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                 <div className="w-8 h-8 bg-gradient-to-r from-purple-300 to-pink-300 rounded-lg flex items-center justify-center">
                   <Target className="w-5 h-5 text-white" />
                 </div>
-                Project's description
+                <h2>Project&apos;s description</h2>
               </h2>
               <p className="text-gray-700 leading-relaxed text-lg">{project.description}</p>
-              
               {project.needs && (
                 <div className="mt-8">
                   <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
@@ -76,17 +77,17 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                 {project.email && (
                   <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
                     <Mail className="w-4 h-4 text-purple-400" />
-                    <a href={`mailto:${project.email}`} className="text-purple-600 hover:text-purple-700 transition-colors">
+                    <Link href={`mailto:${project.email}`} className="text-purple-600 hover:text-purple-700 transition-colors">
                       {project.email}
-                    </a>
+                    </Link>
                   </div>
                 )}
                 {project.phone && (
                   <div className="flex items-center gap-3 p-3 bg-pink-50 rounded-lg">
                     <Phone className="w-4 h-4 text-pink-400" />
-                    <a href={`tel:${project.phone}`} className="text-pink-600 hover:text-pink-700 transition-colors">
+                    <Link href={`tel:${project.phone}`} className="text-pink-600 hover:text-pink-700 transition-colors">
                       {project.phone}
-                    </a>
+                    </Link>
                   </div>
                 )}
                 {project.address && (
@@ -105,7 +106,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
               </h3>
               <div className="space-y-3">
                 {project.website_url && (
-                  <a 
+                  <Link
                     href={project.website_url} 
                     target="_blank" 
                     rel="noopener noreferrer"
@@ -113,10 +114,10 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                   >
                     <Globe className="w-4 h-4 text-purple-600" />
                     <span className="text-purple-700 group-hover:text-purple-800">Website</span>
-                  </a>
+                  </Link>
                 )}
                 {project.social_media_url && (
-                  <a 
+                  <Link
                     href={project.social_media_url} 
                     target="_blank" 
                     rel="noopener noreferrer"
@@ -124,7 +125,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                   >
                     <Users className="w-4 h-4 text-pink-600" />
                     <span className="text-pink-700 group-hover:text-pink-800">Social links</span>
-                  </a>
+                  </Link>
                 )}
               </div>
             </div>
@@ -136,7 +137,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
             <div className="w-8 h-8 bg-gradient-to-r from-pink-300 to-purple-300 rounded-lg flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-white" />
             </div>
-            Project's specifications
+            Project&apos;s specifications
           </h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -178,7 +179,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
               </div>
               Fondators
             </h2>
-            
+
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {project.founders.map((founder) => (
                 <div key={founder.id} className="text-center group">
@@ -199,7 +200,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                       )}
                     </div>
                   </div>
-                  
+
                   <h4 className="text-xl font-bold text-gray-800 mb-2">{founder.name}</h4>
                   {founder.role && (
                     <div className="inline-block">

@@ -3,12 +3,20 @@ import { getEvents, getEventImage } from "../requests/events";
 import { Calendar } from "lucide-react";
 import Link from "next/link";
 
+interface Event {
+  id: number;
+  name: string;
+  description?: string;
+  dates?: string;
+  event_type?: string;
+}
+
 export default async function events() {
 
     const events = await getEvents();
 
     const eventsWithImages = await Promise.all(
-        events.map(async (event: any) => {
+        events.map(async (event: Event) => {
           const imageUrl = await getEventImage(event.id);
           return { ...event, imageUrl };
         })
@@ -20,7 +28,7 @@ export default async function events() {
                 Discover our upcoming events
             </h1>
             <div className="flex flex-wrap items-center justify-center gap-8 pt-6 max-w-[85rem]">
-                {eventsWithImages.map((event: any) => (
+                {eventsWithImages.map((event) => (
                     <Link
                         href={`/events/${event.id}`}
                         key={event.id}
