@@ -71,4 +71,14 @@ export async function login(sql, { email, password }) {
   return { id: user.id, name: user.name, email: user.email };
 }
 
-export default { getAll, getById, getByEmail, getUserImage, register, create, login , deleteById, update };
+export async function updatePassword(sql, { userId, newPassword }) {
+  const [user] = await sql`
+    UPDATE users
+    SET password = ${newPassword}
+    WHERE id = ${userId}
+    RETURNING id, name, email
+  `;
+  return user;
+}
+
+export default { getAll, getById, getByEmail, getUserImage, register, create, login , deleteById, update, updatePassword };
