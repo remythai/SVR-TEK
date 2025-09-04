@@ -82,9 +82,10 @@ export const deleteById = async (req, res) => {
 export const update = async (req, res) => {
   const sql = req.app.get("db");
   const { id } = req.params;
+  const data = req.body;
   
   try {
-    const result = await Investor.update(sql, id);
+    const result = await Investor.update(sql, data, id);
     
     if (result.count === 0) {
       return res.status(404).json({ error: "Investor not found" });
