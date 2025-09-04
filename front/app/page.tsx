@@ -6,14 +6,16 @@ import Team from "@/components/Team";
 import Trusted from "@/components/Trusted";
 import Contact from "@/components/Contact";
 import Events from "@/components/Events";
+import News from "@/components/News";
 
 export default function Home() {
   return (
     <div>
       <Hero />
       <Projects />
-      <Events />
+      <News />
       <About />
+      <Events />
       <Banner />
       <Team />
       <Trusted />
