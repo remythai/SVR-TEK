@@ -40,27 +40,24 @@ export async function getStartup(startupId: string) {
 
 export async function getFounderImage(startupId: string, founderId: string) {
   try {
-    const response = await axios.get(
+    const res = await axios.get(
       `https://api.jeb-incubator.com/startups/${startupId}/founders/${founderId}/image`,
       {
         headers: {
-          'X-Group-Authorization': process.env.GROUP_TOKEN
+          "X-Group-Authorization": process.env.GROUP_TOKEN,
         },
-        responseType: 'text'
+        responseType: "arraybuffer",
+        validateStatus: () => true,
       }
     );
 
-    const data = response.data;
+    if (res.status !== 200) return null;
 
-    if (typeof data === 'object' && data.detail) {
-      console.error(`error:`, data.detail);
-      return null;
-    }
-
-    return data;
-
+    const contentType = res.headers["content-type"] || "image/png";
+    const base64 = Buffer.from(res.data).toString("base64");
+    return `data:${contentType};base64,${base64}`;
   } catch (error: any) {
-    console.error(`error:`, error.message);
+    console.error("getFounderImage error:", error.message);
     return null;
   }
 }

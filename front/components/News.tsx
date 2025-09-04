@@ -23,7 +23,7 @@ export default async function News() {
                 <Link
                     href={`/news/${news.id}`}
                     key={news.id}
-                    className="relative flex flex-col bg-secondary-500/30 shadow-sm rounded-lg w-[430px] justify-between"
+                    className="relative flex flex-col bg-secondary-500/30 hover:scale-105 transform duration-300 shadow-sm rounded-lg w-[430px] justify-between"
                 >
                     {news.location && (
                         <iframe
@@ -36,7 +36,7 @@ export default async function News() {
                             className="rounded-t-lg"
                         ></iframe>
                     )}
-                    <div className="fle flex-col items-start p-5">
+                    <div className="p-5">
                         <div className="flex items-center mb-4">
                             <h5 className="text-slate-800 text-xl font-semibold">
                                 {news.title.length > 25 ? news.title.slice(0, 25) + "..." : news.title}
