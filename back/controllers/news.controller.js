@@ -85,7 +85,7 @@ export const update = async (req, res) => {
   const { id } = req.params;
   
   try {
-    const result = await Users.update(sql, id);
+    const result = await News.update(sql, id);
     
     if (result.count === 0) {
       return res.status(404).json({ error: "News not found" });
