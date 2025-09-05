@@ -1,8 +1,20 @@
 import 'dotenv/config'; 
 import { Resend } from 'resend';
-import utils from './src/utils.js';
+import fs from 'fs';
+import path from 'path';
 
 const resend = new Resend(process.env.RESEND_KEY);
+
+const logDir = path.resolve('./logs');
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir, { recursive: true });
+}
+
+function writeLog(message) {
+  const logFile = path.join(logDir, 'email.log');
+  const timestamp = new Date().toISOString();
+  fs.appendFileSync(logFile, `[${timestamp}] ${message}\n`);
+}
 
 export async function sendTempPassEmail(name, email, temp_password) {
   try {

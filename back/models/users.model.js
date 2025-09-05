@@ -19,29 +19,11 @@ export async function getByEmail(sql, email) {
     return await sql`SELECT * FROM users WHERE email = ${email}`;
 }
 
-export async function getUserImage(sql, newsId) {
-  return (await dbUtils.getImageById(sql, TABLE_NAME, newsId))
+export async function getUserImage(sql, userId) {
+    return await sql`SELECT * FROM users WHERE id = ${userId}`;
 }
 
-// ------------
-// -- Create --
-// ------------
-
-export async function create(sql, data) {
-  return await dbUtils.create(sql, TABLE_NAME, data);
-}
-
-// ------------
-// -- Delete --
-// ------------
-
-export async function deleteById(sql, id) {
-  return (await dbUtils.deleteById(sql, TABLE_NAME, id));
-}
-
-// ------------
-// -- Update --
-// ------------
+// Update
 
 export async function update(sql, data, id) {
   return (await dbUtils.update(sql, TABLE_NAME, data, id));
@@ -73,14 +55,26 @@ export async function login(sql, { email, password }) {
   return { id: user.id, name: user.name, email: user.email };
 }
 
-export async function updatePassword(sql, { userId, newPassword }) {
-  const [user] = await sql`
-    UPDATE users
-    SET password = ${newPassword}
-    WHERE id = ${userId}
-    RETURNING id, name, email
-  `;
-  return user;
+export async function updatePassword(sql, userId, hashedPassword) {
+  console.log("=== DEBUG updatePassword ===");
+  console.log("userId:", userId, typeof userId);
+  console.log("hashedPassword:", hashedPassword, typeof hashedPassword);
+  console.log("sql object:", typeof sql);
+  
+  try {
+    const [user] = await sql`
+      UPDATE users
+      SET password = ${hashedPassword}
+      WHERE id = ${userId}
+      RETURNING id, name, email
+    `;
+    
+    console.log("Update result:", user);
+    return user;
+  } catch (error) {
+    console.error("SQL Error in updatePassword:", error);
+    throw error;
+  }
 }
 
 export default { getAll, getById, getByEmail, getUserImage, register, create, login , deleteById, update, updatePassword };

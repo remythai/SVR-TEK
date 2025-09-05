@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, MapPin, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
 import Image from "next/image";
 
 interface Event {
@@ -12,7 +13,7 @@ interface Event {
   event_type?: string;
   location?: string;
   target_audience?: string;
-  imageUrl?: string | null;
+  imageUrl?: string;
 }
 
 interface CalendarViewProps {
@@ -204,7 +205,7 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
   };
 
   const renderWeekView = () => {
-    const { start } = getWeekRange();
+    const { start, end } = getWeekRange();
     const weekDays = [];
     
     for (let i = 0; i < 7; i++) {
@@ -247,24 +248,19 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
             
             return (
               <div key={day.toISOString()} className="relative min-h-80 border rounded-lg p-2">
-                {dayEvents.map(event => {
-                    if (!event.dates) return null; // sécurité
-                    const eventDate = new Date(event.dates);
-
-                    return (
-                        <div 
-                        key={event.id}
-                        className="absolute bg-blue-100 text-blue-800 rounded p-1 text-xs w-full cursor-pointer hover:bg-blue-200"
-                        style={{ 
-                            top: `${((eventDate.getHours() - 8) * 60 + eventDate.getMinutes()) / 6}%`,
-                            height: '40px'
-                        }}
-                        onClick={() => setExpandedEvent(expandedEvent === event.id ? null : event.id)}
-                        >
-                        {event.name.length > 20 ? event.name.slice(0, 17) + '...' : event.name}
-                        </div>
-                    );
-                    })}
+                {dayEvents.map(event => (
+                  <div 
+                    key={event.id}
+                    className="absolute bg-blue-100 text-blue-800 rounded p-1 text-xs w-full cursor-pointer hover:bg-blue-200"
+                    style={{ 
+                      top: `${((new Date(event.dates).getHours() - 8) * 60 + new Date(event.dates).getMinutes()) / 6}%`,
+                      height: '40px'
+                    }}
+                    onClick={() => setExpandedEvent(expandedEvent === event.id ? null : event.id)}
+                  >
+                    {event.name.length > 20 ? event.name.slice(0, 17) + '...' : event.name}
+                  </div>
+                ))}
               </div>
             );
           })}
@@ -310,8 +306,6 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
         <div className="space-y-4">
           {dayEvents.length > 0 ? (
             dayEvents.map(event => {
-                if (!event.dates)
-                        return null;
               const formattedDate = formatDate(event.dates);
               return (
                 <div 
@@ -369,7 +363,7 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
     <div className="min-h-screen mt-30 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Event&apo;s calendar</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Event's calendar</h1>
           <p className="text-gray-600">Discover our future events and partnerships</p>
         </div>
 

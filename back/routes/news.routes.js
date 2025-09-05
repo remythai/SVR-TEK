@@ -23,8 +23,11 @@ router.post("/", newsController.create);
 
 router.delete("/:id", newsController.deleteById);
 
+<<<<<<< HEAD
 // Update
 
 router.put("/:id", newsController.update);
 
+=======
+>>>>>>> 9039f8e (feat: deletion for some tables)
 export default router;

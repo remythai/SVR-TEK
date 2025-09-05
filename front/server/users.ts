@@ -6,9 +6,7 @@ export const signIn = async (email: string, password: string) => {
   try {
     const res = await fetch("http://localhost:8000/users/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
 
@@ -18,10 +16,13 @@ export const signIn = async (email: string, password: string) => {
       return { success: false, message: data.error || "Error login user" };
     }
 
+    const token = data.access_token;
+
     return {
       success: true,
       message: "User logged successfully",
       user: data.user,
+      token,
     };
   } catch (error) {
     return {
@@ -47,10 +48,13 @@ export const signUp = async (name: string, email: string, password: string) => {
       return { success: false, message: data.error || "Error creating user" };
     }
 
+    const token = data.access_token;
+
     return {
       success: true,
       message: "User created successfully",
       user: data.user,
+      token,
     };
   } catch (error) {
     return {
@@ -60,15 +64,27 @@ export const signUp = async (name: string, email: string, password: string) => {
   }
 };
 
-export const changePassword = async (oldPassword: string, newPassword: string, confirmNewPassword : string) => {
+export const updatePassword = async (
+  oldPassword: string,
+  newPassword: string,
+  confirmNewPassword: string,
+  token: string) => {
   try {
-    const res = await fetch("http://localhost:8000/users/newPassword", {
-      method: "POST",
+    if (typeof window !== "undefined")
+      throw Error;
+    if (!token) {
+      return { success: false, message: "User not authenticated" };
+    }
+    console.log("test - 2");
+    const res = await fetch("http://localhost:8000/users/update-password", {
+      method: "PUT",
       headers: {
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ oldPassword, newPassword, confirmNewPassword }),
     });
+    console.log("test - 3");
 
     const data = await res.json();
 
@@ -76,10 +92,10 @@ export const changePassword = async (oldPassword: string, newPassword: string, c
       return { success: false, message: data.error || "Error changing password" };
     }
 
+    console.log("test - success");
     return {
       success: true,
-      message: "Password changed successfully",
-      user: data.user,
+      message: data.message || "Password changed successfully",
     };
   } catch (error) {
     return {

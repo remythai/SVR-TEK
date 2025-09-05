@@ -63,9 +63,7 @@ export const deleteById = async (req, res) => {
   }
 };
 
-// ------------
-// -- Update --
-// ------------
+// Update
 
 export const update = async (req, res) => {
   const sql = req.app.get("db");

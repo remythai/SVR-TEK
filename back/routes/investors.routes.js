@@ -7,10 +7,6 @@ const router = express.Router();
 // -- Read --
 // ----------
 
-// ----------
-// -- Read --
-// ----------
-
 router.get("/", investorsController.getAll);
 router.get("/:id", investorsController.getById);
 router.get("/:id/image", investorsController.getInvestorImage);

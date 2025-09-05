@@ -17,7 +17,6 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ChartLine, Rocket } from "lucide-react";
 
 const formSchema = z.object({
     name: z.string().min(2).max(50),
@@ -39,9 +38,9 @@ export default function Register() {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true);
-        const { success, message } = await signUp(values.name, values.email, values.password);
-
+        const { success, message, token } = await signUp(values.name, values.email, values.password);
         if (success) {
+            localStorage.setItem("access_token", token);
             toast.success("Account created successfully!");
             router.push('/dashboard');
             form.reset();
@@ -49,12 +48,6 @@ export default function Register() {
             toast.error(`Error: ${message}`);
         }
         setIsLoading(false);
-    }
-
-    const [isChecked, setIsChecked] = useState(false)
-
-    const handleCheckboxChange = () => {
-      setIsChecked(!isChecked)
     }
 
   return (
@@ -114,34 +107,6 @@ export default function Register() {
                     </FormItem>
                 )}
         />
-            </div>
-
-            <div className="w-full flex flex-col items-start gap-5">
-              <h4 className="text-primary-100 font-medium">Are you a startup or an investor ?</h4>
-              <label className='themeSwitcherTwo shadow-md p-2 rounded-md relative inline-flex cursor-pointer select-none items-center justify-center'>
-                <input
-                  type='checkbox'
-                  className='sr-only'
-                  checked={isChecked}
-                  onChange={handleCheckboxChange}
-                />
-                <span
-                  className={`flex items-center space-x-[6px] rounded py-2 px-[18px] text-sm font-medium gap-2 ${
-                    !isChecked ? 'text-primary bg-primary-400/40 text-primary-100' : 'text-gray-500'
-                  }`}
-                >
-                  <ChartLine className="w-[15px]"/>
-                  investissor
-                </span>
-                <span
-                  className={`flex items-center space-x-[6px] rounded py-2 px-[18px] text-sm font-medium gap-2 ${
-                    isChecked ? 'text-primary bg-primary-400/40 text-primary-100' : 'text-gray-500'
-                  }`}
-                >
-                  <Rocket className="w-[15px]"/>
-                  Startup
-                </span>
-              </label>
             </div>
 
             <div>

@@ -2,8 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { changePassword } from "@/server/users";
-import { z } from "zod";
+import { updatePassword } from "@/server/users";
+import { set, z } from "zod";
 
 import {
   Form,
@@ -38,8 +38,9 @@ export default function UpdatePassword() {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true);
-        const { success, message } = await changePassword(values.oldPassword, values.newPassword, values.confirmNewPassword);
-
+        const token = localStorage.getItem("access_token");
+        if (token !== null) {
+          const { success, message } = await updatePassword(values.oldPassword, values.newPassword, values.confirmNewPassword, token);
         if (success) {
             toast.success("Password changed successfully!");
             router.push('/dashboard');
@@ -48,13 +49,13 @@ export default function UpdatePassword() {
             toast.error(`Error: ${message}`);
         }
         setIsLoading(false);
+      }
     }
-
   return (
     <>
       <div className="flex min-h-[70vh] flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">Login to your account</h2>
+          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">Change password</h2>
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -115,7 +116,7 @@ export default function UpdatePassword() {
                 disabled={isLoading}
                 className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
               >
-                {isLoading ? "..." : "Login"}
+                {isLoading ? "..." : "Submit"}
               </button>
             </div>
           </form>

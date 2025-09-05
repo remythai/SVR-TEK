@@ -23,8 +23,11 @@ router.post("/", startupsController.create);
 
 router.delete("/:id", startupsController.deleteById);
 
+<<<<<<< HEAD
 // Update
 
 router.put("/:id", startupsController.update);
 
+=======
+>>>>>>> 9039f8e (feat: deletion for some tables)
 export default router;
