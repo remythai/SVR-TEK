@@ -59,3 +59,32 @@ export const signUp = async (name: string, email: string, password: string) => {
     };
   }
 };
+
+export const changePassword = async (oldPassword: string, newPassword: string, confirmNewPassword : string) => {
+  try {
+    const res = await fetch("http://localhost:8000/users/newPassword", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ oldPassword, newPassword, confirmNewPassword }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      return { success: false, message: data.error || "Error changing password" };
+    }
+
+    return {
+      success: true,
+      message: "Password changed successfully",
+      user: data.user,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: (error as Error).message || "An error occurred",
+    };
+  }
+};

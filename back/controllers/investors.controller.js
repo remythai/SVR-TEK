@@ -76,3 +76,24 @@ export const deleteById = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+// Update
+
+export const update = async (req, res) => {
+  const sql = req.app.get("db");
+  const { id } = req.params;
+  const data = req.body;
+  
+  try {
+    const result = await Investor.update(sql, data, id);
+    
+    if (result.count === 0) {
+      return res.status(404).json({ error: "Investor not found" });
+    }
+    
+    res.status(200).json({ message: "Investor updated successfully" });
+  } catch (err) {
+    console.error("DB error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+}

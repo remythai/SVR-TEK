@@ -1,5 +1,5 @@
-import * as dbUtils from './utils.js';
 import bcrypt from "bcrypt";
+import * as dbUtils from './utils.js';
 
 const TABLE_NAME = 'users';
 
@@ -31,6 +31,22 @@ export async function create(sql, data) {
   return await dbUtils.create(sql, TABLE_NAME, data);
 }
 
+// ------------
+// -- Delete --
+// ------------
+
+export async function deleteById(sql, id) {
+  return (await dbUtils.deleteById(sql, TABLE_NAME, id));
+}
+
+// Update
+
+export async function update(sql, data, id) {
+  return (await dbUtils.update(sql, TABLE_NAME, data, id));
+}
+
+// Auth
+
 export async function register(sql, { name, email, password }) {
   const [user] = await sql`
   INSERT INTO users (name, email, password)
@@ -55,12 +71,14 @@ export async function login(sql, { email, password }) {
   return { id: user.id, name: user.name, email: user.email };
 }
 
-// ------------
-// -- Delete --
-// ------------
-
-export async function deleteById(sql, id) {
-  return (await dbUtils.deleteById(sql, TABLE_NAME, id));
+export async function updatePassword(sql, { userId, newPassword }) {
+  const [user] = await sql`
+    UPDATE users
+    SET password = ${newPassword}
+    WHERE id = ${userId}
+    RETURNING id, name, email
+  `;
+  return user;
 }
 
-export default { getAll, getById, getByEmail, getUserImage, register, create, login , deleteById };
+export default { getAll, getById, getByEmail, getUserImage, register, create, login , deleteById, update, updatePassword };

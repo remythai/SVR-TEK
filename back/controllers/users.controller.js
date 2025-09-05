@@ -1,5 +1,14 @@
 import Users from "../models/users.model.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
+// ----------
+// -- Read --
+// ----------
+
+// ----------
+// -- Read --
+// ----------
 
 // ----------
 // -- Read --
@@ -92,8 +101,21 @@ export const register = async (req, res) => {
 
     const newUser = await Users.register(sql, { name, email, password: hashedPassword });
 
+    const token = jwt.sign(
+      { id: newUser.id, email: newUser.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 3600000 // 1h
+    });
+
     res.status(201).json({
       success: true,
+      message: "User registered successfully",
       user: { id: newUser.id, name: newUser.name, email: newUser.email }
     });
   } catch (err) {
@@ -112,17 +134,77 @@ export const login = async (req, res) => {
 
   try {
     const existingUser = await Users.getByEmail(sql, email);
-    if (existingUser.length <= 0) {
-      return res.status(409).json({ error: "No account with this email" });
+    if (existingUser.length === 0) {
+      return res.status(404).json({ error: "No account with this email" });
     }
 
-    if (bcrypt.compare(password, existingUser.hashedPassword)) {
-      res.status(201).json({
-        success: true,
-        user: { id: existingUser.id, name: existingUser.name, email: existingUser.email }
-      });
+    const user = existingUser[0];
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Wrong password" });
     }
-    res.status(500).json({ error: "Wrong Password" });
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 3600000 // 1h
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      user: { id: user.id, name: user.name, email: user.email }
+    });
+  } catch (err) {
+    console.error("DB error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+export const changePassword = async (req, res) => {
+  const sql = req.app.get("db");
+  const { oldPassword, newPassword, confirmNewPassword } = req.body;
+
+  if (!oldPassword || !newPassword || !confirmNewPassword) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  if (newPassword !== confirmNewPassword) {
+    return res.status(400).json({ error: "Passwords do not match" });
+  }
+
+  try {
+    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+
+    const existingUser = await Users.getById(sql, userId);
+    if (existingUser.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const user = existingUser[0];
+
+    const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Old password is incorrect" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await Users.updatePassword(sql, userId, hashedPassword);
+
+    res.status(200).json({ success: true, message: "Password updated successfully" });
   } catch (err) {
     console.error("DB error:", err);
     res.status(500).json({ error: "Server error" });
@@ -136,17 +218,38 @@ export const login = async (req, res) => {
 export const deleteById = async (req, res) => {
   const sql = req.app.get("db");
   const { id } = req.params;
-  
+
   try {
     const result = await Users.deleteById(sql, id);
-    
+
     if (result.count === 0) {
       return res.status(404).json({ error: "User not found" });
     }
-    
+
     res.status(200).json({ message: "User deleted successfully" });
   } catch (err) {
     console.error("DB error:", err);
     res.status(500).json({ error: "Server error" });
   }
 };
+
+// Update
+
+export const update = async (req, res) => {
+  const sql = req.app.get("db");
+  const { id } = req.params;
+  const data = req.body;
+  
+  try {
+    const result = await Users.update(sql, data, id);
+    
+    if (result.count === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    res.status(200).json({ message: "User updated successfully" });
+  } catch (err) {
+    console.error("DB error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+}

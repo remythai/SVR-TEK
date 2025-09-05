@@ -1,7 +1,16 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 
-export async function getUsers() {
-    const config = {
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string,
+  founder_id: number,
+  investor_id: number
+}
+
+export async function getUsers(): Promise<User[]> {
+  const config: AxiosRequestConfig = {
     method: 'get',
     maxBodyLength: Infinity,
     url: 'https://api.jeb-incubator.com/users',
@@ -11,16 +20,20 @@ export async function getUsers() {
   };
 
   try {
-    const response = await axios.request(config);
+    const response = await axios.request<User[]>(config);
     return response.data;
-  } catch (error: any) {
-    console.error('error:', error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('error:', error.message);
+    } else {
+      console.error('Unexpected error:', error);
+    }
     return [];
   }
 }
 
-export async function getUser(userId : string) {
-    const config = {
+export async function getUser(userId: string): Promise<User | null> {
+  const config: AxiosRequestConfig = {
     method: 'get',
     maxBodyLength: Infinity,
     url: `https://api.jeb-incubator.com/users/${userId}`,
@@ -30,16 +43,20 @@ export async function getUser(userId : string) {
   };
 
   try {
-    const response = await axios.request(config);
+    const response = await axios.request<User>(config);
     return response.data;
-  } catch (error: any) {
-    console.error('error:', error.message);
-    return [];
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('error:', error.message);
+    } else {
+      console.error('Unexpected error:', error);
+    }
+    return null;
   }
 }
 
-export async function getUserFromEmail(email : string) {
-    const config = {
+export async function getUserFromEmail(email: string): Promise<User | null> {
+  const config: AxiosRequestConfig = {
     method: 'get',
     maxBodyLength: Infinity,
     url: `https://api.jeb-incubator.com/users/email/${email}`,
@@ -49,16 +66,20 @@ export async function getUserFromEmail(email : string) {
   };
 
   try {
-    const response = await axios.request(config);
+    const response = await axios.request<User>(config);
     return response.data;
-  } catch (error: any) {
-    console.error('error:', error.message);
-    return [];
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('error:', error.message);
+    } else {
+      console.error('Unexpected error:', error);
+    }
+    return null;
   }
 }
 
-export async function getUserImage(userId : string) {
-    const config = {
+export async function getUserImage(userId: string): Promise<string | null> {
+  const config: AxiosRequestConfig = {
     method: 'get',
     maxBodyLength: Infinity,
     url: `https://api.jeb-incubator.com/users/${userId}/image`,
@@ -68,10 +89,14 @@ export async function getUserImage(userId : string) {
   };
 
   try {
-    const response = await axios.request(config);
-    return response.data;
-  } catch (error: any) {
-    console.error('error:', error.message);
-    return [];
+    const response = await axios.request<{ imageUrl: string }>(config);
+    return response.data.imageUrl;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('error:', error.message);
+    } else {
+      console.error('Unexpected error:', error);
+    }
+    return null;
   }
 }

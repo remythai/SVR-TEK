@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { signUp } from "@/server/users";
-import { set, z } from "zod";
+import { z } from "zod";
 
 import {
   Form,
@@ -54,7 +54,7 @@ export default function Register() {
     <>
       <div className="flex min-h-[70vh] flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">Register a new account</h2>
+          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight">Register a new account</h2>
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -69,7 +69,7 @@ export default function Register() {
                     <FormItem>
                     <FormLabel>name</FormLabel>
                     <FormControl>
-                        <Input placeholder="shadcn" {...field} />
+                        <Input placeholder="Ex: Quentin Klebaur" {...field} />
                     </FormControl>
                     <FormMessage />
                     </FormItem>
@@ -85,7 +85,7 @@ export default function Register() {
                     <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                        <Input placeholder="shadcn" {...field} />
+                        <Input placeholder="Ex: quentinLeBoss@gmail.com" {...field} />
                     </FormControl>
                     <FormMessage />
                     </FormItem>
@@ -101,7 +101,7 @@ export default function Register() {
                     <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                        <Input placeholder="********" {...field} />
+                        <Input placeholder="Ex: quentinLePlusBeau" {...field} />
                     </FormControl>
                     <FormMessage />
                     </FormItem>
@@ -113,7 +113,7 @@ export default function Register() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                className="cursor-pointer flex w-full justify-center rounded-md bg-primary-200 hover:bg-primary-300 transition-colors duration-300 px-3 py-1.5 text-sm/6 font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
               >
                 {isLoading ? "..." : "Register"}
               </button>

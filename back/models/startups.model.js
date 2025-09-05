@@ -38,4 +38,10 @@ export async function deleteById(sql, id) {
   return (await dbUtils.deleteById(sql, TABLE_NAME, id));
 }
 
-export default { getAll, getById, getFounderImage, create, deleteById};
+// Update
+
+export async function update(sql, data, id) {
+  return (await dbUtils.update(sql, TABLE_NAME, data, id));
+}
+
+export default { getAll, getById, getFounderImage, create, deleteById, update};

@@ -2,8 +2,13 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+<<<<<<< HEAD
 import { signIn, signUp } from "@/server/users";
 import { set, z } from "zod";
+=======
+import { signIn } from "@/server/users";
+import { z } from "zod";
+>>>>>>> ac2ed8a3e6f8a73d92b58f22b9ef13a5ce99739c
 
 import {
   Form,
@@ -52,7 +57,11 @@ export default function Login() {
     <>
       <div className="flex min-h-[70vh] flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+<<<<<<< HEAD
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">Login to your account</h2>
+=======
+          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight">Login to your account</h2>
+>>>>>>> ac2ed8a3e6f8a73d92b58f22b9ef13a5ce99739c
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -67,7 +76,11 @@ export default function Login() {
                     <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
+<<<<<<< HEAD
                         <Input placeholder="shadcn" {...field} />
+=======
+                        <Input placeholder="Ex: QuentinLePlusSexy@gmail.com" {...field} />
+>>>>>>> ac2ed8a3e6f8a73d92b58f22b9ef13a5ce99739c
                     </FormControl>
                     <FormMessage />
                     </FormItem>
@@ -95,7 +108,11 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={isLoading}
+<<<<<<< HEAD
                 className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+=======
+                className="flex w-full justify-center rounded-md bg-primary-200 hover:bg-primary-300 transition-colors duration-300 px-3 py-1.5 text-sm/6 font-semibold text-white cursor-pointer"
+>>>>>>> ac2ed8a3e6f8a73d92b58f22b9ef13a5ce99739c
               >
                 {isLoading ? "..." : "Login"}
               </button>

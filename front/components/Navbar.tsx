@@ -41,19 +41,19 @@ export default function Navbar() {
     <nav
       className={`fixed w-full top-0 left-0 z-50 transition-transform duration-300 px-6 ${
         showNavbar ? "translate-y-0" : "-translate-y-full"
-      } ${isOpen ? "bg-[#171717]" : "bg-none"} text-black`}
+      } ${isOpen ? "bg-white" : "bg-none"} text-black`}
     >
       <div
         className={`max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4 px-2 rounded-[30px]`}
       >
-        <Link href="/" className="text-white font-bold text-2xl hover:text-orange-400 transition-all">
+        <Link href="/" className="font-bold text-2xl text-secondary-100">
             <h1>Jeb</h1>
         </Link>
 
         <button
           onClick={() => setIsOpen(!isOpen)}
           type="button"
-          className="relative w-10 h-10 flex flex-col justify-center items-center space-y-1 lg:hidden z-50 text-white"
+          className="relative w-10 h-10 flex flex-col justify-center items-center space-y-1 lg:hidden z-50"
           aria-label="Toggle menu"
         >
           <span
@@ -73,40 +73,34 @@ export default function Navbar() {
           ></span>
         </button>
 
-        <div className="hidden lg:flex md:w-auto space-x-8 text-gray-500">
+        <div className="hidden lg:flex md:w-auto space-x-8">
           <Link
             href="/"
-            className="block px-3 py-2 hover:text-orange-400 hover:bg-orange-400/30 rounded-full transition-colors duration-300"
+            className="block px-3 py-2 text-secondary-100 bg-secondary-400/30 rounded-full transition-colors duration-300"
           >
             Home
           </Link>
           <Link
             href="/#projects"
-            className="block px-3 py-2 hover:text-orange-400 hover:bg-orange-400/30 rounded-full transition-colors duration-300"
+            className="block px-3 py-2 hover:text-secondary-100 hover:bg-secondary-400/30 rounded-full transition-colors duration-300"
           >
             Projects
           </Link>
           <Link
             href="/#news"
-            className="block px-3 py-2 hover:text-orange-400 hover:bg-orange-400/30 rounded-full transition-colors duration-300"
+            className="block px-3 py-2 hover:text-secondary-100 hover:bg-secondary-400/30 rounded-full transition-colors duration-300"
           >
             News
           </Link>
           <Link
             href="/#events"
-            className="block px-3 py-2 hover:text-orange-400 hover:bg-orange-400/30 rounded-full transition-colors duration-300"
+            className="block px-3 py-2 hover:text-secondary-100 hover:bg-secondary-400/30 rounded-full transition-colors duration-300"
           >
             Events
           </Link>
           <Link
-            href="/#advanced-search"
-            className="block px-3 py-2 hover:text-orange-400 hover:bg-orange-400/30 rounded-full transition-colors duration-300"
-          >
-            Advanced Search
-          </Link>
-          <Link
             href="/#about"
-            className="block px-3 py-2 hover:text-orange-400 hover:bg-orange-400/30 rounded-full transition-colors duration-300"
+            className="block px-3 py-2 hover:text-secondary-100 hover:bg-secondary-400/30 rounded-full transition-colors duration-300"
           >
             About
           </Link>
@@ -116,29 +110,28 @@ export default function Navbar() {
           className={`w-full lg:hidden overflow-hidden transition-[max-height,opacity] duration-500 ease-in-out
           ${isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}
         >
-            <div className="w-full text-gray-500 flex flex-col gap-3 items-center justify-center mt-5">
+            <div className="w-full flex flex-col gap-3 items-center justify-center mt-5">
                 <Link
                     href="/login"
-                    className="w-full flex justify-center text-gray-500 bg-[##292929] py-2 px-4 rounded-xl transition-colors duration-500 border-2 border-[#383837]">
+                    className="w-full flex justify-center text-secondary-100  py-2 px-4 rounded-xl transition-colors duration-500 border-2 border-secondary-100">
                     Sign in
                 </Link>
                 <Link
                     href="/register"
-                    className="w-full flex justify-center text-black rounded-xl py-2 px-4 bg-white">
+                    className="w-full flex justify-center text-secondary-100 rounded-xl py-2 px-4 bg-secondary-500/30">
                     Get Started
                 </Link>
             </div>
-          <ul className="flex flex-col space-y-4 font-medium py-8 text-gray-500">
+          <ul className="flex flex-col space-y-4 font-medium py-8">
             {[
               { href: "/", label: "Home" },
               { href: "#projects", label: "Projects" },
               { href: "#news", label: "News" },
               { href: "#events", label: "Events" },
-              { href: "#advanced-search", label: "Advanced Search" },
               { href: "#about", label: "About" },
             ].map(({ href, label }) => (
               <li key={href} className="border-b pb-3">
-                <a
+                <Link
                   href={href}
                   onClick={() => {
                     setIsOpen(false);
@@ -148,21 +141,21 @@ export default function Navbar() {
                 >
                   {label}
                 <ArrowRight className="" size={16} />
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="hidden md:w-auto space-x-8 text-gray-500 lg:flex items-center justify-center">
+        <div className="hidden md:w-auto space-x-8 lg:flex items-center justify-center">
             <Link
                 href="/login"
-                className="text-gray-500 hover:text-white transition-colors duration-500">
+                className="hover:underline">
                 Sign in
             </Link>
             <Link
                 href="/register"
-                className="text-black rounded-xl py-2 px-4 bg-white">
+                className="text-secondary-100 rounded-full py-2 px-4 border border-secondary-300 hover:text-white hover:bg-secondary-200 transition-colors duration-300">
                 Get Started
             </Link>
         </div>

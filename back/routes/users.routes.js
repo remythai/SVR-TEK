@@ -17,8 +17,25 @@ router.get("/:id/image", usersController.getUserImage);
 // ------------
 
 router.post("/", usersController.create);
+
+// auth
+
 router.post("/register", usersController.register);
 router.post("/login", usersController.login);
+
+// ------------
+// -- Delete --
+// ------------
+
+router.delete("/:id", usersController.deleteById);
+
+// Update
+
+router.put("/:id", usersController.update);
+
+// update password
+
+router.put("/changePassword", usersController.changePassword)
 
 // ------------
 // -- Delete --
