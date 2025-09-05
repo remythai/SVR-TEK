@@ -1,6 +1,5 @@
 
 import fs from 'fs';
-import { get } from 'https';
 import path from 'path';
 
 // ----------
@@ -42,6 +41,30 @@ async function getByField(field) {
 	return await response.json();
 }
 
+async function getImageByFieldId(field, id) {
+	const myHeaders = new Headers();
+	myHeaders.append("X-Group-Authorization", ancient_api_key);
+
+	const requestOptions = {
+		method: "GET",
+		headers: myHeaders,
+		redirect: "follow"
+	};
+
+	try {
+		const response = await fetch(`${ancient_api_url}${field}/${id}/image`, requestOptions);
+		if (!response.ok) {
+			writeLog(`⚠️ Impossible to get image for ${field} id=${id}`, field);
+			return null;
+		}
+		return await response.text();
+	} catch (error) {
+		writeLog(`❌ Error when trying to get image ${field} id=${id} : ${error}`, field);
+		return null;
+	}
+}
+
+
 async function addInField(field, item) {
 	const requestOptions = {
 		method: "POST",
@@ -59,4 +82,4 @@ async function addInField(field, item) {
 	}
 }
 
-export default { writeLog, getByField, addInField }
+export default { writeLog, getByField, addInField, getImageByFieldId }

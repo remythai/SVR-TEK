@@ -88,6 +88,13 @@ async function workitout() {
       });
 
       for (const item of newItems) {
+        // if (field.image === true) {
+        //   const image = await utils.getImageByFieldId(field, item.id_legacy);
+        //   if (image) {
+        //     item.image = image;
+        //   }
+        // }
+
         utils.addInField(field, item);
       }
     }
@@ -96,6 +103,4 @@ async function workitout() {
   }
 }
 
-
-// Exemple d'utilisation
 workitout()
