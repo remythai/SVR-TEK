@@ -8,7 +8,7 @@ export default function Banner() {
             <p className="text-sm md:text-base text-white max-w-xl">
                 Join our incubator and grow with us. If you are a company interested in being part of our ecosystem, click the button below.
             </p>
-            <Link href="/register" className="px-10 py-3 mt-4 text-sm bg-white hover:scale-105 transition duration-300 rounded-full">
+            <Link href="/startup" className="px-10 py-3 mt-4 text-sm bg-white hover:scale-105 transition duration-300 rounded-full">
                 Apply Now
             </Link>
         </div>
