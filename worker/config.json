@@ -1,8 +1,26 @@
 [
   {
-    "field": "partners"
+    "field": "partners",
+    "image": false
   },
   {
-    "field": "events"
+    "field": "events",
+    "image": true
+  },
+  {
+    "field": "news",
+    "image": true
+  },
+  {
+    "field": "startups",
+    "image": false
+  },
+  {
+    "field": "investors",
+    "image": false
+  },
+  {
+    "field": "users",
+    "image": true
   }
 ]
