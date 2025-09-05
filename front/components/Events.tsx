@@ -49,7 +49,7 @@ export default async function Events() {
                 className="w-full h-[290px] object-cover rounded-md"
                 unoptimized
               />
-            <div className="fle flex-col items-start p-5">
+            <div className="flex flex-col items-start p-5">
                 <div className="flex items-center mb-4">
                     <Calendar />
                     <h5 className="ml-3 text-slate-800 text-xl font-semibold">
