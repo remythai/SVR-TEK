@@ -6,7 +6,7 @@ export default async function News() {
     const displayedNews = news.slice(0, 6);
 
     return (
-        <div className="w-full flex flex-col items-center mb-30">
+        <div className="w-full flex flex-col items-center mb-30" id="news">
                 <div className="w-full justify-center flex">
                     <div className="flex flex-col gap-5 text-left md:text-center">
                         <h1 className="text-3xl font-medium leading-tight text-secondary-100">
