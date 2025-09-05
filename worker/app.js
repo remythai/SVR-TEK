@@ -47,51 +47,52 @@ export async function sendTempPassEmail(name, email, temp_password) {
 
 // sendTempPassEmail("Antton", "antton.ducos@gmail.com", "NEW_PASSWORD")
 
-
-const ancient_api_key = process.env.ANCIENT_API_KEY;
-const ancient_api_url = process.env.ANCIENT_API_URL;
+import fs from "fs";
 
 const api_url = 'http://localhost:8000/';
-
-export default { sendTempPassEmail };
+const config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
 
 async function workitout() {
   try {
-    const data = await utils.getByField("partners");
+    for (const { field } of config) {
+      utils.writeLog(`🔄 Processing field: ${field}`, "config");
 
-    const transformedData = data.map(({ id, ...rest }) => ({
-      ...rest,
-      id_legacy: id
-    }));
+      const data = await utils.getByField(field);
 
-    const localResponse = await fetch(api_url + "partners");
-    const localData = await localResponse.json();
+      const transformedData = data.map(({ id, ...rest }) => ({
+        ...rest,
+        id_legacy: id
+      }));
 
-    const existingLegacyIds = new Set(localData.map(p => p.id_legacy));
+      const localResponse = await fetch(api_url + field);
+      const localData = await localResponse.json();
 
-    const newPartners = [];
-    const skippedPartners = [];
+      const existingLegacyIds = new Set(localData.map(p => p.id_legacy));
 
-    for (const p of transformedData) {
-      if (existingLegacyIds.has(p.id_legacy)) {
-        skippedPartners.push(p);
-      } else {
-        newPartners.push(p);
+      const newItems = [];
+      const skippedItems = [];
+
+      for (const p of transformedData) {
+        if (existingLegacyIds.has(p.id_legacy)) {
+          skippedItems.push(p);
+        } else {
+          newItems.push(p);
+        }
+      }
+
+      skippedItems.forEach(p => {
+        utils.writeLog(
+          `ℹ️ ${field} already existing (id_legacy=${p.id_legacy}, name=${p.name || "N/A"})`,
+          field
+        );
+      });
+
+      for (const item of newItems) {
+        utils.addInField(field, item);
       }
     }
-
-    skippedPartners.forEach(p => {
-      utils.writeLog(`ℹ️ Partner already existing (id_legacy=${p.id_legacy}, name=${p.name})`, "partners");
-    });
-
-    for (const item of newPartners) {
-      utils.addInField("partners", item);
-    }
-
-    return { inserted: newPartners, skipped: skippedPartners };
-
   } catch (error) {
-    console.error("Erreur:", error);
+    utils.writeLog("❌ Error :" + error, "ancientDataBase");
   }
 }
 
