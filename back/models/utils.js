@@ -30,6 +30,7 @@ export async function create(sql, tableName, data) {
 
   const formattedValues = values.map(value => {
     if (value === null || value === undefined) return 'NULL';
+    if (Array.isArray(value) || typeof value === 'object') return `'${JSON.stringify(value).replace(/'/g, "''")}'`;
     if (typeof value === 'string') return `'${value.replace(/'/g, "''")}'`;
     if (typeof value === 'boolean') return value ? 'TRUE' : 'FALSE';
     return String(value);
@@ -37,6 +38,7 @@ export async function create(sql, tableName, data) {
 
   return await sql`INSERT INTO ${sql.unsafe(tableName)} (${sql.unsafe(columns)}) VALUES (${sql.unsafe(formattedValues)}) RETURNING *;`;
 }
+
 
 // ------------
 // -- Update --
