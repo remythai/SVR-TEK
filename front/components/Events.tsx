@@ -1,16 +1,8 @@
 // components/Events.tsx
 import Link from "next/link";
-import { getEvents, getEventImage } from "../app/requests/events";
+import { getEvents, getEventImage, Event } from "../app/requests/events";
 import { Calendar } from "lucide-react";
 import Image from "next/image";
-
-interface Event {
-  id: number;
-  name: string;
-  description?: string;
-  dates?: string;
-  event_type?: string;
-}
 
 export default async function Events() {
   const events = await getEvents();

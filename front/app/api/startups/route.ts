@@ -1,64 +1,77 @@
-import { NextRequest, NextResponse } from 'next/server';
-import axios from 'axios';
+import { NextRequest, NextResponse } from "next/server";
+import axios, { AxiosError } from "axios";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
-    console.log('API Route: Receiving request with body:', body);
-    
+
+    console.log("API Route: Receiving request with body:", body);
+
     const response = await axios.post(
-      'http://localhost:8000/startups',
+      "http://localhost:8000/startups",
       body,
       {
         headers: {
-          'X-Group-Authorization': process.env.GROUP_TOKEN,
-          'Content-Type': 'application/json',
+          "X-Group-Authorization": process.env.GROUP_TOKEN,
+          "Content-Type": "application/json",
         },
-        timeout: 10000, // 10 secondes de timeout
+        timeout: 10000,
       }
     );
-    
-    console.log('API Route: Backend response:', response.data);
+
+    console.log("API Route: Backend response:", response.data);
     return NextResponse.json(response.data, { status: 201 });
-    
-  } catch (error: any) {
-    console.error('API Route Error:', error.message);
-    console.error('API Route Error Response:', error.response?.data);
-    
-    if (error.code === 'ECONNREFUSED') {
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("API Route Error:", error.message);
+      console.error("API Route Error Response:", error.response?.data);
+
+      if (error.code === "ECONNREFUSED") {
+        return NextResponse.json(
+          {
+            error:
+              "Impossible de contacter le serveur backend. Vérifiez qu'il est démarré.",
+          },
+          { status: 503 }
+        );
+      }
+
       return NextResponse.json(
-        { error: 'Impossible de contacter le serveur backend. Vérifiez qu\'il est démarré.' },
-        { status: 503 }
+        {
+          error: "Erreur serveur",
+          details: error.response?.data || error.message,
+        },
+        { status: error.response?.status || 500 }
       );
     }
-    
+
+    // fallback si ce n'est pas une erreur Axios
+    console.error("Unexpected Error:", error);
     return NextResponse.json(
-      { 
-        error: 'Erreur serveur', 
-        details: error.response?.data || error.message 
-      },
-      { status: error.response?.status || 500 }
+      { error: "Erreur inattendue" },
+      { status: 500 }
     );
   }
 }
 
 export async function GET() {
   try {
-    const response = await axios.get(
-      'http://localhost:8000/startups',
-      {
-        headers: {
-          'X-Group-Authorization': process.env.GROUP_TOKEN,
-        }
-      }
-    );
-    
+    const response = await axios.get("http://localhost:8000/startups", {
+      headers: {
+        "X-Group-Authorization": process.env.GROUP_TOKEN,
+      },
+    });
+
     return NextResponse.json(response.data);
-  } catch (error: any) {
-    console.error('GET Startups Error:', error.message);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error("GET Startups Error:", error.message);
+    } else {
+      console.error("Unexpected GET Error:", error);
+    }
+
     return NextResponse.json(
-      { error: 'Erreur lors de la récupération des startups' },
+      { error: "Erreur lors de la récupération des startups" },
       { status: 500 }
     );
   }

@@ -1,12 +1,4 @@
-import { getNews } from "../requests/news";
-
-interface News {
-  id: number;
-  title: string;
-  location?: string;
-  news_date: string;
-  category: string;
-}
+import { getNews, NewsItem } from "../requests/news";
 
 export default async function news() {
 
@@ -14,11 +6,8 @@ export default async function news() {
 
     return (
         <div className="w-full h-full flex justify-center flex-col items-center mt-30">
-            <h1 className="text-3xl font-bold text-center mt-8 mb-4">
-                Discover our upcoming news
-            </h1>
             <div className="flex flex-wrap items-center justify-center gap-8 pt-6 max-w-[85rem]">
-                {news.map((news: News) => (
+                {news.map((news: NewsItem) => (
                 <div
                     key={news.id}
                     className="group relative flex flex-col bg-secondary-500/30 hover:scale-105 transform duration-300 shadow-sm rounded-lg w-[430px] justify-between"

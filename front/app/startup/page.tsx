@@ -83,29 +83,29 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
 
   try {
     const requiredFields = [
-      { field: formData.name, name: 'Nom de la startup' },
-      { field: formData.legal_status, name: 'Statut juridique' },
-      { field: formData.address, name: 'Adresse' },
+      { field: formData.name, name: `Startup's name` },
+      { field: formData.legal_status, name: 'Legal status' },
+      { field: formData.address, name: 'Address' },
       { field: formData.email, name: 'Email' },
-      { field: formData.phone, name: 'Téléphone' },
+      { field: formData.phone, name: 'Phone' },
       { field: formData.description, name: 'Description' },
-      { field: formData.sector, name: 'Secteur d\'activité' },
-      { field: formData.project_status, name: 'Statut du projet' },
-      { field: formData.maturity, name: 'Maturité' },
-      { field: formData.needs, name: 'Besoins' }
+      { field: formData.sector, name: 'Business sector' },
+      { field: formData.project_status, name: 'Project status' },
+      { field: formData.maturity, name: 'Maturity' },
+      { field: formData.needs, name: 'Needs' }
     ];
 
     const missingFields = requiredFields.filter(({ field }) => !field || field.trim() === '');
     
     if (missingFields.length > 0) {
-      alert(`Merci de remplir les champs obligatoires suivants :\n• ${missingFields.map(f => f.name).join('\n• ')}`);
+      alert(`Please fill in the following required fields:\n• ${missingFields.map(f => f.name).join('\n• ')}`);
       setIsSubmitting(false);
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      alert('Veuillez saisir une adresse email valide.');
+      alert('Please enter a valid email address.');
       setIsSubmitting(false);
       return;
     }
@@ -113,14 +113,14 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
     const validFounders = formData.founders.filter(f => f.name && f.name.trim() !== '' && f.role && f.role.trim() !== '');
     
     if (validFounders.length === 0) {
-      alert('Au moins un fondateur avec nom et rôle complets est requis.');
+      alert('At least one founder with complete name and role is required.');
       setIsSubmitting(false);
       return;
     }
 
     const urlFields = [
-      { field: formData.website_url, name: 'Site web' },
-      { field: formData.social_media_url, name: 'Réseaux sociaux' }
+      { field: formData.website_url, name: 'Website' },
+      { field: formData.social_media_url, name: 'Social media' }
     ];
 
     for (const { field, name } of urlFields) {
@@ -128,13 +128,13 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
         const trimmedUrl = field.trim();
         try {
           if (!trimmedUrl.startsWith('http://') && !trimmedUrl.startsWith('https://')) {
-            alert(`L'URL du champ "${name}" doit commencer par http:// ou https://\nExemple: https://www.monsite.com`);
+            alert(`The URL for "${name}" must start with http:// or https://\nExample: https://www.mysite.com`);
             setIsSubmitting(false);
             return;
           }
           new URL(trimmedUrl);
         } catch {
-          alert(`L'URL du champ "${name}" n'est pas valide.\nVérifiez le format: https://www.exemple.com`);
+          alert(`The URL for "${name}" is not valid.\nCheck the format: https://www.example.com`);
           setIsSubmitting(false);
           return;
         }
@@ -165,17 +165,17 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
       }))
     };
 
-    console.log('Payload à envoyer:', payload);
+    console.log('Payload to send:', payload);
 
     const result = await createStartup(payload);
 
     if (!result) {
-      throw new Error('Aucune réponse reçue du serveur');
+      throw new Error('No response received from server');
     }
 
-    console.log('Startup créée avec succès:', result);
+    console.log('Startup created successfully:', result);
 
-    alert('Votre startup a été enregistrée avec succès !\n\nVous allez être contacté prochainement par notre équipe.');
+    alert('Your startup has been successfully registered!');
 
     setFormData({
       name: '',
@@ -194,121 +194,115 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
       founders: [{ name: '', role: '' }]
     });
 
-    // Optionnel : scroll vers le haut après succès
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
   } catch (error: any) {
-    console.error('Erreur lors de l\'enregistrement:', error);
-    
-    // Gestion d'erreurs plus détaillée
-    let errorMessage = 'Une erreur est survenue lors de l\'enregistrement.';
-    
+    console.error('Error during registration:', error);
+
+    let errorMessage = 'An error occurred during registration.';
+
     if (error.response) {
-      // Erreur de réponse du serveur
       const status = error.response.status;
       const data = error.response.data;
-      
+
       switch (status) {
         case 400:
-          errorMessage = 'Données invalides. Veuillez vérifier les informations saisies.';
+          errorMessage = 'Invalid data. Please check the information entered.';
           if (data?.error) {
-            errorMessage += `\nDétail: ${data.error}`;
+            errorMessage += `\nDetail: ${data.error}`;
           }
           break;
         case 401:
-          errorMessage = 'Erreur d\'authentification. Veuillez recharger la page.';
+          errorMessage = 'Authentication error. Please reload the page.';
           break;
         case 409:
-          errorMessage = 'Une startup avec ce nom ou cet email existe déjà.';
+          errorMessage = 'A startup with this name or email already exists.';
           break;
         case 422:
-          errorMessage = 'Données incorrectes. Vérifiez le format de vos informations.';
+          errorMessage = 'Incorrect data. Check the format of your information.';
           break;
         case 500:
-          errorMessage = 'Erreur interne du serveur. Veuillez réessayer dans quelques minutes.';
+          errorMessage = 'Internal server error. Please try again in a few minutes.';
           break;
         default:
-          errorMessage = `Erreur serveur (${status}). Veuillez réessayer.`;
+          errorMessage = `Server error (${status}). Please try again.`;
       }
     } else if (error.request) {
-      errorMessage = 'Impossible de contacter le serveur. Vérifiez votre connexion internet.';
+      errorMessage = 'Unable to contact the server. Check your internet connection.';
     } else if (error.message) {
-      errorMessage = `Erreur: ${error.message}`;
+      errorMessage = `Error: ${error.message}`;
     }
-    
-    alert(`${errorMessage}\n\nSi le problème persiste, contactez notre support technique.`);
-    
+
+    alert(`${errorMessage}\n\nIf the problem persists, contact our technical support.`);
+
   } finally {
     setIsSubmitting(false);
   }
 };
 
   const legalStatusOptions = [
-    'SAS', 'SARL', 'SA', 'SNC', 'Auto-entrepreneur', 'Association', 'Autre'
+    'SAS', 'SARL', 'SA', 'SNC', 'Freelancer', 'Association', 'Other'
   ];
 
   const projectStatusOptions = [
-    'Idée', 'Prototype', 'MVP', 'Beta', 'Production', 'Croissance'
+    'Idea', 'Prototype', 'MVP', 'Beta', 'Production', 'Growth'
   ];
 
   const maturityOptions = [
-    'Pré-seed', 'Seed', 'Série A', 'Série B', 'Série C+', 'Non applicable'
+    'Pre-seed', 'Seed', 'Series A', 'Series B', 'Series C+', 'Not applicable'
   ];
 
   const sectorOptions = [
-    'Technologie', 'Santé', 'Finance', 'E-commerce', 'Éducation', 
-    'Environnement', 'Transport', 'Immobilier', 'Autre'
+    'Technology', 'Healthcare', 'Finance', 'E-commerce', 'Education', 
+    'Environment', 'Transport', 'Real estate', 'Other'
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12 px-4">
+    <div className="min-h-screen py-12 px-4 mt-30">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          {/* En-tête */}
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6">
+        <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+          <div className="bg-gradient-to-r from-pink-400 to-purple-500 px-8 py-6">
             <h1 className="text-3xl font-bold text-white flex items-center gap-3">
               <Building className="w-8 h-8" />
-              Inscription de Startup
+              Startup Registration
             </h1>
-            <p className="text-blue-100 mt-2">
-              Rejoignez l&apo;écosystème JEB Incubator et donnez vie à votre projet
+            <p className="text-pink-100 mt-2">
+              Join the JEB Incubator ecosystem and bring your project to life
             </p>
           </div>
 
           <div className="p-8 space-y-8">
-            {/* Informations générales */}
             <section>
               <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
-                <Building className="w-6 h-6 text-blue-600" />
-                Informations générales
+                <Building className="w-6 h-6 text-pink-400" />
+                General Information
               </h2>
-              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nom de la startup *
+                    Startup Name *
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    placeholder="Nom de votre startup"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
+                    placeholder="Your startup name"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Statut juridique *
+                    Legal Status *
                   </label>
                   <select
                     required
                     value={formData.legal_status}
                     onChange={(e) => handleInputChange('legal_status', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
                   >
-                    <option value="">Sélectionnez un statut</option>
+                    <option value="">Select a status</option>
                     {legalStatusOptions.map(status => (
                       <option key={status} value={status}>{status}</option>
                     ))}
@@ -317,15 +311,15 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Adresse *
+                    Address *
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.address}
                     onChange={(e) => handleInputChange('address', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    placeholder="Adresse complète"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
+                    placeholder="Complete address"
                   />
                 </div>
 
@@ -339,7 +333,7 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
                     required
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
                     placeholder="contact@startup.com"
                   />
                 </div>
@@ -347,66 +341,64 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                     <Phone className="w-4 h-4" />
-                    Téléphone *
+                    Phone *
                   </label>
                   <input
                     type="tel"
                     required
                     value={formData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    placeholder="+33 1 23 45 67 89"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
+                    placeholder="+1 123 456 7890"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Date de création *
+                    Creation Date *
                   </label>
                   <input
                     type="date"
                     required
                     value={formData.created_at}
                     onChange={(e) => handleInputChange('created_at', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                     <Globe className="w-4 h-4" />
-                    Site web
+                    Website
                   </label>
                   <input
                     type="url"
                     value={formData.website_url}
                     onChange={(e) => handleInputChange('website_url', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
                     placeholder="https://www.startup.com"
                   />
                 </div>
 
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Réseaux sociaux
+                    Social Media
                   </label>
                   <input
                     type="url"
                     value={formData.social_media_url}
                     onChange={(e) => handleInputChange('social_media_url', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
                     placeholder="https://linkedin.com/company/startup"
                   />
                 </div>
               </div>
             </section>
 
-            {/* Description du projet */}
             <section>
               <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-                Description du projet
+                Project Description
               </h2>
-              
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -417,23 +409,23 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
                     rows={4}
                     value={formData.description}
                     onChange={(e) => handleInputChange('description', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
-                    placeholder="Décrivez votre startup, votre mission et votre vision..."
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all resize-none"
+                    placeholder="Describe your startup, your mission and vision..."
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Secteur d'activité *
+                      Business Sector *
                     </label>
                     <select
                       required
                       value={formData.sector}
                       onChange={(e) => handleInputChange('sector', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
                     >
-                      <option value="">Sélectionnez un secteur</option>
+                      <option value="">Select a sector</option>
                       {sectorOptions.map(sector => (
                         <option key={sector} value={sector}>{sector}</option>
                       ))}
@@ -442,15 +434,15 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Statut du projet *
+                      Project Status *
                     </label>
                     <select
                       required
                       value={formData.project_status}
                       onChange={(e) => handleInputChange('project_status', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
                     >
-                      <option value="">Sélectionnez un statut</option>
+                      <option value="">Select a status</option>
                       {projectStatusOptions.map(status => (
                         <option key={status} value={status}>{status}</option>
                       ))}
@@ -459,15 +451,15 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Maturité *
+                      Maturity *
                     </label>
                     <select
                       required
                       value={formData.maturity}
                       onChange={(e) => handleInputChange('maturity', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
                     >
-                      <option value="">Sélectionnez une maturité</option>
+                      <option value="">Select a maturity level</option>
                       {maturityOptions.map(maturity => (
                         <option key={maturity} value={maturity}>{maturity}</option>
                       ))}
@@ -477,33 +469,31 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Besoins *
+                    Needs *
                   </label>
                   <textarea
                     required
                     rows={3}
                     value={formData.needs}
                     onChange={(e) => handleInputChange('needs', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
-                    placeholder="Quels sont vos besoins ? (financement, accompagnement, réseau, etc.)"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all resize-none"
+                    placeholder="What are your needs? (funding, support, network, etc.)"
                   />
                 </div>
               </div>
             </section>
 
-            {/* Fondateurs */}
             <section>
               <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
-                <Users className="w-6 h-6 text-blue-600" />
-                Fondateurs
+                <Users className="w-6 h-6 text-pink-400" />
+                Founders
               </h2>
-              
               <div className="space-y-4">
                 {formData.founders.map((founder, index) => (
-                  <div key={index} className="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                  <div key={index} className="p-6 bg-gray-50 rounded-xl border border-gray-200">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-medium text-gray-800">
-                        Fondateur {index + 1}
+                        Founder {index + 1}
                       </h3>
                       {formData.founders.length > 1 && (
                         <button
@@ -515,67 +505,63 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
                         </button>
                       )}
                     </div>
-                    
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Nom complet *
+                          Full Name *
                         </label>
                         <input
                           type="text"
                           required
                           value={founder.name}
                           onChange={(e) => handleFounderChange(index, 'name', e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                          placeholder="Nom et prénom"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
+                          placeholder="First and last name"
                         />
                       </div>
-                      
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Rôle *
+                          Role *
                         </label>
                         <input
                           type="text"
                           required
                           value={founder.role}
                           onChange={(e) => handleFounderChange(index, 'role', e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
                           placeholder="CEO, CTO, CMO..."
                         />
                       </div>
                     </div>
                   </div>
                 ))}
-                
                 <button
                   type="button"
                   onClick={addFounder}
-                  className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-blue-500 hover:text-blue-600 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-600 hover:border-pink-400 hover:text-pink-600 transition-all flex items-center justify-center gap-2"
                 >
                   <Plus className="w-5 h-5" />
-                  Ajouter un fondateur
+                  Add a founder
                 </button>
               </div>
             </section>
 
-            {/* Bouton de soumission */}
             <div className="pt-6 border-t border-gray-200">
               <button
                 type="button"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-8 rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-purple-700 focus:ring-4 focus:ring-blue-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-pink-400 to-purple-500 text-white py-4 px-8 rounded-xl font-semibold text-lg hover:from-pink-500 hover:to-purple-600 focus:ring-4 focus:ring-pink-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <>
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Inscription en cours...
+                    Registration in progress...
                   </>
                 ) : (
                   <>
                     <Building className="w-5 h-5" />
-                    Inscrire ma startup
+                    Register my startup
                   </>
                 )}
               </button>

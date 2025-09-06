@@ -1,4 +1,3 @@
-// app/requests/startups.ts
 import axios, { AxiosRequestConfig } from "axios";
 
 export interface Founder {
@@ -14,20 +13,19 @@ export interface Startup {
   address: string;
   email: string;
   phone: string;
-  created_at: number | null;
-  description: string | null;
-  website_url: string | null;
-  social_media_url: string | null;
-  project_status: string | null;
-  needs: string | null;
+  created_at: number;
+  description: string;
+  website_url: string;
+  social_media_url: string;
+  project_status: string;
+  needs: string;
   sector: string;
   maturity: string;
-  founders: Founder[] | null;
+  founders: Founder[];
 }
 
-// Payload pour créer une startup (API)
 export type CreateStartupPayload = Omit<Startup, "id"> & {
-  founders: Omit<Founder, "id">[] | null; // id n’est pas nécessaire pour la création
+  founders: Omit<Founder, "id">[] | null;
 };
 
 export async function createStartup(
@@ -35,27 +33,26 @@ export async function createStartup(
 ): Promise<Startup | null> {
   try {
     console.log('Client: Sending request to API route');
-    
+
     const response = await axios.post<Startup>(
-      '/api/startups', // Utiliser l'API route Next.js
+      '/api/startups',
       startupData,
       {
         headers: {
           'Content-Type': 'application/json',
         },
-        timeout: 15000, // 15 secondes de timeout
+        timeout: 15000,
       }
     );
-    
+
     console.log('Client: Response received:', response.data);
     return response.data;
-    
+
   } catch (error: any) {
     console.error('Client Error:', error.message);
     console.error('Client Error Response:', error.response?.data);
     console.error('Client Error Status:', error.response?.status);
-    
-    // Relancer l'erreur pour que handleSubmit puisse la traiter
+
     throw error;
   }
 }
