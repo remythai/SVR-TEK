@@ -23,7 +23,16 @@ export default async function ProjectPage({ params }: { params: { id: string } }
   if (project.founders && project.founders.length > 0) {
     await Promise.all(
       project.founders.map(async (founder) => {
-        const img = await getFounderImage(project.id.toString(), founder.id.toString());
+        if (!project.id || !founder.id) {
+          console.warn("Founder without id:", founder);
+          return;
+        }
+
+        const img = await getFounderImage(
+          project.id.toString(),
+          founder.id.toString()
+        );
+
         if (img) founderImages[founder.id] = img;
       })
     );

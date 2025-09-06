@@ -12,7 +12,7 @@ export async function getPartners(): Promise<Partner[]> {
   const config = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: 'https://api.jeb-incubator.com/partners',
+    url: 'https://localhost:8000/partners',
     headers: {
       'X-Group-Authorization': process.env.GROUP_TOKEN as string
     }

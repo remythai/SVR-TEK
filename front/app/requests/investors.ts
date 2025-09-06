@@ -13,7 +13,7 @@ export async function getInvestors(): Promise<Investor[]> {
   const config = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: 'https://api.jeb-incubator.com/investors',
+    url: 'http://localhost:8000/investors',
     headers: {
       'X-Group-Authorization': process.env.GROUP_TOKEN as string,
     },
@@ -36,7 +36,7 @@ export async function getInvestor(investorId: string): Promise<Investor | null> 
   const config = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: `https://api.jeb-incubator.com/investors/${investorId}`,
+    url: `http://localhost:8000/investors/${investorId}`,
     headers: {
       'X-Group-Authorization': process.env.GROUP_TOKEN as string,
     },
