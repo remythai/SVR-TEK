@@ -194,7 +194,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                 <div key={founder.id} className="text-center group">
                   <div className="relative mb-6">
                     <div className="w-32 h-32 mx-auto rounded-full overflow-hidden shadow-lg ring-4 ring-purple-100 group-hover:ring-purple-200 transition-all duration-200">
-                      {founderImages[founder.id] ? (
+                      {founder.id && founderImages[founder.id] ? (
                         <Image
                           src={founderImages[founder.id]}
                           alt={founder.name}

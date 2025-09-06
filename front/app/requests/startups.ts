@@ -13,7 +13,7 @@ export interface Startup {
   address: string;
   email: string;
   phone: string;
-  created_at: number;
+  created_at: string;
   description: string;
   website_url: string;
   social_media_url: string;
@@ -24,9 +24,22 @@ export interface Startup {
   founders: Founder[];
 }
 
-export type CreateStartupPayload = Omit<Startup, "id"> & {
-  founders: Omit<Founder, "id">[] | null;
-};
+export interface CreateStartupPayload {
+  name: string;
+  legal_status: string;
+  address: string;
+  email: string;
+  phone: string;
+  created_at: string; // bien string
+  description: string;
+  website_url: string | null;
+  social_media_url: string | null;
+  project_status: string;
+  needs: string;
+  sector: string;
+  maturity: string;
+  founders: { name: string; role: string }[]; // jamais null
+}
 
 export async function createStartup(
   startupData: CreateStartupPayload
@@ -48,10 +61,12 @@ export async function createStartup(
     console.log('Client: Response received:', response.data);
     return response.data;
 
-  } catch (error: any) {
-    console.error('Client Error:', error.message);
-    console.error('Client Error Response:', error.response?.data);
-    console.error('Client Error Status:', error.response?.status);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Client Error:', error.message);
+    } else {
+      console.error('Unexpected error:', error);
+    }
 
     throw error;
   }

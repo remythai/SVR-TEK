@@ -1,6 +1,7 @@
 import { getPartner, Partner } from "@/app/requests/partners";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+
 import {
     Building2,
     MapPin,
@@ -22,19 +23,17 @@ interface Props {
 }
 
 export default async function PartnerDetailPage({ params }: Props) {
-    const partnerId = parseInt(params.id);
+    const { id } = await params;
+    const partnerId = parseInt(id);
 
     if (isNaN(partnerId)) {
         notFound();
     }
 
-    let partner: Partner;
+    const partner = await getPartner(partnerId);
 
-    try {
-        partner = await getPartner(partnerId);
-    } catch (error) {
+    if (!partner)
         notFound();
-    }
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', {

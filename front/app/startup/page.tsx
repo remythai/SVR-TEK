@@ -96,84 +96,62 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
     ];
 
     const missingFields = requiredFields.filter(({ field }) => !field || field.trim() === '');
-    
     if (missingFields.length > 0) {
       alert(`Please fill in the following required fields:\n• ${missingFields.map(f => f.name).join('\n• ')}`);
-      setIsSubmitting(false);
       return;
     }
 
+    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       alert('Please enter a valid email address.');
-      setIsSubmitting(false);
       return;
     }
 
-    const validFounders = formData.founders.filter(f => f.name && f.name.trim() !== '' && f.role && f.role.trim() !== '');
-    
+    // Founders validation
+    const validFounders = formData.founders.filter(f => f.name.trim() && f.role.trim());
     if (validFounders.length === 0) {
       alert('At least one founder with complete name and role is required.');
-      setIsSubmitting(false);
       return;
     }
 
+    // URL validation
     const urlFields = [
       { field: formData.website_url, name: 'Website' },
       { field: formData.social_media_url, name: 'Social media' }
     ];
-
     for (const { field, name } of urlFields) {
       if (field && field.trim() !== '') {
         const trimmedUrl = field.trim();
         try {
           if (!trimmedUrl.startsWith('http://') && !trimmedUrl.startsWith('https://')) {
-            alert(`The URL for "${name}" must start with http:// or https://\nExample: https://www.mysite.com`);
-            setIsSubmitting(false);
+            alert(`The URL for "${name}" must start with http:// or https://`);
             return;
           }
           new URL(trimmedUrl);
         } catch {
-          alert(`The URL for "${name}" is not valid.\nCheck the format: https://www.example.com`);
-          setIsSubmitting(false);
+          alert(`The URL for "${name}" is not valid.`);
           return;
         }
       }
     }
 
+    // Payload
     const payload = {
+      ...formData,
       name: formData.name.trim(),
-      legal_status: formData.legal_status,
       address: formData.address.trim(),
       email: formData.email.trim().toLowerCase(),
       phone: formData.phone.trim(),
-      created_at: formData.created_at || null,
-      description: formData.description.trim(),
-      website_url: formData.website_url && formData.website_url.trim() !== '' 
-        ? formData.website_url.trim() 
-        : null,
-      social_media_url: formData.social_media_url && formData.social_media_url.trim() !== '' 
-        ? formData.social_media_url.trim() 
-        : null,
-      project_status: formData.project_status,
-      needs: formData.needs.trim(),
-      sector: formData.sector,
-      maturity: formData.maturity,
-      founders: validFounders.map(founder => ({
-        name: founder.name.trim(),
-        role: founder.role.trim()
-      }))
+      founders: validFounders.map(f => ({ name: f.name.trim(), role: f.role.trim() })),
+      website_url: formData.website_url?.trim() || null,
+      social_media_url: formData.social_media_url?.trim() || null,
+      created_at: formData.created_at.trim()
     };
-
-    console.log('Payload to send:', payload);
 
     const result = await createStartup(payload);
 
-    if (!result) {
-      throw new Error('No response received from server');
-    }
-
-    console.log('Startup created successfully:', result);
+    if (!result) throw new Error('No response received from server');
 
     alert('Your startup has been successfully registered!');
 
@@ -196,45 +174,11 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error during registration:', error);
-
-    let errorMessage = 'An error occurred during registration.';
-
-    if (error.response) {
-      const status = error.response.status;
-      const data = error.response.data;
-
-      switch (status) {
-        case 400:
-          errorMessage = 'Invalid data. Please check the information entered.';
-          if (data?.error) {
-            errorMessage += `\nDetail: ${data.error}`;
-          }
-          break;
-        case 401:
-          errorMessage = 'Authentication error. Please reload the page.';
-          break;
-        case 409:
-          errorMessage = 'A startup with this name or email already exists.';
-          break;
-        case 422:
-          errorMessage = 'Incorrect data. Check the format of your information.';
-          break;
-        case 500:
-          errorMessage = 'Internal server error. Please try again in a few minutes.';
-          break;
-        default:
-          errorMessage = `Server error (${status}). Please try again.`;
-      }
-    } else if (error.request) {
-      errorMessage = 'Unable to contact the server. Check your internet connection.';
-    } else if (error.message) {
-      errorMessage = `Error: ${error.message}`;
-    }
-
-    alert(`${errorMessage}\n\nIf the problem persists, contact our technical support.`);
-
+    let message = 'An error occurred during registration.';
+    if (error instanceof Error) message = error.message;
+    alert(message);
   } finally {
     setIsSubmitting(false);
   }
@@ -253,7 +197,7 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
   ];
 
   const sectorOptions = [
-    'Technology', 'Healthcare', 'Finance', 'E-commerce', 'Education', 
+    'Technology', 'Healthcare', 'Finance', 'E-commerce', 'Education',
     'Environment', 'Transport', 'Real estate', 'Other'
   ];
 
