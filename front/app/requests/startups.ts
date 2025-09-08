@@ -76,7 +76,7 @@ export async function getStartups(): Promise<Startup[]> {
   const config: AxiosRequestConfig = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: 'http://localhost:8000/startups',
+    url: 'https://api.jeb-incubator.com/startups',
     headers: {
       'X-Group-Authorization': process.env.GROUP_TOKEN
     }
@@ -100,7 +100,7 @@ export async function getStartup(startupId: string): Promise<Startup | null> {
   const config: AxiosRequestConfig = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: `http://localhost:8000/startups/${startupId}`,
+    url: `https://api.jeb-incubator.com/startups/${startupId}`,
     headers: {
       'X-Group-Authorization': process.env.GROUP_TOKEN
     }

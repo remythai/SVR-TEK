@@ -8,6 +8,8 @@ interface SearchParams {
   sector?: string;
   maturity?: string;
   location?: string;
+  project_status?: string;
+  legal_status?: string;
   search?: string;
 }
 
@@ -15,18 +17,20 @@ interface Startup {
   id: number;
   name: string;
   sector: string;
-  location?: string;
   maturity: string;
   description?: string;
+  address?: string
+  project_status?: string;
+  legal_status?: string;
 }
 
 export default async function Home({ searchParams }: { searchParams: SearchParams }) {
   const allStartups: Startup[] = await getStartups();
-
-  const params = await searchParams;
+  const params = searchParams;
 
   let filteredStartups = allStartups;
 
+  // Recherche globale
   if (params.search) {
     const searchTerm = params.search.toLowerCase();
     filteredStartups = filteredStartups.filter(
@@ -37,21 +41,38 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
     );
   }
 
+  // Filtre secteur
   if (params.sector) {
     filteredStartups = filteredStartups.filter((startup) =>
       startup.sector?.toLowerCase().includes(params.sector!.toLowerCase())
     );
   }
 
+  // Filtre maturité
   if (params.maturity) {
     filteredStartups = filteredStartups.filter((startup) =>
       startup.maturity?.toLowerCase().includes(params.maturity!.toLowerCase())
     );
   }
 
+  // Filtre statut projet
+  if (params.project_status) {
+    filteredStartups = filteredStartups.filter((startup) =>
+      startup.project_status?.toLowerCase().includes(params.project_status!.toLowerCase())
+    );
+  }
+
+  // Filtre statut légal
+  if (params.legal_status) {
+    filteredStartups = filteredStartups.filter((startup) =>
+      startup.legal_status?.toLowerCase().includes(params.legal_status!.toLowerCase())
+    );
+  }
+
+  // Filtre localisation (dans address)
   if (params.location) {
     filteredStartups = filteredStartups.filter((startup) =>
-      startup.location?.toLowerCase().includes(params.location!.toLowerCase())
+      startup.address?.toLowerCase().includes(params.location!.toLowerCase())
     );
   }
 
@@ -63,9 +84,10 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
             sector: params.sector || "",
             maturity: params.maturity || "",
             location: params.location || "",
+            project_status: params.project_status || "",
+            legal_status: params.legal_status || "",
           }}
         />
-
         <SearchBar />
       </div>
 
@@ -92,10 +114,11 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
               </h5>
             </div>
             <p className="block text-slate-600 leading-normal font-light mb-4">
-              {startup.name}
-              {startup.sector}
-              {startup.location}
-              {startup.maturity}
+              {startup.name} — {startup.sector} — {startup.maturity}
+              <br />
+              {startup.project_status} | {startup.legal_status}
+              <br />
+              {startup.address}
             </p>
             <div>
               <p className="text-slate-800 font-semibold text-sm hover:underline flex items-center">

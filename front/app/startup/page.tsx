@@ -175,31 +175,31 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
   } catch (error: unknown) {
-    console.error('Error during registration:', error);
-    let message = 'An error occurred during registration.';
-    if (error instanceof Error) message = error.message;
-    alert(message);
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+      console.error('Error during registration:', error);
+      let message = 'An error occurred during registration.';
+      if (error instanceof Error) message = error.message;
+      alert(message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-  const legalStatusOptions = [
-    'SAS', 'SARL', 'SA', 'SNC', 'Freelancer', 'Association', 'Other'
-  ];
-
-  const projectStatusOptions = [
-    'Idea', 'Prototype', 'MVP', 'Beta', 'Production', 'Growth'
+  const sectorOptions = [
+    'Deeptech', 'FinTech', 'Logistics', 'Saas', 'HealthTech',
+    'EdTech', 'Sustainability'
   ];
 
   const maturityOptions = [
-    'Pre-seed', 'Seed', 'Series A', 'Series B', 'Series C+', 'Not applicable'
+    'Idea', 'Prototype', 'MVP', 'Product-Market fit'
   ];
 
-  const sectorOptions = [
-    'Technology', 'Healthcare', 'Finance', 'E-commerce', 'Education',
-    'Environment', 'Transport', 'Real estate', 'Other'
-  ];
+  const projectStatusOptions = [
+    'Growth', 'Early Stage', 'Seed', 'Scale-up'
+  ]
+
+  const legalStatusOptions = [
+    'SAS', 'GmbH', 'SpA', 'Oy'
+  ]
 
   return (
     <div className="min-h-screen py-12 px-4 mt-30">
@@ -234,23 +234,6 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
                     placeholder="Your startup name"
                   />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Legal Status *
-                  </label>
-                  <select
-                    required
-                    value={formData.legal_status}
-                    onChange={(e) => handleInputChange('legal_status', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
-                  >
-                    <option value="">Select a status</option>
-                    {legalStatusOptions.map(status => (
-                      <option key={status} value={status}>{status}</option>
-                    ))}
-                  </select>
                 </div>
 
                 <div className="md:col-span-2">
@@ -344,19 +327,6 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
                 Project Description
               </h2>
               <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Description *
-                  </label>
-                  <textarea
-                    required
-                    rows={4}
-                    value={formData.description}
-                    onChange={(e) => handleInputChange('description', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all resize-none"
-                    placeholder="Describe your startup, your mission and vision..."
-                  />
-                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -378,23 +348,6 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Project Status *
-                    </label>
-                    <select
-                      required
-                      value={formData.project_status}
-                      onChange={(e) => handleInputChange('project_status', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
-                    >
-                      <option value="">Select a status</option>
-                      {projectStatusOptions.map(status => (
-                        <option key={status} value={status}>{status}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Maturity *
                     </label>
                     <select
@@ -409,6 +362,54 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
                       ))}
                     </select>
                   </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Project status *
+                    </label>
+                    <select
+                      required
+                      value={formData.project_status}
+                      onChange={(e) => handleInputChange('project_status', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
+                    >
+                      <option value="">Select the project status</option>
+                      {projectStatusOptions.map(project_status => (
+                        <option key={project_status} value={project_status}>{project_status}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Legal status *
+                    </label>
+                    <select
+                      required
+                      value={formData.legal_status}
+                      onChange={(e) => handleInputChange('legal_status', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
+                    >
+                      <option value="">Select the legal status</option>
+                      {legalStatusOptions.map(legal_status => (
+                        <option key={legal_status} value={legal_status}>{legal_status}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description *
+                  </label>
+                  <textarea
+                    required
+                    rows={4}
+                    value={formData.description}
+                    onChange={(e) => handleInputChange('description', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all resize-none"
+                    placeholder="Describe your startup, your mission and vision..."
+                  />
                 </div>
 
                 <div>
