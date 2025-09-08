@@ -22,8 +22,6 @@ interface Props {
 
 export default async function ProjectsPage({ searchParams }: Props) {
   const allStartups: Startup[] = await getStartups();
-  
-  // Await searchParams before using it
   const resolvedSearchParams = await searchParams;
 
   const params: Record<string, string> = {};
@@ -49,7 +47,7 @@ export default async function ProjectsPage({ searchParams }: Props) {
     );
   }
 
-  ["sector", "maturity", "project_status", "legal_status", "address"].forEach((key) => {
+  ["sector", "maturity", "project_status", "legal_status"].forEach((key) => {
     const value = params[key];
     if (value) {
       filteredStartups = filteredStartups.filter((startup) =>
@@ -60,6 +58,13 @@ export default async function ProjectsPage({ searchParams }: Props) {
     }
   });
 
+  if (params.location) {
+    const locationTerm = params.location.toLowerCase();
+    filteredStartups = filteredStartups.filter((startup) =>
+      (startup.location?.toLowerCase().includes(locationTerm) ?? false) ||
+      (startup.address?.toLowerCase().includes(locationTerm) ?? false)
+    );
+  }
   return (
     <div className="w-full min-h-screen px-6 md:px-12 lg:px-20 flex flex-col items-center">
       <div className="flex justify-between w-full items-left md:items-center gap-6 mt-30 max-w-[85rem] custom-max-1170">
@@ -67,7 +72,7 @@ export default async function ProjectsPage({ searchParams }: Props) {
           currentFilters={{
             sector: params.sector || "",
             maturity: params.maturity || "",
-            location: params.address || "",
+            location: params.location || "",
             project_status: params.project_status || "",
             legal_status: params.legal_status || "",
           }}

@@ -1,6 +1,16 @@
 'use client';
 
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+
+// Fonction debounce custom (sans lodash)
+function debounce<T extends (...args: any[]) => void>(func: T, delay: number): T {
+  let timeoutId: NodeJS.Timeout;
+  return ((...args: any[]) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
+  }) as T;
+}
 
 const sectorOptions = [
   'DeepTech', 'FinTech', 'Logistics', 'SaaS', 'HealthTech',
@@ -30,6 +40,7 @@ interface FilterFormProps {
 }
 
 export default function FilterForm({ currentFilters }: FilterFormProps) {
+  const [localLocation, setLocalLocation] = useState(currentFilters.location);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -45,13 +56,33 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
     router.push(`?${params.toString()}`);
   };
 
+  const debouncedLocationUpdate = useCallback(
+    debounce((value: string) => {
+      const params = new URLSearchParams(searchParams);
+      if (value) {
+        params.set('location', value);
+      } else {
+        params.delete('location');
+      }
+      router.push(`?${params.toString()}`);
+    }, 300),
+    [searchParams]
+  );
+
+  useEffect(() => {
+    debouncedLocationUpdate(localLocation);
+  }, [localLocation, debouncedLocationUpdate]);
+
+  useEffect(() => {
+    setLocalLocation(currentFilters.location);
+  }, [currentFilters.location]);
+
   const resetFilters = () => {
     router.push('/projects');
   };
 
   return (
     <div className="flex items-center gap-4 flex-wrap">
-      {/* Filtre Secteur */}
       <div className="relative">
         <select
           value={currentFilters.sector}
@@ -65,7 +96,6 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
         </select>
       </div>
 
-      {/* Filtre Maturité */}
       <div className="relative">
         <select
           value={currentFilters.maturity}
@@ -79,7 +109,6 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
         </select>
       </div>
 
-      {/* Filtre Statut du projet */}
       <div className="relative">
         <select
           value={currentFilters.project_status || ""}
@@ -93,7 +122,6 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
         </select>
       </div>
 
-      {/* Filtre Statut légal */}
       <div className="relative">
         <select
           value={currentFilters.legal_status || ""}
@@ -107,18 +135,16 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
         </select>
       </div>
 
-      {/* Filtre Localisation */}
       <div className="relative">
         <input
           type="text"
           placeholder="Search a location..."
-          value={currentFilters.location}
-          onChange={(e) => handleFilterChange('address', e.target.value)}
+          value={localLocation}
+          onChange={(e) => setLocalLocation(e.target.value)}
           className="bg-white border border-secondary-300 rounded-full px-4 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-secondary-100 focus:border-transparent"
         />
       </div>
 
-      {/* Bouton Reset */}
       {(currentFilters.sector || currentFilters.maturity || currentFilters.location || currentFilters.project_status || currentFilters.legal_status) && (
         <button
           onClick={resetFilters}
