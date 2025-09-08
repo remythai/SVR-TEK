@@ -49,7 +49,7 @@ export default async function ProjectsPage({ searchParams }: Props) {
     );
   }
 
-  ["sector", "maturity", "project_status", "legal_status", "location"].forEach((key) => {
+  ["sector", "maturity", "project_status", "legal_status", "address"].forEach((key) => {
     const value = params[key];
     if (value) {
       filteredStartups = filteredStartups.filter((startup) =>
@@ -67,7 +67,7 @@ export default async function ProjectsPage({ searchParams }: Props) {
           currentFilters={{
             sector: params.sector || "",
             maturity: params.maturity || "",
-            location: params.location || "",
+            location: params.address || "",
             project_status: params.project_status || "",
             legal_status: params.legal_status || "",
           }}

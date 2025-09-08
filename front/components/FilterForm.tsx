@@ -113,7 +113,7 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
           type="text"
           placeholder="Search a location..."
           value={currentFilters.location}
-          onChange={(e) => handleFilterChange('location', e.target.value)}
+          onChange={(e) => handleFilterChange('address', e.target.value)}
           className="bg-white border border-secondary-300 rounded-full px-4 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-secondary-100 focus:border-transparent"
         />
       </div>
