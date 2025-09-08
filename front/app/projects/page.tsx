@@ -94,8 +94,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
       <div className="pt-6 w-full max-w-[85rem]">
         <p className="text-sm text-gray-600">
           {filteredStartups.length} startup
-          {filteredStartups.length > 1 ? "s" : ""} trouvée
-          {filteredStartups.length > 1 ? "s" : ""}
+          found
           {params.search && <span> pour &quot;{params.search}&quot;</span>}
         </p>
       </div>
@@ -105,7 +104,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           <Link
             href={`/projects/${startup.id}`}
             key={startup.id}
-            className="relative flex flex-col border border-secondary-200 shadow-sm rounded-lg w-[430px] p-6 hover:scale-105 transition-transform duration-300"
+            className="relative flex flex-col border border-secondary-200 shadow-sm rounded-lg w-full md:w-[430px] p-6 hover:scale-105 transition-transform duration-300"
           >
             <div className="flex items-center mb-4">
               <Building />

@@ -46,7 +46,7 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
   };
 
   const resetFilters = () => {
-    router.push('/');
+    router.push('/projects');
   };
 
   return (
@@ -58,7 +58,7 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
           onChange={(e) => handleFilterChange('sector', e.target.value)}
           className="appearance-none bg-white border border-secondary-300 rounded-full px-4 py-2 pr-8 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-secondary-100 focus:border-transparent"
         >
-          <option value="">Tous les secteurs</option>
+          <option value="">All sectors</option>
           {sectorOptions.map((sector) => (
             <option key={sector} value={sector}>{sector}</option>
           ))}
@@ -86,7 +86,7 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
           onChange={(e) => handleFilterChange('project_status', e.target.value)}
           className="appearance-none bg-white border border-secondary-300 rounded-full px-4 py-2 pr-8 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-secondary-100 focus:border-transparent"
         >
-          <option value="">Tous les statuts projet</option>
+          <option value="">All projects status</option>
           {projectStatusOptions.map((status) => (
             <option key={status} value={status}>{status}</option>
           ))}
@@ -100,7 +100,7 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
           onChange={(e) => handleFilterChange('legal_status', e.target.value)}
           className="appearance-none bg-white border border-secondary-300 rounded-full px-4 py-2 pr-8 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-secondary-100 focus:border-transparent"
         >
-          <option value="">Tous les statuts légaux</option>
+          <option value="">All legal status</option>
           {legalStatusOptions.map((status) => (
             <option key={status} value={status}>{status}</option>
           ))}
@@ -124,7 +124,7 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
           onClick={resetFilters}
           className="text-sm text-gray-500 hover:text-gray-700 underline"
         >
-          Réinitialiser
+          Reset
         </button>
       )}
     </div>
