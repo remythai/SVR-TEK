@@ -32,6 +32,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${montserrat.variable} ${openSans.variable} antialiased`}
+        suppressHydrationWarning
       >
         <Navbar />
         {children}
