@@ -24,9 +24,6 @@ export default async function events() {
 
     return (
         <div className="w-full h-full flex justify-center flex-col items-center mt-30">
-            <h1 className="text-3xl font-bold text-center mt-8 mb-4">
-                Discover our upcoming events
-            </h1>
             <div className="flex flex-wrap items-center justify-center gap-8 pt-6 max-w-[85rem]">
                 {eventsWithImages.map((event) => (
                     <Link

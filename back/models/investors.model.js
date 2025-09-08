@@ -34,7 +34,9 @@ export async function deleteById(sql, id) {
   return (await dbUtils.deleteById(sql, TABLE_NAME, id));
 }
 
-// Update
+// ------------
+// -- Update --
+// ------------
 
 export async function update(sql, data, id) {
   return (await dbUtils.update(sql, TABLE_NAME, data, id));

@@ -3,9 +3,13 @@ import axios from "axios";
 export interface Partner {
   id: number;
   name: string;
+  legal_status: string,
+  address: string,
+  email: string,
+  phone: string,
+  created_at: string,
   description?: string;
-  website?: string;
-  logo_url?: string;
+  partnership_type: string
 }
 
 export async function getPartners(): Promise<Partner[]> {
@@ -31,7 +35,7 @@ export async function getPartners(): Promise<Partner[]> {
   }
 }
 
-export async function getPartner(partnerId: string): Promise<Partner | null> {
+export async function getPartner(partnerId: number): Promise<Partner | null> {
   const config = {
     method: 'get',
     maxBodyLength: Infinity,

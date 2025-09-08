@@ -23,7 +23,16 @@ export default async function ProjectPage({ params }: { params: { id: string } }
   if (project.founders && project.founders.length > 0) {
     await Promise.all(
       project.founders.map(async (founder) => {
-        const img = await getFounderImage(project.id.toString(), founder.id.toString());
+        if (!project.id || !founder.id) {
+          console.warn("Founder without id:", founder);
+          return;
+        }
+
+        const img = await getFounderImage(
+          project.id.toString(),
+          founder.id.toString()
+        );
+
         if (img) founderImages[founder.id] = img;
       })
     );
@@ -181,11 +190,11 @@ export default async function ProjectPage({ params }: { params: { id: string } }
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {project.founders.map((founder) => (
-                <div key={founder.id} className="text-center group">
+              {project.founders.map((founder, index) => (
+                <div key={founder.id ?? index} className="text-center group">
                   <div className="relative mb-6">
                     <div className="w-32 h-32 mx-auto rounded-full overflow-hidden shadow-lg ring-4 ring-purple-100 group-hover:ring-purple-200 transition-all duration-200">
-                      {founderImages[founder.id] ? (
+                      {founder.id && founderImages[founder.id] ? (
                         <Image
                           src={founderImages[founder.id]}
                           alt={founder.name}

@@ -1,16 +1,8 @@
 // components/Events.tsx
 import Link from "next/link";
-import { getEvents, getEventImage } from "../app/requests/events";
+import { getEvents, getEventImage, Event } from "../app/requests/events";
 import { Calendar } from "lucide-react";
 import Image from "next/image";
-
-interface Event {
-  id: number;
-  name: string;
-  description?: string;
-  dates?: string;
-  event_type?: string;
-}
 
 export default async function Events() {
   const events = await getEvents();
@@ -49,7 +41,7 @@ export default async function Events() {
                 className="w-full h-[290px] object-cover rounded-md"
                 unoptimized
               />
-            <div className="flex flex-col items-start p-5">
+            <div className="flex flex-col p-5">
                 <div className="flex items-center mb-4">
                     <Calendar />
                     <h5 className="ml-3 text-slate-800 text-xl font-semibold">
