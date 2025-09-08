@@ -2,12 +2,12 @@ name: Basic CI
 
 on:
   push:
-    branches: [ cicd ]
+    branches: ["main", "develop", "cicd"]
   pull_request:
-    branches: [ cicd ]
+    branches: ["main", "develop"]
 
 jobs:
-  front:
+  frontend:
     name: Frontend CI
     runs-on: ubuntu-latest
     defaults:
@@ -32,7 +32,7 @@ jobs:
       - name: Run tests
         run: npm test || echo "No tests found"
 
-  back:
+  backend:
     name: Backend CI
     runs-on: ubuntu-latest
     defaults:
