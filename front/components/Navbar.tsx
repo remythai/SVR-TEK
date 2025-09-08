@@ -125,10 +125,10 @@ export default function Navbar() {
           <ul className="flex flex-col space-y-4 font-medium py-8">
             {[
               { href: "/", label: "Home" },
-              { href: "#projects", label: "Projects" },
-              { href: "#news", label: "News" },
-              { href: "#events", label: "Events" },
-              { href: "#about", label: "About" },
+              { href: "/#projects", label: "Projects" },
+              { href: "/#news", label: "News" },
+              { href: "/#events", label: "Events" },
+              { href: "/#about", label: "About" },
             ].map(({ href, label }) => (
               <li key={href} className="border-b pb-3">
                 <Link

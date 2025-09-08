@@ -30,7 +30,7 @@ export default function SearchBar() {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="w-full h-full outline-none text-sm text-gray-500"
-        placeholder="Rechercher une startup..."
+        placeholder="Search a startup..."
       />
     </form>
   );

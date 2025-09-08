@@ -12,8 +12,8 @@ export default async function ProjectPage({ params }: { params: { id: string } }
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-pink-50">
         <div className="text-center p-8 bg-white rounded-2xl shadow-lg border border-purple-100">
           <AlertCircle className="w-16 h-16 text-purple-300 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-800">Projet introuvable</h2>
-          <p className="text-gray-600 mt-2">Le projet que vous recherchez n&apos;existe pas ou a été supprimé.</p>
+          <h2 className="text-2xl font-bold text-gray-800">Project not found</h2>
+          <p className="text-gray-600 mt-2">The project you are looking for does not exist or has been deleted.</p>
         </div>
       </div>
     );

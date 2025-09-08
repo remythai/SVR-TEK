@@ -4,80 +4,64 @@ import FilterForm from "@/components/FilterForm";
 import SearchBar from "@/components/SearchBar";
 import { Building } from "lucide-react";
 
-interface SearchParams {
-  sector?: string;
-  maturity?: string;
-  location?: string;
-  project_status?: string;
-  legal_status?: string;
-  search?: string;
-}
-
 interface Startup {
   id: number;
   name: string;
   sector: string;
   maturity: string;
   description?: string;
-  address?: string
+  address?: string;
   project_status?: string;
   legal_status?: string;
+  location?: string;
 }
 
-export default async function Home({ searchParams }: { searchParams: SearchParams }) {
+interface Props {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}
+
+export default async function ProjectsPage({ searchParams }: Props) {
   const allStartups: Startup[] = await getStartups();
-  const params = searchParams;
+  
+  // Await searchParams before using it
+  const resolvedSearchParams = await searchParams;
+
+  const params: Record<string, string> = {};
+  if (resolvedSearchParams) {
+    Object.entries(resolvedSearchParams).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        params[key] = value[0];
+      } else if (typeof value === "string") {
+        params[key] = value;
+      }
+    });
+  }
 
   let filteredStartups = allStartups;
 
-  // Recherche globale
   if (params.search) {
     const searchTerm = params.search.toLowerCase();
     filteredStartups = filteredStartups.filter(
       (startup) =>
-        startup.name?.toLowerCase().includes(searchTerm) ||
-        startup.sector?.toLowerCase().includes(searchTerm) ||
-        startup.description?.toLowerCase().includes(searchTerm)
+        startup.name.toLowerCase().includes(searchTerm) ||
+        startup.sector.toLowerCase().includes(searchTerm) ||
+        (startup.description?.toLowerCase().includes(searchTerm) ?? false)
     );
   }
 
-  // Filtre secteur
-  if (params.sector) {
-    filteredStartups = filteredStartups.filter((startup) =>
-      startup.sector?.toLowerCase().includes(params.sector!.toLowerCase())
-    );
-  }
-
-  // Filtre maturité
-  if (params.maturity) {
-    filteredStartups = filteredStartups.filter((startup) =>
-      startup.maturity?.toLowerCase().includes(params.maturity!.toLowerCase())
-    );
-  }
-
-  // Filtre statut projet
-  if (params.project_status) {
-    filteredStartups = filteredStartups.filter((startup) =>
-      startup.project_status?.toLowerCase().includes(params.project_status!.toLowerCase())
-    );
-  }
-
-  // Filtre statut légal
-  if (params.legal_status) {
-    filteredStartups = filteredStartups.filter((startup) =>
-      startup.legal_status?.toLowerCase().includes(params.legal_status!.toLowerCase())
-    );
-  }
-
-  // Filtre localisation (dans address)
-  if (params.location) {
-    filteredStartups = filteredStartups.filter((startup) =>
-      startup.address?.toLowerCase().includes(params.location!.toLowerCase())
-    );
-  }
+  ["sector", "maturity", "project_status", "legal_status", "location"].forEach((key) => {
+    const value = params[key];
+    if (value) {
+      filteredStartups = filteredStartups.filter((startup) =>
+        (startup[key as keyof Startup] as string | undefined)
+          ?.toLowerCase()
+          .includes(value.toLowerCase()) ?? false
+      );
+    }
+  });
 
   return (
-    <div className="w-full min-h-screen p-10 flex flex-col items-center">
+    <div className="w-full min-h-screen px-6 md:px-12 lg:px-20 flex flex-col items-center">
       <div className="flex justify-between w-full items-left md:items-center gap-6 mt-30 max-w-[85rem] custom-max-1170">
         <FilterForm
           currentFilters={{
@@ -93,8 +77,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
 
       <div className="pt-6 w-full max-w-[85rem]">
         <p className="text-sm text-gray-600">
-          {filteredStartups.length} startup
-          found
+          {filteredStartups.length} startup{filteredStartups.length > 1 ? "s" : ""} found
           {params.search && <span> pour &quot;{params.search}&quot;</span>}
         </p>
       </div>
@@ -108,9 +91,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
           >
             <div className="flex items-center mb-4">
               <Building />
-              <h5 className="ml-3 text-slate-800 text-xl font-semibold">
-                {startup.name}
-              </h5>
+              <h5 className="ml-3 text-slate-800 text-xl font-semibold">{startup.name}</h5>
             </div>
             <p className="block text-slate-600 leading-normal font-light mb-4">
               {startup.name} — {startup.sector} — {startup.maturity}
