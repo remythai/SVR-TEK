@@ -2,8 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { signIn } from "@/server/users";
-import { z } from "zod";
+import { signIn, signUp } from "@/server/users";
+import { set, z } from "zod";
 
 import {
   Form,
