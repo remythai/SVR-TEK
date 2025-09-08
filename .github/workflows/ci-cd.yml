@@ -2,9 +2,9 @@ name: Basic CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ cicd ]
   pull_request:
-    branches: [ main ]
+    branches: [ cicd ]
 
 jobs:
   front:
