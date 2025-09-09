@@ -23,6 +23,22 @@ export async function getUserImage(sql, userId) {
     return await sql`SELECT * FROM users WHERE id = ${userId}`;
 }
 
+// ------------
+// -- Create --
+// ------------
+
+export async function create(sql, data) {
+  return await dbUtils.create(sql, TABLE_NAME, data);
+}
+
+// ------------
+// -- Delete --
+// ------------
+
+export async function deleteById(sql, id) {
+  return (await dbUtils.deleteById(sql, TABLE_NAME, id));
+}
+
 // Update
 
 export async function update(sql, data, id) {

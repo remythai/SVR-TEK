@@ -13,7 +13,7 @@ export async function getNews(): Promise<NewsItem[]> {
   const config = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: 'http://localhost:8000/news',
+    url: 'https://api.jeb-incubator.com/news',
     headers: {
       'X-Group-Authorization': process.env.GROUP_TOKEN as string
     }

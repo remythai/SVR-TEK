@@ -19,14 +19,6 @@ export async function create(sql, data) {
 }
 
 // ------------
-// -- Create --
-// ------------
-
-export async function create(sql, data) {
-  return await dbUtils.create(sql, TABLE_NAME, data);
-}
-
-// ------------
 // -- Delete --
 // ------------
 
