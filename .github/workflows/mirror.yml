@@ -22,7 +22,7 @@ jobs:
 
     - name: Sync to private repository
       run: |
-        git remote add private https://x-access-token:${{ secrets.PRIVATE_REPO_TOKEN }}@github.com/VOTRE-ORG/VOTRE-REPO-PRIVE.git
+        git remote add private https://x-access-token:${{ secrets.PRIVATE_REPO_TOKEN }}@github.com/EpitechPGE3-2025/G-SVR-500-BDX-5-1-survivor-5.git
         
         git fetch private
         
