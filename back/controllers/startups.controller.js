@@ -8,8 +8,25 @@ export const getAll = async (req, res) => {
   const sql = req.app.get("db");
   try {
     const startups = await Startup.getAll(sql);
-    res.status(200).json(startups);
+
+    const startupsWithFounders = await Promise.all(
+      startups.map(async (startup) => {
+        const relations = await Startup.getRelationsByStartupId(sql, startup.id);
+
+        const founders = await Promise.all(
+          relations.map((rel) => Startup.getFounderById(sql, rel.founder_id))
+        );
+
+        return {
+          ...startup,
+          founders,
+        };
+      })
+    );
+
+    res.status(200).json(startupsWithFounders);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Erreur serveur" });
   }
 };

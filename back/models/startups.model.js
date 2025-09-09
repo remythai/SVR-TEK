@@ -22,6 +22,15 @@ export async function getFounderImage(sql, founderId) {
   `;
 }
 
+export async function getRelationsByStartupId(sql, startupId) {
+  return await sql`SELECT founder_id FROM relation_table WHERE startup_id = ${startupId}`;
+}
+
+export async function getFounderById(sql, founderId) {
+  const response = await dbUtils.getById(sql, 'founders', founderId);
+  return response[0];
+}
+
 // ------------
 // -- Create --
 // ------------
@@ -46,4 +55,4 @@ export async function update(sql, data, id) {
   return (await dbUtils.update(sql, TABLE_NAME, data, id));
 }
 
-export default { getAll, getById, getFounderImage, create, deleteById, update};
+export default { getAll, getById, getFounderImage, getFounderById, getRelationsByStartupId,create, deleteById, update};
