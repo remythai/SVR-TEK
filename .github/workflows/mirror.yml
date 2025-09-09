@@ -3,8 +3,7 @@ name: Mirror to Public Repository
 on:
   push:
     branches:
-      - main
-      - develop
+      - '**'
 
 jobs:
   mirror:
@@ -15,15 +14,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure Git
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
       - name: Mirror to public repository
         env:
           PUBLIC_REPO_TOKEN: ${{ secrets.PUBLIC_REPO_TOKEN }}
         run: |
+          # Ajouter le remote public avec token
           git remote add public https://x-access-token:${PUBLIC_REPO_TOKEN}@github.com/remythai/SVR-TEK.git
-          git push public main --force
-          git push public develop --force
+          
+          # Pousser toutes les branches
+          git push --mirror public
