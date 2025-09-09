@@ -119,12 +119,12 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
 
   const renderMonthView = () => {
     const days = generateMonthDays();
-    const weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+    const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     
     return (
       <div className="bg-white rounded-xl shadow-md p-6">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-800">Calendrier - {getMonthYearString()}</h2>
+          <h2 className="text-xl font-semibold text-gray-800">Calendar - {getMonthYearString()}</h2>
           <div className="flex space-x-2">
             <button 
               onClick={() => navigateDate('prev')}
@@ -136,7 +136,7 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
               onClick={() => setSelectedDate(new Date())}
               className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm"
             >
-              Aujourd'hui
+              Today
             </button>
             <button 
               onClick={() => navigateDate('next')}
@@ -180,7 +180,7 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
                       {dayEvents.slice(0, 2).map(event => (
                         <div 
                           key={event.id} 
-                          className="text-xs bg-blue-100 text-blue-800 rounded px-1 py-0.5 truncate cursor-pointer hover:bg-blue-200"
+                          className="text-xs bg-secondary-500/40 text-secondary-100 rounded px-1 py-0.5 truncate cursor-pointer hover:bg-secondary-500/60 transition-colors duration-300"
                           title={event.name}
                           onClick={(e) => {
                             e.stopPropagation();
@@ -216,32 +216,6 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
     
     return (
       <div className="bg-white rounded-xl shadow-md p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-800">
-            Semaine du {start.toLocaleDateString('fr-FR')} au {end.toLocaleDateString('fr-FR')}
-          </h2>
-          <div className="flex space-x-2">
-            <button 
-              onClick={() => navigateDate('prev')}
-              className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <button 
-              onClick={() => setSelectedDate(new Date())}
-              className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm"
-            >
-              Aujourd'hui
-            </button>
-            <button 
-              onClick={() => navigateDate('next')}
-              className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-        
         <div className="grid grid-cols-8 gap-2">
           <div className="text-center text-sm font-medium text-gray-500 py-2">Heure</div>
           {weekDays.map(day => {
@@ -318,7 +292,7 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
               onClick={() => setSelectedDate(new Date())}
               className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm"
             >
-              Aujourd'hui
+              Today
             </button>
             <button 
               onClick={() => navigateDate('next')}
@@ -341,9 +315,9 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex flex-col items-center justify-center mr-3">
-                        <div className="text-sm font-bold text-blue-800">{formattedDate.day}</div>
-                        <div className="text-xs text-blue-600">{formattedDate.month}</div>
+                      <div className="flex-shrink-0 w-12 h-12 bg-secondary-500/40 rounded-lg flex flex-col items-center justify-center mr-3">
+                        <div className="text-sm font-bold text-secondary-100">{formattedDate.day}</div>
+                        <div className="text-xs text-secondary-100">{formattedDate.month}</div>
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900">
@@ -370,13 +344,6 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
                       <p className="text-gray-600 text-sm mb-3">
                         {event.description || "Aucune description disponible."}
                       </p>
-                      <Link 
-                        href={`/events/${event.id}`}
-                        className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        Voir détails <ArrowRight className="h-4 w-4 ml-1" />
-                      </Link>
                     </div>
                   )}
                 </div>
@@ -384,7 +351,7 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
             })
           ) : (
             <div className="text-center py-8 text-gray-500">
-              Aucun événement prévu pour cette date
+              There is no event for this date
             </div>
           )}
         </div>
@@ -396,8 +363,8 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
     <div className="min-h-screen mt-30 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Calendrier des Événements</h1>
-          <p className="text-gray-600">Découvrez nos prochains événements et activités</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Event's calendar</h1>
+          <p className="text-gray-600">Discover our future events and partnerships</p>
         </div>
 
         <div className="flex justify-center mb-6">
@@ -406,98 +373,39 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
               type="button"
               className={`px-4 py-2 text-sm font-medium rounded-l-lg ${
                 view === 'day' 
-                  ? 'bg-blue-600 text-white' 
+                  ? 'bg-secondary-500/40 text-secondary-100' 
                   : 'bg-white text-gray-700 hover:bg-gray-100'
               }`}
               onClick={() => setView('day')}
             >
-              Jour
-            </button>
-            <button
-              type="button"
-              className={`px-4 py-2 text-sm font-medium ${
-                view === 'week' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
-              }`}
-              onClick={() => setView('week')}
-            >
-              Semaine
+              Day
             </button>
             <button
               type="button"
               className={`px-4 py-2 text-sm font-medium rounded-r-lg ${
                 view === 'month' 
-                  ? 'bg-blue-600 text-white' 
+                  ? 'bg-secondary-500/40 text-secondary-100' 
                   : 'bg-white text-gray-700 hover:bg-gray-100'
               }`}
               onClick={() => setView('month')}
             >
-              Mois
+              Month
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="lg:col-span-2">
             {view === 'month' && renderMonthView()}
             {view === 'week' && renderWeekView()}
             {view === 'day' && renderDayView()}
           </div>
 
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-6">Événements à venir</h2>
-            <div className="space-y-6">
-              {eventsWithImages.slice(0, 5).map((event) => {
-                const formattedDate = event.dates ? formatDate(event.dates) : null;
-                
-                return (
-                  <div key={event.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    {formattedDate && (
-                      <div className="flex items-center mb-3">
-                        <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex flex-col items-center justify-center mr-3">
-                          <div className="text-sm font-bold text-blue-800">{formattedDate.day}</div>
-                          <div className="text-xs text-blue-600">{formattedDate.month}</div>
-                        </div>
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">{formattedDate.weekday}</div>
-                          <div className="text-xs text-gray-500">{formattedDate.year}</div>
-                        </div>
-                      </div>
-                    )}
-                    
-                    <h3 className="font-semibold text-gray-900 mb-2">
-                      {event.name.length > 30 ? event.name.slice(0, 27) + "..." : event.name}
-                    </h3>
-                    
-                    <div className="flex items-center text-sm text-gray-600 mb-2">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      <span>{event.location || "Lieu à préciser"}</span>
-                    </div>
-                    
-                    {event.event_type && (
-                      <div className="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full mb-3">
-                        {event.event_type}
-                      </div>
-                    )}
-                    
-                    <div className="flex justify-between items-center mt-4">
-                      <Link 
-                        href={`/events/${event.id}`}
-                        className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center"
-                      >
-                        Voir détails <ArrowRight className="h-4 w-4 ml-1" />
-                      </Link>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          
         </div>
 
         <div className="mt-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Tous les événements</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">All events</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {eventsWithImages.map((event) => {
               const formattedDate = event.dates ? formatDate(event.dates) : null;
@@ -538,7 +446,7 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
                     </div>
                     
                     {event.event_type && (
-                      <span className="inline-block bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full mb-4">
+                      <span className="inline-block bg-secondary-500/40 text-secondary-100 text-xs px-3 py-1 rounded-full mb-4">
                         {event.event_type}
                       </span>
                     )}
@@ -546,13 +454,6 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                       {event.description || "Aucune description disponible."}
                     </p>
-                    
-                    <Link 
-                      href={`/events/${event.id}`}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 rounded-lg block transition-colors"
-                    >
-                      Voir détails
-                    </Link>
                   </div>
                 </div>
               );
