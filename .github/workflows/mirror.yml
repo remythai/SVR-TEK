@@ -15,30 +15,11 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Configure Git
-      run: |
-        git config --global user.name "GitHub Actions Bot"
-        git config --global user.email "actions@github.com"
-
-    - name: Sync to private repository
-      run: |
-        git remote add private https://x-access-token:${{ secrets.PRIVATE_REPO_TOKEN }}@github.com/EpitechPGE3-2025/G-SVR-500-BDX-5-1-survivor-5.git
-        
-        git fetch private
-        
-        if ! git push private ${{ github.ref_name }}:${{ github.ref_name }} --force-with-lease; then
-          echo "⚠️  Push failed, attempting to resolve..."
+    - name: Push to Mirror
+      uses: pixta-dev/repository-mirroring-action@v1
+      with:
+        target_repo_url:
+          ${{ vars.MIRROR_URL }}
+        ssh_private_key:
+          ${{ secrets.GIT_SSH_PRIVATE_KEY }}
           
-          git push private ${{ github.ref_name }}:${{ github.ref_name }} --force
-          echo "🔄 Forced push completed"
-        else
-          echo "✅ Clean push completed"
-        fi
-
-    - name: Create summary
-      run: |
-        echo "## Sync Summary" >> $GITHUB_STEP_SUMMARY
-        echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Author:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Status:** ✅ Successfully synced to private repository" >> $GITHUB_STEP_SUMMARY
