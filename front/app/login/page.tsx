@@ -2,8 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { signIn, signUp } from "@/server/users";
-import { set, z } from "zod";
+import { signIn } from "@/server/users";
+import { z } from "zod";
 
 import {
   Form,
@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "../../components/hooks/useAuth";
 
 const formSchema = z.object({
     email: z.string().min(2).max(50),
@@ -26,6 +27,8 @@ const formSchema = z.object({
 export default function Login() {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const { login } = useAuth();
+    
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -38,8 +41,7 @@ export default function Login() {
         setIsLoading(true);
         const { success, message, token } = await signIn(values.email, values.password);
         if (success) {
-            localStorage.setItem("access_token", token);
-
+            login(token);
             toast.success("Logged successfully!");
             router.push('/dashboard');
             form.reset();
@@ -84,7 +86,7 @@ export default function Login() {
                     <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                        <Input placeholder="********" {...field} />
+                        <Input type="password" placeholder="********" {...field} />
                     </FormControl>
                     <FormMessage />
                     </FormItem>
