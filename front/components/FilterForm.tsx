@@ -1,16 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-
-// Fonction debounce custom (sans lodash)
-function debounce<T extends (...args: any[]) => void>(func: T, delay: number): T {
-  let timeoutId: NodeJS.Timeout;
-  return ((...args: any[]) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => func(...args), delay);
-  }) as T;
-}
 
 const sectorOptions = [
   'DeepTech', 'FinTech', 'Logistics', 'SaaS', 'HealthTech',
@@ -56,22 +47,20 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
     router.push(`?${params.toString()}`);
   };
 
-  const debouncedLocationUpdate = useCallback(
-    debounce((value: string) => {
+  // Debounce location update avec useEffect
+  useEffect(() => {
+    const handler = setTimeout(() => {
       const params = new URLSearchParams(searchParams);
-      if (value) {
-        params.set('location', value);
+      if (localLocation) {
+        params.set('location', localLocation);
       } else {
         params.delete('location');
       }
       router.push(`?${params.toString()}`);
-    }, 300),
-    [searchParams]
-  );
+    }, 300);
 
-  useEffect(() => {
-    debouncedLocationUpdate(localLocation);
-  }, [localLocation, debouncedLocationUpdate]);
+    return () => clearTimeout(handler);
+  }, [localLocation, searchParams, router]);
 
   useEffect(() => {
     setLocalLocation(currentFilters.location);

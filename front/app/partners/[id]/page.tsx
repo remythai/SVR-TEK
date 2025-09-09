@@ -1,4 +1,4 @@
-import { getPartner, Partner } from "@/app/requests/partners";
+import { getPartner } from "@/app/requests/partners";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
