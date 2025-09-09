@@ -18,10 +18,28 @@ jobs:
 
       - name: Setup SSH Key
         run: |
+          echo "🔑 Setting up SSH key..."
+          
           mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          
+          if [ -z "${{ secrets.DEPLOY_PRIVATE_KEY }}" ]; then
+            echo "❌ DEPLOY_PRIVATE_KEY secret is empty!"
+            exit 1
+          fi
+          
           echo "${{ secrets.DEPLOY_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          
           ssh-keyscan github.com >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          
+          echo "🔍 Checking SSH key format..."
+          head -1 ~/.ssh/id_rsa
+          tail -1 ~/.ssh/id_rsa
+          
+          echo "🌐 Testing SSH connection to GitHub..."
+          ssh -T git@github.com || echo "SSH test completed (exit code $?)"
 
       - name: Configure Git
         run: |
@@ -39,3 +57,4 @@ jobs:
           
           git push public $current_branch --force
           
+          echo "✅ Mirror completed successfully!"
