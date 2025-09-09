@@ -13,7 +13,7 @@ export async function getEvents(): Promise<Event[]> {
   const config = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: 'http://localhost:8000/events',
+    url: 'https://api.jeb-incubator.com/events',
     headers: {
       'X-Group-Authorization': process.env.GROUP_TOKEN as string
     }
@@ -36,7 +36,7 @@ export async function getEvent(eventId: string): Promise<Event | null> {
   const config = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: `http://localhost:8000/events/${eventId}`,
+    url: `https://api.jeb-incubator.com/events/${eventId}`,
     headers: {
       'X-Group-Authorization': process.env.GROUP_TOKEN as string
     }
@@ -58,7 +58,7 @@ export async function getEvent(eventId: string): Promise<Event | null> {
 export async function getEventImage(eventId: string | number): Promise<string | null> {
   try {
     const res = await axios.get<ArrayBuffer>(
-      `http://localhost:8000/events/${eventId}/image`,
+      `https://api.jeb-incubator.com/events/${eventId}/image`,
       {
         headers: {
           "X-Group-Authorization": process.env.GROUP_TOKEN as string,
