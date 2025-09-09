@@ -13,7 +13,7 @@ jobs:
             uses: actions/checkout@v4
           - name: No test passed
             run:  |
-              if [[ "${{ github.repository }}" == "${{ git@github.com:EpitechPGE3-2025/G-SVR-500-BDX-5-1-survivor-5.git }}" ]]; then
+              if [[ "${{ github.repository }}" == "git@github.com:EpitechPGE3-2025/G-SVR-500-BDX-5-1-survivor-5.git" ]]; then
                 exit 1
               else
                 exit 0
