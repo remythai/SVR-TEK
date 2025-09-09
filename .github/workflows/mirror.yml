@@ -14,47 +14,19 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Setup SSH Key
-        run: |
-          echo "🔑 Setting up SSH key..."
-          
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          
-          if [ -z "${{ secrets.DEPLOY_PRIVATE_KEY }}" ]; then
-            echo "❌ DEPLOY_PRIVATE_KEY secret is empty!"
-            exit 1
-          fi
-          
-          echo "${{ secrets.DEPLOY_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
-          
-          echo "🔍 Checking SSH key format..."
-          head -1 ~/.ssh/id_rsa
-          tail -1 ~/.ssh/id_rsa
-          
-          echo "🌐 Testing SSH connection to GitHub..."
-          ssh -T git@github.com || echo "SSH test completed (exit code $?)"
-
-      - name: Configure Git
-        run: |
-          git config --global user.name "GitHub Action Mirror"
-          git config --global user.email "action@github.com"
 
       - name: Mirror to public repository
         run: |
           echo "🔄 Starting mirror process..."
           
-          git remote add public git@github.com:remythai/SVR-TEK.git
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          current_branch=$(git branch --show-current)
-          echo "📤 Pushing branch: $current_branch to public repo"
+          git remote add public https://x-access-token:${{ secrets.MIRROR_TOKEN }}@github.com/remythai/SVR-TEK.git
+          
+          current_branch=${GITHUB_REF#refs/heads/}
+          echo "📤 Pushing branch: $current_branch"
           
           git push public $current_branch --force
           
-          echo "✅ Mirror completed successfully!"
+          echo "✅ Mirror completed!"
