@@ -18,8 +18,6 @@ jobs:
         env:
           PUBLIC_REPO_TOKEN: ${{ secrets.PUBLIC_REPO_TOKEN }}
         run: |
-          # Ajouter le remote public avec token
           git remote add public https://x-access-token:${PUBLIC_REPO_TOKEN}@github.com/remythai/SVR-TEK.git
           
-          # Pousser toutes les branches
           git push --mirror public
