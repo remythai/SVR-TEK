@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { Buffer } from "buffer";
 
 export interface Event {
@@ -10,17 +10,21 @@ export interface Event {
 }
 
 export async function getEvents(): Promise<Event[]> {
-  try {
-    const baseUrl =
-      typeof window === 'undefined'
-        ? process.env.NEXT_PUBLIC_BACKEND_URL
-        : '';
+  const config: AxiosRequestConfig = {
+    method: 'get',
+    maxBodyLength: Infinity,
+    url: 'https://api.jeb-incubator.com/events',
+    headers: {
+      'X-Group-Authorization': process.env.GROUP_TOKEN
+    }
+  };
 
-    const response = await axios.get<Event[]>(`${baseUrl}/api/events`);
+  try {
+    const response = await axios.request<Event[]>(config);
     return response.data;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error('Axios error:', error.message);
+    if (error instanceof Error) {
+      console.error('error:', error.message);
     } else {
       console.error('Unexpected error:', error);
     }

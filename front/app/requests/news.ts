@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 
 export interface NewsItem {
   id: number;
@@ -10,13 +10,21 @@ export interface NewsItem {
 }
 
 export async function getNews(): Promise<NewsItem[]> {
+  const config: AxiosRequestConfig = {
+    method: 'get',
+    maxBodyLength: Infinity,
+    url: 'https://api.jeb-incubator.com/news',
+    headers: {
+      'X-Group-Authorization': process.env.GROUP_TOKEN
+    }
+  };
+
   try {
-    const baseUrl = typeof window === 'undefined' ? process.env.NEXT_PUBLIC_BACKEND_URL : '';
-    const response = await axios.get<NewsItem[]>(`${baseUrl}/api/news`);
+    const response = await axios.request<NewsItem[]>(config);
     return response.data;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error('Axios error:', error.message);
+    if (error instanceof Error) {
+      console.error('error:', error.message);
     } else {
       console.error('Unexpected error:', error);
     }

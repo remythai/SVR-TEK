@@ -10,9 +10,17 @@ export interface User {
 }
 
 export async function getUsers(): Promise<User[]> {
+  const config: AxiosRequestConfig = {
+    method: 'get',
+    maxBodyLength: Infinity,
+    url: 'https://api.jeb-incubator.com/users',
+    headers: {
+      'X-Group-Authorization': process.env.GROUP_TOKEN
+    }
+  };
+
   try {
-    const baseUrl = typeof window === 'undefined' ? process.env.NEXT_PUBLIC_BACKEND_URL : '';
-    const response = await axios.get<User[]>(`${baseUrl}/api/users`);
+    const response = await axios.request<User[]>(config);
     return response.data;
   } catch (error: unknown) {
     if (error instanceof Error) {

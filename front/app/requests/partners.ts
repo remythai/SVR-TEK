@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 
 export interface Partner {
   id: number;
@@ -13,12 +13,12 @@ export interface Partner {
 }
 
 export async function getPartners(): Promise<Partner[]> {
-  const config = {
+  const config: AxiosRequestConfig = {
     method: 'get',
     maxBodyLength: Infinity,
     url: 'https://api.jeb-incubator.com/partners',
     headers: {
-      'X-Group-Authorization': process.env.GROUP_TOKEN as string
+      'X-Group-Authorization': process.env.GROUP_TOKEN
     }
   };
 
@@ -26,8 +26,8 @@ export async function getPartners(): Promise<Partner[]> {
     const response = await axios.request<Partner[]>(config);
     return response.data;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error('Axios error:', error.message);
+    if (error instanceof Error) {
+      console.error('error:', error.message);
     } else {
       console.error('Unexpected error:', error);
     }
