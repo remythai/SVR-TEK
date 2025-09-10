@@ -10,6 +10,11 @@ jobs:
   frontend:
     name: Frontend CI
     runs-on: ubuntu-latest
+    env:
+      GROUP_TOKEN: ${{ secrets.FRONT_GROUP_TOKEN }}
+      BETTER_AUTH_SECRET: ${{ secrets.FRONT_BETTER_AUTH_SECRET }}
+      BETTER_AUTH_URL: ${{ secrets.FRONT_BETTER_AUTH_URL }}
+      DATABASE_URL: ${{ secrets.FRONT_DATABASE_URL }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -34,6 +39,10 @@ jobs:
   backend:
     name: Backend CI
     runs-on: ubuntu-latest
+    env:
+      JWT_ACCESS_SECRET: ${{ secrets.BACK_JWT_ACCESS_SECRET }}
+      JWT_REFRESH_SECRET: ${{ secrets.BACK_JWT_REFRESH_SECRET }}
+      DATABASE_URL: ${{ secrets.BACK_DATABASE_URL }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
