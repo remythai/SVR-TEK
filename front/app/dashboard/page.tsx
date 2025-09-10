@@ -31,7 +31,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ onClick, icon: Icon, varian
     className={`p-2 rounded-lg transition-colors ${
       variant === "danger"
         ? "text-red-400 hover:bg-red-500/10"
-        : "text-gray-400 hover:bg-gray-700"
+        : "text-secondary-100 hover:bg-secondary-500/80"
     }`}
   >
     <Icon className="h-4 w-4" />
@@ -74,34 +74,34 @@ export default function AdminDashboard() {
 
   const navigationItems = [
     { id: 'dashboard', label: 'Dashboard Global', icon: BarChart3 },
-    { id: 'news', label: 'Gestion Actualités', icon: Newspaper },
-    { id: 'events', label: 'Gestion Événements', icon: Calendar },
-    { id: 'users', label: 'Gestion Utilisateurs', icon: UserCog },
-    { id: 'startups', label: 'Gestion Startups', icon: Building2 }
+    { id: 'news', label: 'News gestion', icon: Newspaper },
+    { id: 'events', label: 'Events gestion', icon: Calendar },
+    { id: 'users', label: 'Users gestion', icon: UserCog },
+    { id: 'startups', label: 'Startups gestion', icon: Building2 }
   ];
 
   const KPICard = ({ title, value, icon: Icon, trend }: { title: string; value: number; icon: React.ComponentType<SVGProps<SVGSVGElement>>; trend?: string }) => (
-    <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+    <div className="bg-secondary-500/80 rounded-lg p-6 border border-secondary-100">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-gray-400 text-sm">{title}</p>
-          <p className="text-2xl font-bold text-white mt-2">{value}</p>
+          <p className="text-secondary-100 text-sm">{title}</p>
+          <p className="text-2xl font-bold text-secondary-100 mt-2">{value}</p>
           {trend && <p className="text-green-400 text-sm mt-1">{trend}</p>}
         </div>
-        <Icon className="h-8 w-8 text-blue-400" />
+        <Icon className="h-8 w-8 text-secondary-100" />
       </div>
     </div>
   );
 
   const TableRow = ({ children, selected, onSelect }: { children: React.ReactNode; selected?: boolean; onSelect?: () => void }) => (
-    <tr className={`border-b border-gray-700 hover:bg-gray-800 ${selected ? 'bg-gray-800' : ''}`}>
+    <tr className={`border-b border-secondary-100 hover:bg-secondary-500/80 ${selected ? 'bg-secondary-300' : ''}`}>
       {onSelect && (
         <td className="px-6 py-4">
           <input 
             type="checkbox" 
             checked={selected} 
             onChange={onSelect}
-            className="rounded bg-gray-700 border-gray-600"
+            className="rounded bg-secondary-500/80 border-secondary-100"
           />
         </td>
       )}
@@ -112,8 +112,7 @@ export default function AdminDashboard() {
   const renderDashboard = () => (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">Dashboard Global</h1>
-        <p className="text-gray-400">Vue d&apo;ensemble des KPIs et activités récentes</p>
+        <h1 className="text-3xl font-bold text-secondary-100 mb-2">Global Dashboard</h1>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -123,31 +122,31 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-4">Activités Récentes</h3>
+        <div className="bg-secondary-500/80 rounded-lg p-6 border border-secondary-100">
+          <h3 className="text-lg font-semibold text-secondary-100 mb-4">Recent activities</h3>
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
               <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-              <span className="text-gray-300">Nouvelle startup ajoutée</span>
-              <span className="text-gray-500 text-sm ml-auto">Il y a 2h</span>
+              <span className="text-secondary-100">New startup added</span>
+              <span className="text-gray-500 text-sm ml-auto">2h ago</span>
             </div>
             <div className="flex items-center space-x-3">
               <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-              <span className="text-gray-300">Nouvel événement</span>
-              <span className="text-gray-500 text-sm ml-auto">Hier</span>
+              <span className="text-secondary-100">New event</span>
+              <span className="text-gray-500 text-sm ml-auto">Yesterday</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-4">Statistiques</h3>
+        <div className="bg-secondary-500/80 rounded-lg p-6 border border-secondary-100">
+          <h3 className="text-lg font-semibold text-secondary-100 mb-4">Statistiques</h3>
           <div className="space-y-4">
             <div>
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-300">Satisfaction utilisateurs</span>
+                <span className="text-secondary-100">Satisfaction utilisateurs</span>
                 <span className="text-white">90%</span>
               </div>
-              <div className="w-full bg-gray-700 rounded-full h-2">
+              <div className="w-full bg-white rounded-full h-2">
                 <div className="bg-purple-400 h-2 rounded-full" style={{ width: '90%' }}></div>
               </div>
             </div>
@@ -165,18 +164,17 @@ export default function AdminDashboard() {
     onDelete?: (item: T) => Promise<void>
   ) => (
     <div className="space-y-4">
-      {/* ...header et filtres */}
-      <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
+      <div className="bg-secondary-500/80 rounded-lg border border-secondary-100 overflow-hidden">
         <table className="min-w-full">
-          <thead className="bg-gray-900">
+          <thead className="bg-secondary-500/80">
             <tr>
               {actions && <th className="px-6 py-3"></th>}
               {columns.map((column, index) => (
-                <th key={index} className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th key={index} className="px-6 py-3 text-left text-xs font-medium text-secondary-100 uppercase tracking-wider">
                   {column}
                 </th>
               ))}
-              {actions && <th className="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>}
+              {actions && <th className="px-6 py-3 text-right text-xs font-medium text-secondary-100 uppercase tracking-wider">Actions</th>}
             </tr>
           </thead>
           <tbody>
@@ -197,7 +195,7 @@ export default function AdminDashboard() {
                   const value = item[key] as TableValue;
 
                   return (
-                    <td key={idx} className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                    <td key={idx} className="px-6 py-4 whitespace-nowrap text-sm text-secondary-100">
                       {Array.isArray(value)
                         ? value.map(v => typeof v === 'object' ? v.name : String(v)).join(', ')
                         : String(value ?? '')
@@ -232,24 +230,24 @@ export default function AdminDashboard() {
       case 'dashboard':
         return renderDashboard();
       case 'news':
-        return renderTable('Gestion des Actualités', news, ['Titre', 'Auteur', 'Catégorie', 'Statut', 'Date de publication']);
+        return renderTable('News gestion', news, ['Title', 'Autor', 'Category', 'Status', 'Publication date']);
       case 'events':
-        return renderTable('Gestion des Événements', events, ['Titre', 'Date', 'Lieu', 'Organisateur', 'Inscrits/Capacité']);
+        return renderTable('Events gestion', events, ['Title', 'Date', 'Location', 'Organisateur', 'Inscrits/Capacité']);
       case 'users':
-        return renderTable('Gestion des Utilisateurs', users, ['Nom', 'Email', 'Rôle', 'Statut', 'Dernière connexion']);
+        return renderTable('Users gestion', users, ['Name', 'Email', 'Rôle', 'Status', 'Last connection']);
       case 'startups':
-        return renderTable('Gestion des Startups', startups, ['Nom', 'Secteur', 'Statut', 'Maturité', 'Fondateurs']);
+        return renderTable('Startups gestion', startups, ['Name', 'Sector', 'Status', 'Maturity', 'Fondators']);
       default:
         return renderDashboard();
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 mt-30 flex">
-      <div className="w-64 bg-gray-800 border-r border-gray-700">
-        <div className="p-6 border-b border-gray-700">
-          <h2 className="text-xl font-bold text-white">Admin Area</h2>
-          <p className="text-gray-400 text-sm">(auth)</p>
+    <div className="min-h-screen mt-30 flex">
+      <div className="w-64">
+        <div className="p-6">
+          <h2 className="text-xl font-bold text-secondary-100">Admin Area</h2>
+          <p className="text-secondary-100 text-sm">(auth)</p>
         </div>
         
         <nav className="p-4 space-y-2">
@@ -261,8 +259,8 @@ export default function AdminDashboard() {
                 onClick={() => setActiveSection(item.id)}
                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
                   activeSection === item.id
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-400 hover:bg-gray-700 hover:text-white'
+                    ? 'bg-secondary-500/80 text-secondary-100'
+                    : 'text-secondary-100 hover:bg-secondary-500/80'
                 }`}
               >
                 <Icon className="h-5 w-5" />
