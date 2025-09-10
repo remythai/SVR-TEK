@@ -1,77 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 
-export async function POST(request: NextRequest) {
+const BACKEND_URL = "http://localhost:8000/startups";
+const TOKEN = process.env.GROUP_TOKEN;
+
+export async function GET() {
   try {
-    const body = await request.json();
-
-    console.log("API Route: Receiving request with body:", body);
-
-    const response = await axios.post(
-      "http://localhost:8000/startups",
-      body,
-      {
-        headers: {
-          "X-Group-Authorization": process.env.GROUP_TOKEN,
-          "Content-Type": "application/json",
-        },
-        timeout: 10000,
-      }
-    );
-
-    console.log("API Route: Backend response:", response.data);
-    return NextResponse.json(response.data, { status: 201 });
+    const response = await axios.get(BACKEND_URL, {
+      headers: { "X-Group-Authorization": TOKEN },
+    });
+    return NextResponse.json(response.data, { status: 200 });
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("API Route Error:", error.message);
-      console.error("API Route Error Response:", error.response?.data);
-
-      if (error.code === "ECONNREFUSED") {
-        return NextResponse.json(
-          {
-            error:
-              "Impossible de contacter le serveur backend. Vérifiez qu'il est démarré.",
-          },
-          { status: 503 }
-        );
-      }
-
-      return NextResponse.json(
-        {
-          error: "Erreur serveur",
-          details: error.response?.data || error.message,
-        },
-        { status: error.response?.status || 500 }
-      );
-    }
-
-    // fallback si ce n'est pas une erreur Axios
-    console.error("Unexpected Error:", error);
+    console.error("GET Startups Error:", error);
     return NextResponse.json(
-      { error: "Erreur inattendue" },
+      { error: "Erreur lors de la récupération des startups" },
       { status: 500 }
     );
   }
 }
 
-export async function GET() {
+export async function POST(request: NextRequest) {
   try {
-    const response = await axios.get("http://localhost:8000/startups", {
+    const body = await request.json();
+
+    const response = await axios.post(BACKEND_URL, body, {
       headers: {
-        "X-Group-Authorization": process.env.GROUP_TOKEN,
+        "X-Group-Authorization": TOKEN,
+        "Content-Type": "application/json",
       },
     });
 
-    return NextResponse.json(response.data);
+    return NextResponse.json(response.data, { status: 201 });
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("GET Startups Error:", error.message);
-    } else {
-      console.error("Unexpected GET Error:", error);
-    }
-
+    console.error("POST Startups Error:", error);
     return NextResponse.json(
-      { error: "Erreur lors de la récupération des startups" },
+      { error: "Erreur lors de la création de la startup" },
       { status: 500 }
     );
   }

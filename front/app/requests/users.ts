@@ -10,17 +10,9 @@ export interface User {
 }
 
 export async function getUsers(): Promise<User[]> {
-  const config: AxiosRequestConfig = {
-    method: 'get',
-    maxBodyLength: Infinity,
-    url: 'https://api.jeb-incubator.com/users',
-    headers: {
-      'X-Group-Authorization': process.env.GROUP_TOKEN
-    }
-  };
-
   try {
-    const response = await axios.request<User[]>(config);
+    const baseUrl = typeof window === 'undefined' ? process.env.NEXT_PUBLIC_BACKEND_URL : '';
+    const response = await axios.get<User[]>(`${baseUrl}/api/users`);
     return response.data;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -36,7 +28,7 @@ export async function getUser(userId: string): Promise<User | null> {
   const config: AxiosRequestConfig = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: `https://api.jeb-incubator.com/users/${userId}`,
+    url: `http://localhost:8000/users/${userId}`,
     headers: {
       'X-Group-Authorization': process.env.GROUP_TOKEN
     }
@@ -59,7 +51,7 @@ export async function getUserFromEmail(email: string): Promise<User | null> {
   const config: AxiosRequestConfig = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: `https://api.jeb-incubator.com/users/email/${email}`,
+    url: `http://localhost:8000/users/email/${email}`,
     headers: {
       'X-Group-Authorization': process.env.GROUP_TOKEN
     }
@@ -82,7 +74,7 @@ export async function getUserImage(userId: string): Promise<string | null> {
   const config: AxiosRequestConfig = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: `https://api.jeb-incubator.com/users/${userId}/image`,
+    url: `http://localhost:8000/users/${userId}/image`,
     headers: {
       'X-Group-Authorization': process.env.GROUP_TOKEN
     }

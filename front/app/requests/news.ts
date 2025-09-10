@@ -10,17 +10,9 @@ export interface NewsItem {
 }
 
 export async function getNews(): Promise<NewsItem[]> {
-  const config = {
-    method: 'get',
-    maxBodyLength: Infinity,
-    url: 'https://api.jeb-incubator.com/news',
-    headers: {
-      'X-Group-Authorization': process.env.GROUP_TOKEN as string
-    }
-  };
-
   try {
-    const response = await axios.request<NewsItem[]>(config);
+    const baseUrl = typeof window === 'undefined' ? process.env.NEXT_PUBLIC_BACKEND_URL : '';
+    const response = await axios.get<NewsItem[]>(`${baseUrl}/api/news`);
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

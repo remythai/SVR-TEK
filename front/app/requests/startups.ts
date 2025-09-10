@@ -30,7 +30,7 @@ export interface CreateStartupPayload {
   address: string;
   email: string;
   phone: string;
-  created_at: string; // bien string
+  created_at: string;
   description: string;
   website_url: string | null;
   social_media_url: string | null;
@@ -38,7 +38,7 @@ export interface CreateStartupPayload {
   needs: string;
   sector: string;
   maturity: string;
-  founders: { name: string; role: string }[]; // jamais null
+  founders: { name: string; role: string }[];
 }
 
 export async function createStartup(
@@ -62,45 +62,27 @@ export async function createStartup(
     return response.data;
 
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error('Client Error:', error.message);
-    } else {
-      console.error('Unexpected error:', error);
-    }
-
+    console.error('Client Error:', error);
     throw error;
   }
 }
 
 export async function getStartups(): Promise<Startup[]> {
-  const config: AxiosRequestConfig = {
-    method: 'get',
-    maxBodyLength: Infinity,
-    url: 'https://api.jeb-incubator.com/startups',
-    headers: {
-      'X-Group-Authorization': process.env.GROUP_TOKEN
-    }
-  };
-
   try {
-    const response = await axios.request<Startup[]>(config);
+    const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+    const response = await axios.get<Startup[]>(`${baseUrl}/startups`);
     return response.data;
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error('error:', error.message);
-    } else {
-      console.error('Unexpected error:', error);
-    }
+    console.error('Error fetching startups:', error);
     return [];
   }
 }
-
 
 export async function getStartup(startupId: string): Promise<Startup | null> {
   const config: AxiosRequestConfig = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: `https://api.jeb-incubator.com/startups/${startupId}`,
+    url: `http://localhost:8000/startups/${startupId}`,
     headers: {
       'X-Group-Authorization': process.env.GROUP_TOKEN
     }
@@ -110,19 +92,31 @@ export async function getStartup(startupId: string): Promise<Startup | null> {
     const response = await axios.request<Startup>(config);
     return response.data;
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error(`error:`, error.message);
-    } else {
-      console.error('Unexpected error:', error);
-    }
+    console.error('Error fetching startup:', error);
     return null;
+  }
+}
+
+export async function deleteStartup(startupId: number): Promise<boolean> {
+  try {
+    const response = await axios.delete(`/api/startups/${startupId}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      timeout: 10000,
+    });
+
+    return response.status === 200;
+  } catch (error: unknown) {
+    console.error("Error deleting startup:", error);
+    return false;
   }
 }
 
 export async function getFounderImage(startupId: string, founderId: string): Promise<string | null> {
   try {
     const res = await axios.get<ArrayBuffer>(
-      `https://api.jeb-incubator.com/startups/${startupId}/founders/${founderId}/image`,
+      `http://localhost:8000/startups/${startupId}/founders/${founderId}/image`,
       {
         headers: {
           "X-Group-Authorization": process.env.GROUP_TOKEN,
@@ -138,11 +132,7 @@ export async function getFounderImage(startupId: string, founderId: string): Pro
     const base64 = Buffer.from(res.data).toString("base64");
     return `data:${contentType};base64,${base64}`;
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("getFounderImage error:", error.message);
-    } else {
-      console.error("Unexpected error:", error);
-    }
+    console.error("Error fetching founder image:", error);
     return null;
   }
 }

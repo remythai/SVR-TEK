@@ -1,7 +1,5 @@
 "use server";
 
-import { auth } from "@/lib/auth";
-
 export const signIn = async (email: string, password: string) => {
   try {
     const res = await fetch("http://localhost:8000/users/login", {
