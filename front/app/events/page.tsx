@@ -10,6 +10,7 @@ interface Event {
   event_type?: string;
   location?: string;
   target_audience?: string;
+  imageUrl?: string | null;
 }
 
 export default async function EventsPage() {
@@ -18,7 +19,7 @@ export default async function EventsPage() {
   const eventsWithImages = await Promise.all(
     events.map(async (event: Event) => {
       const imageUrl = await getEventImage(event.id);
-      return { ...event, imageUrl };
+      return { ...event, imageUrl: imageUrl ?? undefined };
     })
   );
 

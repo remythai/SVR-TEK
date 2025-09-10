@@ -3,15 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-// Fonction debounce custom (sans lodash)
-function debounce<T extends (...args: any[]) => void>(func: T, delay: number): T {
-  let timeoutId: NodeJS.Timeout;
-  return ((...args: any[]) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => func(...args), delay);
-  }) as T;
-}
-
 const sectorOptions = [
   'DeepTech', 'FinTech', 'Logistics', 'SaaS', 'HealthTech',
   'EdTech', 'Sustainability'
@@ -45,32 +36,33 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
   const searchParams = useSearchParams();
 
   const handleFilterChange = (filterType: string, value: string) => {
-    const params = new URLSearchParams(searchParams);
-
+    const params = new URLSearchParams(searchParams.toString());
     if (value) {
       params.set(filterType, value);
     } else {
       params.delete(filterType);
     }
-
     router.push(`?${params.toString()}`);
   };
 
-  const debouncedLocationUpdate = useCallback(
-    debounce((value: string) => {
-      const params = new URLSearchParams(searchParams);
+  // Debounce directement dans useCallback pour éviter le warning
+  const debouncedLocationUpdate = useCallback((value: string) => {
+    const handler = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
       if (value) {
         params.set('location', value);
       } else {
         params.delete('location');
       }
       router.push(`?${params.toString()}`);
-    }, 300),
-    [searchParams]
-  );
+    }, 300);
+
+    return () => clearTimeout(handler);
+  }, [searchParams, router]);
 
   useEffect(() => {
-    debouncedLocationUpdate(localLocation);
+    const cancel = debouncedLocationUpdate(localLocation);
+    return cancel; // cleanup
   }, [localLocation, debouncedLocationUpdate]);
 
   useEffect(() => {

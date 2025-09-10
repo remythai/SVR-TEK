@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     const checkAuthStatus = () => {
@@ -27,7 +27,7 @@ export const useAuth = () => {
 
     checkAuthStatus();
 
-    const handleStorageChange = (e) => {
+    const handleStorageChange = (e: StorageEvent) => {
       if (e.key === "access_token") {
         if (e.newValue) {
           setToken(e.newValue);
@@ -40,13 +40,13 @@ export const useAuth = () => {
     };
 
     window.addEventListener('storage', handleStorageChange);
-    
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 
-  const login = (newToken) => {
+  const login = (newToken: string) => {
     localStorage.setItem("access_token", newToken);
     setToken(newToken);
     setIsAuthenticated(true);

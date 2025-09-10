@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar, MapPin, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import Link from "next/link";
+import { Calendar, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 
 interface Event {
@@ -205,7 +204,7 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
   };
 
   const renderWeekView = () => {
-    const { start, end } = getWeekRange();
+    const { start } = getWeekRange();
     const weekDays = [];
     
     for (let i = 0; i < 7; i++) {
@@ -253,7 +252,9 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
                     key={event.id}
                     className="absolute bg-blue-100 text-blue-800 rounded p-1 text-xs w-full cursor-pointer hover:bg-blue-200"
                     style={{ 
-                      top: `${((new Date(event.dates).getHours() - 8) * 60 + new Date(event.dates).getMinutes()) / 6}%`,
+                      top: event.dates 
+                        ? `${((new Date(event.dates).getHours() - 8) * 60 + new Date(event.dates).getMinutes()) / 6}%` 
+                        : '0%',
                       height: '40px'
                     }}
                     onClick={() => setExpandedEvent(expandedEvent === event.id ? null : event.id)}
@@ -306,47 +307,58 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
         <div className="space-y-4">
           {dayEvents.length > 0 ? (
             dayEvents.map(event => {
-              const formattedDate = formatDate(event.dates);
               return (
                 <div 
-                  key={event.id} 
-                  className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
-                  onClick={() => setExpandedEvent(expandedEvent === event.id ? null : event.id)}
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 w-12 h-12 bg-secondary-500/40 rounded-lg flex flex-col items-center justify-center mr-3">
-                        <div className="text-sm font-bold text-secondary-100">{formattedDate.day}</div>
-                        <div className="text-xs text-secondary-100">{formattedDate.month}</div>
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900">
-                          {event.name.length > 30 ? event.name.slice(0, 27) + "..." : event.name}
-                        </h3>
-                        <div className="flex items-center text-sm text-gray-600">
-                          <MapPin className="h-4 w-4 mr-1" />
-                          <span>{event.location || "Lieu à préciser"}</span>
-                        </div>
-                      </div>
+                key={event.id} 
+                className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => setExpandedEvent(expandedEvent === event.id ? null : event.id)}
+              >
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 w-12 h-12 bg-secondary-500/40 rounded-lg flex flex-col items-center justify-center mr-3">
+                      {event.dates ? (
+                        (() => {
+                          const formattedDate = formatDate(event.dates);
+                          return (
+                            <>
+                              <div className="text-sm font-bold text-secondary-100">{formattedDate.day}</div>
+                              <div className="text-xs text-secondary-100">{formattedDate.month}</div>
+                            </>
+                          );
+                        })()
+                      ) : (
+                        <div className="text-xs text-secondary-100">--</div>
+                      )}
                     </div>
-                    <div className="text-sm text-gray-500">
-                      {new Date(event.dates).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    <div>
+                      <h3 className="font-semibold text-gray-900">
+                        {event.name.length > 30 ? event.name.slice(0, 27) + "..." : event.name}
+                      </h3>
+                      <div className="flex items-center text-sm text-gray-600">
+                        <MapPin className="h-4 w-4 mr-1" />
+                        <span>{event.location || "Lieu à préciser"}</span>
+                      </div>
                     </div>
                   </div>
-                  
-                  {expandedEvent === event.id && (
-                    <div className="mt-4 pl-15">
-                      {event.event_type && (
-                        <div className="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full mb-3">
-                          {event.event_type}
-                        </div>
-                      )}
-                      <p className="text-gray-600 text-sm mb-3">
-                        {event.description || "Aucune description disponible."}
-                      </p>
-                    </div>
-                  )}
+                  <div className="text-sm text-gray-500">
+                    {event.dates 
+                      ? new Date(event.dates).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) 
+                      : "--:--"}
+                  </div>
                 </div>
+                {expandedEvent === event.id && (
+                  <div className="mt-4 pl-15">
+                    {event.event_type && (
+                      <div className="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full mb-3">
+                        {event.event_type}
+                      </div>
+                    )}
+                    <p className="text-gray-600 text-sm mb-3">
+                      {event.description || "Aucune description disponible."}
+                    </p>
+                  </div>
+                )}
+              </div>
               );
             })
           ) : (
@@ -363,7 +375,7 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
     <div className="min-h-screen mt-30 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Event's calendar</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Event&apo;s calendar</h1>
           <p className="text-gray-600">Discover our future events and partnerships</p>
         </div>
 
@@ -400,8 +412,6 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
             {view === 'week' && renderWeekView()}
             {view === 'day' && renderDayView()}
           </div>
-
-          
         </div>
 
         <div className="mt-12">
@@ -409,7 +419,6 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {eventsWithImages.map((event) => {
               const formattedDate = event.dates ? formatDate(event.dates) : null;
-              
               return (
                 <div key={event.id} className="bg-white rounded-xl shadow-md overflow-hidden transition-transform hover:scale-[1.02]">
                   <div className="relative h-48 bg-gray-200">
@@ -432,25 +441,21 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
                       </div>
                     )}
                   </div>
-                  
                   <div className="p-5">
                     <div className="flex justify-between items-start mb-3">
                       <h3 className="font-semibold text-lg text-gray-900">
                         {event.name.length > 30 ? event.name.slice(0, 27) + "..." : event.name}
                       </h3>
                     </div>
-                    
                     <div className="flex items-center text-sm text-gray-600 mb-3">
                       <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
                       <span className="truncate">{event.location || "Lieu à préciser"}</span>
                     </div>
-                    
                     {event.event_type && (
                       <span className="inline-block bg-secondary-500/40 text-secondary-100 text-xs px-3 py-1 rounded-full mb-4">
                         {event.event_type}
                       </span>
                     )}
-                    
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                       {event.description || "Aucune description disponible."}
                     </p>
