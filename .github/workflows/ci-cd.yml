@@ -10,6 +10,7 @@ jobs:
   frontend:
     name: Frontend CI
     runs-on: ubuntu-latest
+    environment: Production
     env:
       GROUP_TOKEN: ${{ secrets.FRONT_GROUP_TOKEN }}
       BETTER_AUTH_SECRET: ${{ secrets.FRONT_BETTER_AUTH_SECRET }}
@@ -23,6 +24,34 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+
+      - name: Verify environment variables
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "❌ DATABASE_URL is not set"
+            exit 1
+          else
+            echo "✅ DATABASE_URL is set"
+          fi
+          if [ -z "$BETTER_AUTH_SECRET" ]; then
+            echo "❌ BETTER_AUTH_SECRET is not set"
+            exit 1
+          else
+            echo "✅ BETTER_AUTH_SECRET is set"
+          fi
+          if [ -z "$BETTER_AUTH_URL" ]; then
+            echo "❌ BETTER_AUTH_URL is not set"
+            exit 1
+          else
+            echo "✅ BETTER_AUTH_URL is set"
+          fi
+          if [ -z "$GROUP_TOKEN" ]; then
+            echo "❌ GROUP_TOKEN is not set"
+            exit 1
+          else
+            echo "✅ GROUP_TOKEN is set"
+          fi
+        working-directory: front
 
       - name: Install dependencies
         run: npm ci
@@ -39,6 +68,7 @@ jobs:
   backend:
     name: Backend CI
     runs-on: ubuntu-latest
+    environment: Production
     env:
       JWT_ACCESS_SECRET: ${{ secrets.BACK_JWT_ACCESS_SECRET }}
       JWT_REFRESH_SECRET: ${{ secrets.BACK_JWT_REFRESH_SECRET }}
@@ -51,6 +81,28 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+
+      - name: Verify environment variables
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "❌ DATABASE_URL is not set"
+            exit 1
+          else
+            echo "✅ DATABASE_URL is set"
+          fi
+          if [ -z "$JWT_ACCESS_SECRET" ]; then
+            echo "❌ JWT_ACCESS_SECRET is not set"
+            exit 1
+          else
+            echo "✅ JWT_ACCESS_SECRET is set"
+          fi
+          if [ -z "$JWT_REFRESH_SECRET" ]; then
+            echo "❌ JWT_REFRESH_SECRET is not set"
+            exit 1
+          else
+            echo "✅ JWT_REFRESH_SECRET is set"
+          fi
+        working-directory: back
 
       - name: Install dependencies
         run: npm ci
