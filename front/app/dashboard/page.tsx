@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Eye, Search, Filter } from 'lucide-react';
 
 import { getStartups, createStartup, updateStartup, deleteStartup, Startup } from '../requests/startups';
@@ -10,10 +11,9 @@ import { getUsers, createUser, updateUser, deleteUser, User } from '../requests/
 import { getInvestors, Investor } from '../requests/investors';
 
 type EntityType = 'startups' | 'events' | 'news' | 'users' | 'investors';
+type DashboardItem = Startup | Event | NewsItem | User | Investor;
 
-interface DashboardProps {}
-
-const Dashboard: React.FC<DashboardProps> = () => {
+const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<EntityType>('startups');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,16 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<'create' | 'edit' | 'view'>('create');
-  const [selectedItem, setSelectedItem] = useState<any>(null);
+
+  type DashboardItemMap = {
+    startups: Startup;
+    events: Event;
+    news: NewsItem;
+    users: User;
+    investors: Investor;
+  };
+
+  const [selectedItem, setSelectedItem] = useState<Partial<DashboardItem>>({});
 
   const getTableHeaders = (): string[] => {
     switch (activeTab) {
@@ -45,79 +54,79 @@ const Dashboard: React.FC<DashboardProps> = () => {
     }
   };
 
-  const getTableRow = (item: any): (string | JSX.Element)[] => {
+  const getTableRow = (item: DashboardItem): (string | React.JSX.Element)[] => {
     switch (activeTab) {
       case 'startups':
+        const startup = item as Startup
         return [
-          item.name,
-          item.sector,
-          <span className={`px-2 py-1 rounded-full text-xs ${
-            item.project_status === 'active' ? 'bg-green-100 text-green-800' : 
-            item.project_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+          startup.name,
+          startup.sector,
+          <span key="status" className={`px-2 py-1 rounded-full text-xs ${
+            startup.project_status === 'active' ? 'bg-green-100 text-green-800' : 
+            startup.project_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
             'bg-gray-100 text-gray-800'
           }`}>
-            {item.project_status}
+            {startup.project_status}
           </span>,
-          item.maturity,
-          item.email,
-          `${item.founders?.length || 0} fondateur(s)`
+          startup.maturity,
+          startup.email,
+          `${startup.founders?.length || 0} fondateur(s)`
         ];
       case 'events':
+        const event = item as Event
         return [
-          item.name,
-          item.event_type,
-          new Date(item.dates).toLocaleDateString('fr-FR'),
-          item.location || 'Non spécifié'
+          event.name,
+          event.event_type,
+          new Date(event.dates).toLocaleDateString('fr-FR'),
+          event.location || 'Non spécifié'
         ];
       case 'news':
+        const news = item as NewsItem
         return [
-          item.title,
-          item.category,
-          new Date(item.news_date).toLocaleDateString('fr-FR'),
-          item.location || 'Non spécifié'
+          news.title,
+          news.category,
+          new Date(news.news_date).toLocaleDateString('fr-FR'),
+          news.location || 'Non spécifié'
         ];
       case 'users':
+        const user = item as User
         return [
-          item.name,
-          item.email,
-          <span className={`px-2 py-1 rounded-full text-xs ${
-            item.role === 'admin' ? 'bg-red-100 text-red-800' : 
-            item.role === 'investor' ? 'bg-blue-100 text-blue-800' : 
+          user.name,
+          user.email,
+          <span key={`role-${user.id}`} className={`px-2 py-1 rounded-full text-xs ${
+            user.role === 'admin' ? 'bg-red-100 text-red-800' : 
+            user.role === 'investor' ? 'bg-blue-100 text-blue-800' : 
             'bg-gray-100 text-gray-800'
           }`}>
-            {item.role}
+            {user.role}
           </span>
         ];
       case 'investors':
+        const investor = item as Investor
         return [
-          item.name,
-          item.company || 'Non spécifié',
-          item.role || 'Non spécifié',
-          item.email || 'Non spécifié'
+          investor.name,
+          investor.company || 'Non spécifié',
+          investor.role || 'Non spécifié',
+          investor.email || 'Non spécifié'
         ];
       default:
         return [];
     }
   };
 
-  const getSearchFields = (item: any): string[] => {
+  const getSearchFields = (item: DashboardItem): string[] => {
     switch (activeTab) {
-      case 'startups':
-        return [item.name, item.sector, item.maturity, item.project_status];
-      case 'events':
-        return [item.name, item.event_type, item.location];
-      case 'news':
-        return [item.title, item.category, item.location];
-      case 'users':
-        return [item.name, item.email, item.role];
-      case 'investors':
-        return [item.name, item.company, item.role];
+      case 'startups': return [(item as Startup).name, (item as Startup).sector, (item as Startup).maturity, (item as Startup).project_status];
+      case 'events': return [(item as Event).name, (item as Event).event_type, (item as Event).location];
+      case 'news': return [(item as NewsItem).title, (item as NewsItem).category, (item as NewsItem).location];
+      case 'users': return [(item as User).name, (item as User).email, (item as User).role];
+      case 'investors': return [(item as Investor).name, (item as Investor).company, (item as Investor).role];
       default:
         return [];
     }
   };
 
-  const loadData = async () => {
+  const loadData = React.useCallback(async () => {
     setLoading(true);
     try {
       switch (activeTab) {
@@ -142,11 +151,12 @@ const Dashboard: React.FC<DashboardProps> = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab]);
+
 
   useEffect(() => {
     loadData();
-  }, [activeTab]);
+  }, [loadData]);
 
   const getCurrentData = () => {
     switch (activeTab) {
@@ -159,7 +169,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
     }
   };
 
-  const filteredData = getCurrentData().filter((item: any) => {
+  const filteredData = getCurrentData().filter((item: DashboardItem) => {
     const searchFields = getSearchFields(item);
     return searchFields.some(field => 
       field && field.toLowerCase().includes(searchTerm.toLowerCase())
@@ -167,7 +177,9 @@ const Dashboard: React.FC<DashboardProps> = () => {
   });
 
   const handleCreate = () => {
-    if (activeTab === 'startups') {
+  setModalType('create');
+
+  if (activeTab === 'startups') {
       setSelectedItem({
         name: '',
         sector: '',
@@ -175,69 +187,112 @@ const Dashboard: React.FC<DashboardProps> = () => {
         maturity: '',
         email: '',
         founders: [],
-      });
+        legal_status: '',
+        address: '',
+        phone: '',
+        created_at: '',
+        description: '',
+        website_url: '',
+        social_media_url: '',
+        needs: '',
+        id: undefined,
+      } as Partial<Startup>);
     } else if (activeTab === 'events') {
       setSelectedItem({
         name: '',
         event_type: '',
         dates: '',
         location: '',
-      });
+        id: undefined,
+      } as Partial<Event>);
     } else if (activeTab === 'news') {
       setSelectedItem({
         title: '',
         category: '',
         news_date: '',
         location: '',
-        description: ''
-      });
+        description: '',
+        id: undefined,
+      } as Partial<NewsItem>);
     } else if (activeTab === 'users') {
       setSelectedItem({
         name: '',
         email: '',
         role: 'investor',
-        founder_id: null,
-        investor_id: null
-      });
+        founder_id: undefined,
+        investor_id: undefined,
+        id: undefined,
+      } as Partial<User>);
+    } else if (activeTab === 'investors') {
+      setSelectedItem({
+        name: '',
+        company: '',
+        role: '',
+        email: '',
+        id: undefined,
+      } as Partial<Investor>);
     }
 
-    setModalType('create');
     setShowModal(true);
   };
 
-  const handleEdit = (item: any) => {
+
+  const handleEdit = (item: DashboardItem) => {
     setModalType('edit');
     setSelectedItem(item);
     setShowModal(true);
   };
 
-  const handleView = (item: any) => {
+  const handleView = (item: DashboardItem) => {
     setModalType('view');
     setSelectedItem(item);
     setShowModal(true);
   };
 
-  const handleDelete = async (item: any) => {
-    if (!window.confirm(`Êtes-vous sûr de vouloir supprimer "${item.title || item.name}" ?`)) return;
+  const handleDelete = async (item: DashboardItem) => {
+    const itemName = 'name' in item ? item.name : 'title' in item ? item.title : 'élément';
+
+    if (!window.confirm(`Êtes-vous sûr de vouloir supprimer "${itemName}" ?`)) return;
 
     try {
       let success = false;
-      if (activeTab === 'startups') success = await deleteStartup(item.id);
-      else if (activeTab === 'events') success = await deleteEvent(item.id);
-      else if (activeTab === 'news') success = await deleteNews(item.id);
-      else if (activeTab === 'users') success = await deleteUser(item.id);
+
+      if (activeTab === 'startups' && 'id' in item) {
+        success = await deleteStartup(item.id);
+      } else if (activeTab === 'events' && 'id' in item) {
+        success = await deleteEvent(item.id);
+      } else if (activeTab === 'news' && 'id' in item) {
+        success = await deleteNews(item.id);
+      } else if (activeTab === 'users' && 'id' in item) {
+        success = await deleteUser(item.id);
+      }
 
       if (success) {
-        alert(`${activeTab === 'startups' ? 'Startup' : activeTab === 'events' ? 'Événement' : 'Actualité'} supprimé(e) avec succès`);
+        alert(
+          `${
+            activeTab === 'startups'
+              ? 'Startup'
+              : activeTab === 'events'
+              ? 'Événement'
+              : 'Actualité'
+          } supprimé(e) avec succès`
+        );
         loadData();
       } else {
-        alert(`Impossible de supprimer ${activeTab === 'startups' ? 'la startup' : activeTab === 'events' ? 'l’événement' : 'l’actualité'}`);
+        alert(
+          `Impossible de supprimer ${
+            activeTab === 'startups'
+              ? 'la startup'
+              : activeTab === 'events'
+              ? "l’événement"
+              : "l’actualité"
+          }`
+        );
       }
     } catch (err) {
       console.error('Erreur lors de la suppression:', err);
     }
   };
-
 
   const tabs = [
     { key: 'startups' as EntityType, label: 'Startups', count: startups.length },
@@ -249,13 +304,12 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
   return (
     <div className="min-h-screen mt-30">
-      {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Dashboard Admin</h1>
-              <p className="text-gray-600">Gérez vos données d'incubateur</p>
+              <p className="text-gray-600">Gérez vos données d&apos;incubateur</p>
             </div>
             <button
               onClick={handleCreate}
@@ -269,7 +323,6 @@ const Dashboard: React.FC<DashboardProps> = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Tabs */}
         <div className="flex space-x-8 border-b border-gray-200 mb-8">
           {tabs.map((tab) => (
             <button
@@ -307,7 +360,6 @@ const Dashboard: React.FC<DashboardProps> = () => {
           </button>
         </div>
 
-        {/* Content */}
         {loading ? (
           <div className="flex justify-center items-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
@@ -332,7 +384,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredData.map((item: any, index) => (
+                  {filteredData.map((item: DashboardItem, index) => (
                     <tr key={item.id || index} className="hover:bg-gray-50">
                       {getTableRow(item).map((cell, cellIndex) => (
                         <td key={cellIndex} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -431,8 +483,8 @@ const Modal = ({
 }: {
   type: 'create' | 'edit' | 'view';
   entityType: EntityType;
-  item: any;
-  setItem: React.Dispatch<React.SetStateAction<any>>;
+  item: Partial<DashboardItem>;
+  setItem: React.Dispatch<React.SetStateAction<Partial<DashboardItem>>>;
   onClose: () => void;
   onSave: () => void;
 }) => {

@@ -3,7 +3,7 @@ import axios, { AxiosRequestConfig } from "axios";
 export interface NewsItem {
   id: number;
   title: string;
-  location?: string;
+  location: string;
   news_date: string;
   category: string;
   description?: string;

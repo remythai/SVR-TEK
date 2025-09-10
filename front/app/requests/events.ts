@@ -5,7 +5,7 @@ export interface Event {
   id: number;
   name: string;
   dates: string;
-  location?: string;
+  location: string;
   event_type: string;
 }
 
@@ -129,7 +129,7 @@ export async function createEvent(eventData: CreateEventPayload): Promise<Event 
 export async function updateEvent(eventData: Partial<Event>, eventId: number): Promise<Event | null> {
   try {
     // On supprime l'id pour éviter de le mettre à jour
-    const { id, ...payload } = eventData;
+    const { ...payload } = eventData;
 
     const response = await axios.put<Event>(
       `${API_BASE_URL}/events/${eventId}`,

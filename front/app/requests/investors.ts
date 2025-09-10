@@ -4,8 +4,8 @@ export interface Investor {
   id: number;
   name: string;
   email?: string;
-  role?: string;
-  company?: string;
+  role: string;
+  company: string;
   description?: string;
 }
 

@@ -4,9 +4,9 @@ export interface User {
   id: number;
   name: string;
   email: string;
-  role: string;
-  founder_id: number;
-  investor_id: number;
+  role: 'admin' | 'investor' | 'founder';
+  founder_id?: number | null;
+  investor_id?: number | null;
 }
 
 // ---------- GET ----------

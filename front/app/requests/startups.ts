@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 
 export interface Founder {
   id?: number;
@@ -103,8 +103,7 @@ export async function createStartup(
   startupData: CreateStartupPayload
 ): Promise<Startup | null> {
   try {
-    // On clone le payload sans la propriété "founders"
-    const { founders, ...dataWithoutFounders } = startupData;
+    const { ...dataWithoutFounders } = startupData;
 
     console.log('Client: Sending request to API', {
       url: `${API_BASE_URL}/startups`,
@@ -202,7 +201,7 @@ export async function getFounderImage(startupId: string, founderId: string): Pro
 
 export async function updateStartup(startupData: Partial<Startup>, startupId: number): Promise<Startup | null> {
   try {
-    const { id, ...payload } = startupData; // On supprime id pour ne pas l’envoyer
+    const { ...payload } = startupData;
     const response = await axios.put<Startup>(
       `${API_BASE_URL}/startups/${startupId}`,
       payload,
