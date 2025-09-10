@@ -83,9 +83,14 @@ export const deleteById = async (req, res) => {
 export const update = async (req, res) => {
   const sql = req.app.get("db");
   const { id } = req.params;
-  
+  const data = req.body;
+
+  if (!id || Number(id) <= 0) {
+    return res.status(400).json({ error: "ID invalide" });
+  }
+
   try {
-    const result = await News.update(sql, id);
+    const result = await News.update(sql, data, Number(id));
     
     if (result.count === 0) {
       return res.status(404).json({ error: "News not found" });
@@ -96,4 +101,5 @@ export const update = async (req, res) => {
     console.error("DB error:", err);
     res.status(500).json({ error: "Server error" });
   }
-}
+};
+

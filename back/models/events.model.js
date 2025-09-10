@@ -1,3 +1,7 @@
+import * as dbUtils from './utils.js';
+
+const TABLE_NAME = 'events';
+
 export async function getAll(sql) {
     return await sql`SELECT * FROM events`;
 }

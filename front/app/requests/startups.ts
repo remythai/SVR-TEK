@@ -41,11 +41,9 @@ export interface CreateStartupPayload {
   founders: { name: string; role: string }[];
 }
 
-// Configuration de base
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const GROUP_TOKEN = process.env.NEXT_PUBLIC_GROUP_TOKEN;
 
-// Fonction utilitaire pour les headers
 const getHeaders = () => {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -60,7 +58,6 @@ const getHeaders = () => {
   return headers;
 };
 
-// Fonction utilitaire pour gérer les erreurs Axios
 const handleAxiosError = (error: unknown, context: string) => {
   if (axios.isAxiosError(error)) {
     const axiosError = error as AxiosError;
@@ -74,7 +71,6 @@ const handleAxiosError = (error: unknown, context: string) => {
       method: axiosError.config?.method,
     });
     
-    // Erreurs spécifiques
     if (axiosError.code === 'ECONNREFUSED') {
       throw new Error('Impossible de se connecter au serveur API. Vérifiez que le serveur est démarré.');
     }
@@ -107,15 +103,18 @@ export async function createStartup(
   startupData: CreateStartupPayload
 ): Promise<Startup | null> {
   try {
+    // On clone le payload sans la propriété "founders"
+    const { founders, ...dataWithoutFounders } = startupData;
+
     console.log('Client: Sending request to API', {
       url: `${API_BASE_URL}/startups`,
       hasToken: !!GROUP_TOKEN,
-      data: startupData
+      data: dataWithoutFounders
     });
 
     const response = await axios.post<Startup>(
       `${API_BASE_URL}/startups`,
-      startupData,
+      dataWithoutFounders,
       {
         headers: getHeaders(),
         timeout: 15000,
@@ -147,7 +146,7 @@ export async function getStartups(): Promise<Startup[]> {
     return response.data;
   } catch (error) {
     handleAxiosError(error, 'getStartups');
-    return []; // Retourner un tableau vide uniquement après avoir loggé l'erreur
+    return [];
   }
 }
 
@@ -201,15 +200,42 @@ export async function getFounderImage(startupId: string, founderId: string): Pro
   }
 }
 
-// Fonction utilitaire pour tester la connexion API
-export async function testApiConnection(): Promise<boolean> {
+export async function updateStartup(startupData: Partial<Startup>, startupId: number): Promise<Startup | null> {
   try {
-    await axios.get(`${API_BASE_URL}/health`, {
-      timeout: 5000,
-    });
-    return true;
+    const { id, ...payload } = startupData; // On supprime id pour ne pas l’envoyer
+    const response = await axios.put<Startup>(
+      `${API_BASE_URL}/startups/${startupId}`,
+      payload,
+      { headers: getHeaders(), timeout: 15000 }
+    );
+    return response.data;
   } catch (error) {
-    console.error('API connection test failed:', error);
+    handleAxiosError(error, 'updateStartup');
+    return null;
+  }
+}
+
+
+export async function deleteStartup(startupId: number): Promise<boolean> {
+  try {
+    console.log('Client: Sending delete request to API', {
+      url: `${API_BASE_URL}/startups/${startupId}`,
+      hasToken: !!GROUP_TOKEN
+    });
+
+    const response = await axios.delete(
+      `${API_BASE_URL}/startups/${startupId}`,
+      {
+        headers: getHeaders(),
+        timeout: 10000,
+      }
+    );
+
+    console.log('Client: Delete response status:', response.status);
+    return response.status === 200 || response.status === 204;
+
+  } catch (error) {
+    handleAxiosError(error, 'deleteStartup');
     return false;
   }
 }

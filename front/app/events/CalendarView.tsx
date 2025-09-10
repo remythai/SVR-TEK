@@ -434,10 +434,10 @@ function CalendarView({ eventsWithImages }: CalendarViewProps) {
                         <Calendar className="h-12 w-12 text-gray-400" />
                       </div>
                     )}
-                    {formattedDate && (
+                    {formattedDate && !isNaN(formattedDate.day) && (
                       <div className="absolute top-4 left-4 bg-white rounded-lg shadow-sm p-2 text-center">
-                        <div className="text-sm font-bold text-gray-800">{formattedDate.day}</div>
-                        <div className="text-xs text-gray-600">{formattedDate.month}</div>
+                        <div className="text-sm font-bold text-gray-800">{String(formattedDate.day)}</div>
+                        <div className="text-xs text-gray-600">{String(formattedDate.month)}</div>
                       </div>
                     )}
                   </div>

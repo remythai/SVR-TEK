@@ -44,17 +44,29 @@ export async function create(sql, tableName, data) {
 // -- Update --
 // ------------
 
+// utils.js
+
 export async function update(sql, tableName, data, id) {
-  const keys = Object.keys(data);
-  const values = Object.values(data);
+  // Supprime id pour ne pas essayer de le mettre à jour
+  const { id: _, ...dataWithoutId } = data;
 
-  const formattedValues = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
+  const keys = Object.keys(dataWithoutId);
+  const values = Object.values(dataWithoutId);
 
+  if (keys.length === 0) throw new Error("Aucun champ à mettre à jour");
+
+  // Crée dynamiquement la partie SET
+  const setClause = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
+
+  // Ajoute l'id à la fin pour le WHERE
   values.push(id);
 
-  const query = `UPDATE ${tableName} SET ${formattedValues} WHERE id = $${values.length}`;
+  const query = `UPDATE ${tableName} SET ${setClause} WHERE id = $${values.length} RETURNING *;`;
 
-  return sql.query(query, values);
+  // Execute la requête
+  const result = await sql.query(query, values);
+
+  return result[0]; // retourne l'objet mis à jour
 }
 
 // ------------

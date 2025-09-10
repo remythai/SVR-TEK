@@ -3,10 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Eye, Search, Filter } from 'lucide-react';
 
-import { getStartups, Startup } from '../requests/startups';
-import { getEvents, Event } from '../requests/events';
-import { getNews, NewsItem } from '../requests/news';
-import { getUsers, User } from '../requests/users';
+import { getStartups, createStartup, updateStartup, deleteStartup, Startup } from '../requests/startups';
+import { getEvents, createEvent, updateEvent, deleteEvent, Event } from '../requests/events';
+import { getNews, createNews, updateNews, deleteNews, NewsItem } from '../requests/news';
+import { getUsers, createUser, updateUser, deleteUser, User } from '../requests/users';
 import { getInvestors, Investor } from '../requests/investors';
 
 type EntityType = 'startups' | 'events' | 'news' | 'users' | 'investors';
@@ -167,8 +167,41 @@ const Dashboard: React.FC<DashboardProps> = () => {
   });
 
   const handleCreate = () => {
+    if (activeTab === 'startups') {
+      setSelectedItem({
+        name: '',
+        sector: '',
+        project_status: 'pending',
+        maturity: '',
+        email: '',
+        founders: [],
+      });
+    } else if (activeTab === 'events') {
+      setSelectedItem({
+        name: '',
+        event_type: '',
+        dates: '',
+        location: '',
+      });
+    } else if (activeTab === 'news') {
+      setSelectedItem({
+        title: '',
+        category: '',
+        news_date: '',
+        location: '',
+        description: ''
+      });
+    } else if (activeTab === 'users') {
+      setSelectedItem({
+        name: '',
+        email: '',
+        role: 'investor',
+        founder_id: null,
+        investor_id: null
+      });
+    }
+
     setModalType('create');
-    setSelectedItem(null);
     setShowModal(true);
   };
 
@@ -185,11 +218,26 @@ const Dashboard: React.FC<DashboardProps> = () => {
   };
 
   const handleDelete = async (item: any) => {
-    if (window.confirm(`Êtes-vous sûr de vouloir supprimer cet élément ?`)) {
-      // TODO: Implémenter delete
-      console.log('Delete:', item);
+    if (!window.confirm(`Êtes-vous sûr de vouloir supprimer "${item.title || item.name}" ?`)) return;
+
+    try {
+      let success = false;
+      if (activeTab === 'startups') success = await deleteStartup(item.id);
+      else if (activeTab === 'events') success = await deleteEvent(item.id);
+      else if (activeTab === 'news') success = await deleteNews(item.id);
+      else if (activeTab === 'users') success = await deleteUser(item.id);
+
+      if (success) {
+        alert(`${activeTab === 'startups' ? 'Startup' : activeTab === 'events' ? 'Événement' : 'Actualité'} supprimé(e) avec succès`);
+        loadData();
+      } else {
+        alert(`Impossible de supprimer ${activeTab === 'startups' ? 'la startup' : activeTab === 'events' ? 'l’événement' : 'l’actualité'}`);
+      }
+    } catch (err) {
+      console.error('Erreur lors de la suppression:', err);
     }
   };
+
 
   const tabs = [
     { key: 'startups' as EntityType, label: 'Startups', count: startups.length },
@@ -337,10 +385,33 @@ const Dashboard: React.FC<DashboardProps> = () => {
           type={modalType}
           entityType={activeTab}
           item={selectedItem}
+          setItem={setSelectedItem}
           onClose={() => setShowModal(false)}
-          onSave={() => {
-            setShowModal(false);
-            loadData();
+          onSave={async () => {
+            try {
+              if (activeTab === 'startups') {
+                const { id, ...payload } = selectedItem;
+                if (modalType === 'create') await createStartup(payload);
+                else if (modalType === 'edit') await updateStartup(id, payload);
+              } else if (activeTab === 'events') {
+                const { id, ...payload } = selectedItem;
+                if (modalType === 'create') await createEvent(payload);
+                else if (modalType === 'edit') await updateEvent(id, payload);
+              } else if (activeTab === 'news') {
+                const { id, ...payload } = selectedItem;
+                if (modalType === 'create') await createNews(payload);
+                else if (modalType === 'edit') await updateNews(id, payload);
+              } else if (activeTab === 'users') {
+                const { id, ...payload } = selectedItem;
+                if (modalType === 'create') await createUser(payload);
+                else if (modalType === 'edit') await updateUser(id, payload);
+              }
+
+              setShowModal(false);
+              loadData();
+            } catch (err) {
+              console.error('Erreur lors de la sauvegarde:', err);
+            }
           }}
         />
       )}
@@ -354,12 +425,14 @@ const Modal = ({
   type,
   entityType,
   item,
+  setItem,
   onClose,
   onSave,
 }: {
   type: 'create' | 'edit' | 'view';
   entityType: EntityType;
   item: any;
+  setItem: React.Dispatch<React.SetStateAction<any>>;
   onClose: () => void;
   onSave: () => void;
 }) => {
@@ -369,9 +442,27 @@ const Modal = ({
         <h2 className="text-lg font-bold mb-4">
           {type === 'create' ? 'Créer' : type === 'edit' ? 'Modifier' : 'Voir'} {entityType}
         </h2>
-        <pre className="text-xs bg-gray-100 p-2 rounded mb-4">
-          {JSON.stringify(item, null, 2)}
-        </pre>
+        {type !== 'view' ? (
+          <form className="space-y-2">
+            {Object.keys(item).map((key) => (
+              <div key={key} className="flex flex-col">
+                <label className="text-sm text-gray-600">{key}</label>
+                <input
+                  type="text"
+                  value={item[key] ?? ''}
+                  onChange={(e) =>
+                    setItem({ ...item, [key]: e.target.value })
+                  }
+                  className="border rounded px-2 py-1"
+                />
+              </div>
+            ))}
+          </form>
+        ) : (
+          <pre className="text-xs bg-gray-100 p-2 rounded mb-4">
+            {JSON.stringify(item, null, 2)}
+          </pre>
+        )}
         <div className="flex justify-end gap-2">
           <button
             onClick={onClose}
