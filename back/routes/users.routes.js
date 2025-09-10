@@ -1,5 +1,16 @@
 import express from "express";
-import * as usersController from "../controllers/users.controller.js"
+import {
+  getAll,
+  getById,
+  getByEmail,
+  getUserImage,
+  create,
+  register,
+  login,
+  updatePassword,
+  update,
+  deleteById
+} from "../controllers/users.controller.js";
 import { authenticate } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -7,34 +18,30 @@ const router = express.Router();
 // ----------
 // -- Read --
 // ----------
-router.get("/", usersController.getAll);
-router.get("/email/:email", usersController.getByEmail);
+router.get("/", getAll);
+router.get("/email/:email", getByEmail);
 
 // ------------
 // -- Create --
 // ------------
-router.post("/", usersController.create);
+router.post("/", create);
 
-router.post("/register", usersController.register);
-router.post("/login", usersController.login);
+router.post("/register", register);
+router.post("/login", login);
 
-router.put("/update-password", authenticate, usersController.updatePassword);
+router.get("/dashboard", authenticate, (req, res) => {
+  res.json({ message: "Dashboard accessible", user: req.user });
+});
 
-router.get("/:id", usersController.getById);
-router.get("/:id/image", usersController.getUserImage);
-router.put("/:id", usersController.update);
-router.delete("/:id", usersController.deleteById);
+router.put("/update-password", authenticate, updatePassword);
 
-// ------------
-// -- Delete --
-// ------------
-
-router.delete("/:id", usersController.deleteById);
+router.get("/:id", getById);
+router.get("/:id/image", getUserImage);
+router.put("/:id", update);
 
 // ------------
 // -- Delete --
 // ------------
-
-router.delete("/:id", usersController.deleteById);
+router.delete("/:id", deleteById);
 
 export default router;

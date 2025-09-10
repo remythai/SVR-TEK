@@ -62,14 +62,16 @@ export const create = async (req, res) => {
 export const deleteById = async (req, res) => {
   const sql = req.app.get("db");
   const { id } = req.params;
-  
+
   try {
+    await sql`DELETE FROM news WHERE startup_id = ${id}`;
+
     const result = await Startup.deleteById(sql, id);
-    
+
     if (result.count === 0) {
       return res.status(404).json({ error: "Startup not found" });
     }
-    
+
     res.status(200).json({ message: "Startup deleted successfully" });
   } catch (err) {
     console.error("DB error:", err);
