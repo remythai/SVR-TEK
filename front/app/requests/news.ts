@@ -13,7 +13,7 @@ export async function getNews(): Promise<NewsItem[]> {
   const config: AxiosRequestConfig = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: 'https://api.jeb-incubator.com/news',
+    url: 'http://localhost:8000/news',
     headers: {
       'X-Group-Authorization': process.env.GROUP_TOKEN
     }

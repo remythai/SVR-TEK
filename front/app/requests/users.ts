@@ -13,7 +13,7 @@ export async function getUsers(): Promise<User[]> {
   const config: AxiosRequestConfig = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: 'https://api.jeb-incubator.com/users',
+    url: 'http://localhost:8000/users',
     headers: {
       'X-Group-Authorization': process.env.GROUP_TOKEN
     }

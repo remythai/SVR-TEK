@@ -16,7 +16,7 @@ export async function getPartners(): Promise<Partner[]> {
   const config: AxiosRequestConfig = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: 'https://api.jeb-incubator.com/partners',
+    url: 'http://localhost:8000/partners',
     headers: {
       'X-Group-Authorization': process.env.GROUP_TOKEN
     }
@@ -39,7 +39,7 @@ export async function getPartner(partnerId: number): Promise<Partner | null> {
   const config = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: `https://api.jeb-incubator.com/partners/${partnerId}`,
+    url: `http://localhost:8000/partners/${partnerId}`,
     headers: {
       'X-Group-Authorization': process.env.GROUP_TOKEN as string
     }

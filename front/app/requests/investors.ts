@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 
 export interface Investor {
   id: number;
@@ -10,21 +10,21 @@ export interface Investor {
 }
 
 export async function getInvestors(): Promise<Investor[]> {
-  const config = {
+  const config: AxiosRequestConfig = {
     method: 'get',
     maxBodyLength: Infinity,
     url: 'http://localhost:8000/investors',
     headers: {
-      'X-Group-Authorization': process.env.GROUP_TOKEN as string,
-    },
+      'X-Group-Authorization': process.env.GROUP_TOKEN
+    }
   };
 
   try {
     const response = await axios.request<Investor[]>(config);
     return response.data;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error('Axios error:', error.message);
+    if (error instanceof Error) {
+      console.error('error:', error.message);
     } else {
       console.error('Unexpected error:', error);
     }

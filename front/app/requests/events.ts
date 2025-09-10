@@ -13,7 +13,7 @@ export async function getEvents(): Promise<Event[]> {
   const config: AxiosRequestConfig = {
     method: 'get',
     maxBodyLength: Infinity,
-    url: 'https://api.jeb-incubator.com/events',
+    url: 'http://localhost:8000/events',
     headers: {
       'X-Group-Authorization': process.env.GROUP_TOKEN
     }
