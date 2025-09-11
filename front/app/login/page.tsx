@@ -54,7 +54,7 @@ export default function Login() {
                 },
             });
             const user = await res.json();
-            console.log("User connecté :", user); // <-- ici ton console.log
+            console.log("User connecté :", user);
         } catch (err) {
             console.error("Erreur fetch /auth/me :", err);
         }
