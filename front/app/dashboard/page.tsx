@@ -40,15 +40,15 @@ const Dashboard: React.FC = () => {
   const getTableHeaders = (): string[] => {
     switch (activeTab) {
       case 'startups':
-        return ['Nom', 'Secteur', 'Statut', 'Maturité', 'Email', 'Fondateurs'];
+        return ['Name', 'Sector', 'Status', 'Maturity', 'Email', 'Fondators'];
       case 'events':
-        return ['Nom', 'Type', 'Date', 'Lieu'];
+        return ['Name', 'Type', 'Date', 'Location'];
       case 'news':
-        return ['Titre', 'Catégorie', 'Date', 'Lieu'];
+        return ['Title', 'Category', 'Date', 'Location'];
       case 'users':
-        return ['Nom', 'Email', 'Rôle'];
+        return ['Name', 'Email', 'Role'];
       case 'investors':
-        return ['Nom', 'Entreprise', 'Rôle', 'Email'];
+        return ['Name', 'Enterprise', 'Role', 'Email'];
       default:
         return [];
     }
@@ -95,7 +95,7 @@ const Dashboard: React.FC = () => {
           user.email,
           <span key={`role-${user.id}`} className={`px-2 py-1 rounded-full text-xs ${
             user.role === 'admin' ? 'bg-red-100 text-red-800' : 
-            user.role === 'investor' ? 'bg-blue-100 text-blue-800' : 
+            user.role === 'investor' ? 'bg-blue-100 text-secondary-100' : 
             'bg-gray-100 text-gray-800'
           }`}>
             {user.role}
@@ -186,7 +186,7 @@ const Dashboard: React.FC = () => {
         project_status: 'pending',
         maturity: '',
         email: '',
-        founders: [],
+        // founders: [],
         legal_status: '',
         address: '',
         phone: '',
@@ -296,10 +296,10 @@ const Dashboard: React.FC = () => {
 
   const tabs = [
     { key: 'startups' as EntityType, label: 'Startups', count: startups.length },
-    { key: 'events' as EntityType, label: 'Événements', count: events.length },
-    { key: 'news' as EntityType, label: 'Actualités', count: news.length },
-    { key: 'users' as EntityType, label: 'Utilisateurs', count: users.length },
-    { key: 'investors' as EntityType, label: 'Investisseurs', count: investors.length },
+    { key: 'events' as EntityType, label: 'Events', count: events.length },
+    { key: 'news' as EntityType, label: 'News', count: news.length },
+    { key: 'users' as EntityType, label: 'Users', count: users.length },
+    { key: 'investors' as EntityType, label: 'Investors', count: investors.length },
   ];
 
   return (
@@ -308,15 +308,15 @@ const Dashboard: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Dashboard Admin</h1>
-              <p className="text-gray-600">Gérez vos données d&apos;incubateur</p>
+              <h1 className="text-3xl font-bold text-gray-900">Admin dashboard</h1>
+              <p className="text-gray-600">Manage your incubator data</p>
             </div>
             <button
               onClick={handleCreate}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              className="bg-secondary-500 hover:bg-secondary-400 cursor-pointer text-secondary-100 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
             >
               <Plus size={20} />
-              Créer
+              Create
             </button>
           </div>
         </div>
@@ -330,7 +330,7 @@ const Dashboard: React.FC = () => {
               onClick={() => setActiveTab(tab.key)}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === tab.key
-                  ? 'border-blue-500 text-blue-600'
+                  ? 'border-secondary-100 text-secondary-100'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
@@ -348,21 +348,17 @@ const Dashboard: React.FC = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
             <input
               type="text"
-              placeholder={`Rechercher des ${tabs.find(t => t.key === activeTab)?.label.toLowerCase()}...`}
+              placeholder={`Search ${tabs.find(t => t.key === activeTab)?.label.toLowerCase()}...`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary-500 focus:border-transparent"
             />
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-            <Filter size={20} />
-            Filtres
-          </button>
         </div>
 
         {loading ? (
           <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-secondary-100"></div>
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -395,14 +391,14 @@ const Dashboard: React.FC = () => {
                         <div className="flex justify-end gap-2">
                           <button
                             onClick={() => handleView(item)}
-                            className="text-blue-600 hover:text-blue-900 p-1"
+                            className="text-secondary-100 hover:text-secondary-200 p-1"
                             title="Voir"
                           >
                             <Eye size={16} />
                           </button>
                           <button
                             onClick={() => handleEdit(item)}
-                            className="text-indigo-600 hover:text-indigo-900 p-1"
+                            className="text-secondary-100 hover:text-secondary-200 p-1"
                             title="Modifier"
                           >
                             <Edit2 size={16} />
@@ -424,7 +420,7 @@ const Dashboard: React.FC = () => {
             
             {filteredData.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-gray-500">Aucun élément trouvé</p>
+                <p className="text-gray-500">Nothing found</p>
               </div>
             )}
           </div>
@@ -492,7 +488,7 @@ const Modal = ({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
         <h2 className="text-lg font-bold mb-4">
-          {type === 'create' ? 'Créer' : type === 'edit' ? 'Modifier' : 'Voir'} {entityType}
+          {type === 'create' ? 'Create' : type === 'edit' ? 'Update' : 'See'} {entityType}
         </h2>
         {type !== 'view' ? (
           <form className="space-y-2">
@@ -520,14 +516,14 @@ const Modal = ({
             onClick={onClose}
             className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
           >
-            Fermer
+            Close
           </button>
           {type !== 'view' && (
             <button
               onClick={onSave}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="px-4 py-2 bg-secondary-500/80 text-white rounded hover:bg-secondary-300"
             >
-              Sauvegarder
+              Save
             </button>
           )}
         </div>
