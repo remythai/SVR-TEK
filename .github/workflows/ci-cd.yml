@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: Production
     env:
-      GROUP_TOKEN: ${{ secrets.FRONT_GROUP_TOKEN }}
+      NEXT_PUBLIC_GROUP_TOKEN: ${{ secrets.FRONT_GROUP_TOKEN }}
       BETTER_AUTH_SECRET: ${{ secrets.FRONT_BETTER_AUTH_SECRET }}
       BETTER_AUTH_URL: ${{ secrets.FRONT_BETTER_AUTH_URL }}
       DATABASE_URL: ${{ secrets.FRONT_DATABASE_URL }}
@@ -25,35 +25,27 @@ jobs:
         with:
           node-version: 18
 
-      - name: Verify environment variables
+      - name: Verify frontend environment variables
         run: |
-          if [ -z "$DATABASE_URL" ]; then
-            echo "❌ DATABASE_URL is not set"
-            exit 1
-          else
-            echo "✅ DATABASE_URL is set"
-          fi
-          if [ -z "$BETTER_AUTH_SECRET" ]; then
-            echo "❌ BETTER_AUTH_SECRET is not set"
-            exit 1
-          else
-            echo "✅ BETTER_AUTH_SECRET is set"
-          fi
-          if [ -z "$BETTER_AUTH_URL" ]; then
-            echo "❌ BETTER_AUTH_URL is not set"
-            exit 1
-          else
-            echo "✅ BETTER_AUTH_URL is set"
-          fi
-          if [ -z "$GROUP_TOKEN" ]; then
-            echo "❌ GROUP_TOKEN is not set"
-            exit 1
-          else
-            echo "✅ GROUP_TOKEN is set"
-          fi
+          if [ -z "$DATABASE_URL" ]; then echo "DATABASE_URL not set" && exit 1; else echo "✅ DATABASE_URL set"; fi
+          if [ -z "$BETTER_AUTH_SECRET" ]; then echo "BETTER_AUTH_SECRET not set" && exit 1; else echo "✅ BETTER_AUTH_SECRET set"; fi
+          if [ -z "$BETTER_AUTH_URL" ]; then echo "BETTER_AUTH_URL not set" && exit 1; else echo "✅ BETTER_AUTH_URL set"; fi
+          if [ -z "$NEXT_PUBLIC_GROUP_TOKEN" ]; then echo "NEXT_PUBLIC_GROUP_TOKEN not set" && exit 1; else echo "✅ NEXT_PUBLIC_GROUP_TOKEN set"; fi
         working-directory: front
 
-      - name: Install dependencies
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: back
+
+      - name: Start backend in background
+        run: npm start &
+        working-directory: back
+
+      - name: Wait for backend
+        run: npx wait-on http://localhost:8000
+        working-directory: front
+
+      - name: Install frontend dependencies
         run: npm ci
         working-directory: front
 
@@ -82,29 +74,14 @@ jobs:
         with:
           node-version: 18
 
-      - name: Verify environment variables
+      - name: Verify backend environment variables
         run: |
-          if [ -z "$DATABASE_URL" ]; then
-            echo "❌ DATABASE_URL is not set"
-            exit 1
-          else
-            echo "✅ DATABASE_URL is set"
-          fi
-          if [ -z "$JWT_ACCESS_SECRET" ]; then
-            echo "❌ JWT_ACCESS_SECRET is not set"
-            exit 1
-          else
-            echo "✅ JWT_ACCESS_SECRET is set"
-          fi
-          if [ -z "$JWT_REFRESH_SECRET" ]; then
-            echo "❌ JWT_REFRESH_SECRET is not set"
-            exit 1
-          else
-            echo "✅ JWT_REFRESH_SECRET is set"
-          fi
+          if [ -z "$DATABASE_URL" ]; then echo "DATABASE_URL not set" && exit 1; else echo "✅ DATABASE_URL set"; fi
+          if [ -z "$JWT_ACCESS_SECRET" ]; then echo "JWT_ACCESS_SECRET not set" && exit 1; else echo "✅ JWT_ACCESS_SECRET set"; fi
+          if [ -z "$JWT_REFRESH_SECRET" ]; then echo "JWT_REFRESH_SECRET not set" && exit 1; else echo "✅ JWT_REFRESH_SECRET set"; fi
         working-directory: back
 
-      - name: Install dependencies
+      - name: Install backend dependencies
         run: npm ci
         working-directory: back
 
