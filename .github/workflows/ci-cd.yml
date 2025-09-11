@@ -27,10 +27,10 @@ jobs:
 
       - name: Verify frontend environment variables
         run: |
-          if [ -z "$DATABASE_URL" ]; then echo "❌ DATABASE_URL not set" && exit 1; else echo "✅ DATABASE_URL set"; fi
-          if [ -z "$BETTER_AUTH_SECRET" ]; then echo "❌ BETTER_AUTH_SECRET not set" && exit 1; else echo "✅ BETTER_AUTH_SECRET set"; fi
-          if [ -z "$BETTER_AUTH_URL" ]; then echo "❌ BETTER_AUTH_URL not set" && exit 1; else echo "✅ BETTER_AUTH_URL set"; fi
-          if [ -z "$NEXT_PUBLIC_GROUP_TOKEN" ]; then echo "❌ NEXT_PUBLIC_GROUP_TOKEN not set" && exit 1; else echo "✅ NEXT_PUBLIC_GROUP_TOKEN set"; fi
+          if [ -z "$DATABASE_URL" ]; then echo "DATABASE_URL not set" && exit 1; else echo "✅ DATABASE_URL set"; fi
+          if [ -z "$BETTER_AUTH_SECRET" ]; then echo "BETTER_AUTH_SECRET not set" && exit 1; else echo "✅ BETTER_AUTH_SECRET set"; fi
+          if [ -z "$BETTER_AUTH_URL" ]; then echo "BETTER_AUTH_URL not set" && exit 1; else echo "✅ BETTER_AUTH_URL set"; fi
+          if [ -z "$NEXT_PUBLIC_GROUP_TOKEN" ]; then echo "NEXT_PUBLIC_GROUP_TOKEN not set" && exit 1; else echo "✅ NEXT_PUBLIC_GROUP_TOKEN set"; fi
         working-directory: front
 
       - name: Install backend dependencies
@@ -76,9 +76,9 @@ jobs:
 
       - name: Verify backend environment variables
         run: |
-          if [ -z "$DATABASE_URL" ]; then echo "❌ DATABASE_URL not set" && exit 1; else echo "✅ DATABASE_URL set"; fi
-          if [ -z "$JWT_ACCESS_SECRET" ]; then echo "❌ JWT_ACCESS_SECRET not set" && exit 1; else echo "✅ JWT_ACCESS_SECRET set"; fi
-          if [ -z "$JWT_REFRESH_SECRET" ]; then echo "❌ JWT_REFRESH_SECRET not set" && exit 1; else echo "✅ JWT_REFRESH_SECRET set"; fi
+          if [ -z "$DATABASE_URL" ]; then echo "DATABASE_URL not set" && exit 1; else echo "✅ DATABASE_URL set"; fi
+          if [ -z "$JWT_ACCESS_SECRET" ]; then echo "JWT_ACCESS_SECRET not set" && exit 1; else echo "✅ JWT_ACCESS_SECRET set"; fi
+          if [ -z "$JWT_REFRESH_SECRET" ]; then echo "JWT_REFRESH_SECRET not set" && exit 1; else echo "✅ JWT_REFRESH_SECRET set"; fi
         working-directory: back
 
       - name: Install backend dependencies
