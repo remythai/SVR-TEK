@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export interface User {
   id: number;
@@ -16,7 +16,13 @@ export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchUser = async (token: string) => {
+  const logout = useCallback(() => {
+    localStorage.removeItem("access_token");
+    setUser(null);
+    setIsAuthenticated(false);
+  }, []);
+
+  const fetchUser = useCallback(async (token: string) => {
     try {
       const res = await fetch("http://localhost:8000/users/auth/me", {
         headers: {
@@ -27,13 +33,13 @@ export const useAuth = () => {
       if (!res.ok) throw new Error("Failed to fetch user");
       const data: User = await res.json();
       setUser(data);
-      console.log("User connecté :", data); // <-- console.log ici
+      console.log("User connecté :", data);
       setIsAuthenticated(true);
     } catch (err) {
       console.error("Erreur fetch /auth/me :", err);
       logout();
     }
-  };
+  }, [logout]);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -41,18 +47,12 @@ export const useAuth = () => {
       fetchUser(token);
     }
     setIsLoading(false);
-  }, []);
+  }, [fetchUser]);
 
-  const login = (token: string) => {
+  const login = useCallback((token: string) => {
     localStorage.setItem("access_token", token);
     fetchUser(token);
-  };
-
-  const logout = () => {
-    localStorage.removeItem("access_token");
-    setUser(null);
-    setIsAuthenticated(false);
-  };
+  }, [fetchUser]);
 
   return { user, isAuthenticated, login, logout, isLoading };
 };
