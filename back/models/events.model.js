@@ -2,16 +2,20 @@ import * as dbUtils from './utils.js';
 
 const TABLE_NAME = 'events';
 
+// ----------
+// -- Read --
+// ----------
+
 export async function getAll(sql) {
-    return await sql`SELECT * FROM events`;
+  return await dbUtils.getAll(sql, TABLE_NAME);
 }
-  
+
 export async function getById(sql, id) {
-    return await sql`SELECT * FROM events WHERE id = ${id}`;
+  return await dbUtils.getById(sql, TABLE_NAME, id);
 }
-  
-export async function getEventImage(sql, eventsId) {
-    return await sql`SELECT image FROM events WHERE id = ${eventsId}`;
+
+export async function getEventImage(sql, newsId) {
+  return (await dbUtils.getImageById(sql, TABLE_NAME, newsId))
 }
 
 // ------------
@@ -30,7 +34,9 @@ export async function deleteById(sql, id) {
     return (await dbUtils.deleteById(sql, TABLE_NAME, id));
 }
 
-// Update
+// ------------
+// -- Update --
+// ------------
 
 export async function update(sql, data, id) {
   return (await dbUtils.update(sql, TABLE_NAME, data, id));

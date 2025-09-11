@@ -1,64 +1,5 @@
 import 'dotenv/config'; 
-import { Resend } from 'resend';
-import fs from 'fs';
-import path from 'path';
-
-const resend = new Resend(process.env.RESEND_KEY);
-
-const logDir = path.resolve('./logs');
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir, { recursive: true });
-}
-
-function writeLog(message) {
-  const logFile = path.join(logDir, 'email.log');
-  const timestamp = new Date().toISOString();
-  fs.appendFileSync(logFile, `[${timestamp}] ${message}\n`);
-}
-
-export async function sendTempPassEmail(name, email, temp_password) {
-  try {
-    const { data, error } = await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: email,
-      subject: `${name}, we are waiting for you !`,
-      html: `
-        <div style="font-family: system-ui, sans-serif, Arial; font-size: 14px; color: #333; padding: 20px 14px; background-color: #f5f5f5;">
-          <div style="max-width: 600px; margin: auto; background-color: #fff;">
-            <div style="text-align: center; background-color: #333; padding: 14px;">
-              <a style="text-decoration: none; outline: none;" href="[Website Link]" target="_blank" rel="noopener">
-                <img style="height: 90px; vertical-align: middle;" src="https://www.jeb-incubator.com/images/logo.png" alt="logo" height="90">
-              </a>
-            </div>
-            <div style="padding: 14px;">
-              <h1 style="font-size: 22px; margin-bottom: 26px;">Your password needs to be changed</h1>
-              <p>Our website has had a makeover! A new site means a new password. Your temporary password is:</p>
-              <p><strong>${temp_password}</strong></p>
-              <p>You can access our website at this address:</p>
-              <p>Best regards,<br>JEB Team</p>
-            </div>
-          </div>
-          <div style="max-width: 600px; margin: auto;">
-            <p style="color: #999;">The email was sent to ${email}<br>You received this email because you are registered with [Company Name]</p>
-          </div>
-        </div>
-      `
-    });
-
-    if (error) {
-      utils.writeLog(`❌ Error sending email to ${email}: ${error.message}`, "email");
-      return;
-    }
-
-    utils.writeLog(`✅ Email sent to ${email}, ID: ${data.id}`, "email");
-    
-  } catch (error) {
-    utils.writeLog(`❌ Exception for ${email}: ${error.message}`, "email");
-  }
-}
-
-// sendTempPassEmail("Antton", "antton.ducos@gmail.com", "NEW_PASSWORD")
-
+import utils from './src/utils.js';
 import fs from "fs";
 
 const api_url = 'http://localhost:8000/';
@@ -66,53 +7,122 @@ const config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
 
 async function workitout() {
   try {
-    for (const { field } of config) {
-      utils.writeLog(`🔄 Processing field: ${field}`, "config");
+    for (const table of config) {
+      utils.writeLog(`🔄 Processing field: ${table.field}`, "config");
 
-      const data = await utils.getByField(field);
+      // Récupération des données - pour les startups, on récupère d'abord la liste puis les détails
+      let data;
+      if (table.field === 'startups') {
+        const startupsList = await utils.getByField(table.field);
+        utils.writeLog(`📋 Found ${startupsList.length} startups in list, fetching details...`, table.field);
+        
+        // Récupérer les détails de chaque startup avec limitation de concurrence
+        const DETAIL_BATCH_SIZE = 3; // Limiter les requêtes de détails simultanées
+        data = [];
+        
+        for (let i = 0; i < startupsList.length; i += DETAIL_BATCH_SIZE) {
+          const batch = startupsList.slice(i, i + DETAIL_BATCH_SIZE);
+          const batchDetails = await Promise.all(
+            batch.map(startup => utils.getStartupDetails(startup.id))
+          );
+          data.push(...batchDetails);
+          
+          // Petite pause entre les batches de récupération
+          if (i + DETAIL_BATCH_SIZE < startupsList.length) {
+            await new Promise(resolve => setTimeout(resolve, 200));
+          }
+        }
+        
+        utils.writeLog(`✅ Fetched details for ${data.length} startups`, table.field);
+      } else {
+        data = await utils.getByField(table.field);
+      }
 
+      const localResponse = await fetch(api_url + table.field);
+      const localData = await localResponse.json();
+
+      // Transformation avec id_legacy
       const transformedData = data.map(({ id, ...rest }) => ({
         ...rest,
         id_legacy: id
       }));
 
-      const localResponse = await fetch(api_url + field);
-      const localData = await localResponse.json();
-
+      // Set pour une recherche O(1)
       const existingLegacyIds = new Set(localData.map(p => p.id_legacy));
 
-      const newItems = [];
-      const skippedItems = [];
+      // Filtrage des nouveaux éléments
+      const newItems = transformedData.filter(p => !existingLegacyIds.has(p.id_legacy));
+      const skippedItems = transformedData.filter(p => existingLegacyIds.has(p.id_legacy));
 
-      for (const p of transformedData) {
-        if (existingLegacyIds.has(p.id_legacy)) {
-          skippedItems.push(p);
-        } else {
-          newItems.push(p);
-        }
-      }
-
+      // Log des éléments ignorés
       skippedItems.forEach(p => {
         utils.writeLog(
-          `ℹ️ ${field} already existing (id_legacy=${p.id_legacy}, name=${p.name || "N/A"})`,
-          field
+          `ℹ️ ${table.field} already existing (id_legacy=${p.id_legacy}, name=${p.name || "N/A"})`,
+          table.field
         );
       });
 
-      for (const item of newItems) {
-        // if (field.image === true) {
-        //   const image = await utils.getImageByFieldId(field, item.id_legacy);
-        //   if (image) {
-        //     item.image = image;
-        //   }
-        // }
+      utils.writeLog(`📊 ${table.field}: ${newItems.length} new items, ${skippedItems.length} skipped`, table.field);
 
-        utils.addInField(field, item);
+      // Traitement des nouveaux éléments avec limitation de concurrence
+      const BATCH_SIZE = 3; // Réduire encore plus pour éviter la surcharge
+      for (let i = 0; i < newItems.length; i += BATCH_SIZE) {
+        const batch = newItems.slice(i, i + BATCH_SIZE);
+        
+        await Promise.all(batch.map(async (item) => {
+          try {
+            // Gestion des images pour les éléments normaux (pas les startups)
+            if (table.image === true && table.field !== 'startups') {
+              const image = await utils.getImageByFieldId(table.field, item.id_legacy);
+              if (image) {
+                item.image = image;
+              }
+            }
+
+            // Gestion spéciale pour les startups avec founders
+            if (table.field === 'startups') {
+              utils.writeLog(`🔍 Debug startup ${item.id_legacy}: founders=${JSON.stringify(item.founders)}`, 'startups');
+              
+              if (item.founders && Array.isArray(item.founders) && item.founders.length > 0) {
+                utils.writeLog(`🔄 Processing ${item.founders.length} founders for startup ${item.id_legacy}`, 'startups');
+                item.founders = await utils.processFounders(item.founders, item.id_legacy);
+                utils.writeLog(`✅ Processed founders: ${JSON.stringify(item.founders)}`, 'startups');
+              } else {
+                utils.writeLog(`⚠️ No founders found for startup ${item.id_legacy}`, 'startups');
+                item.founders = []; // S'assurer que le champ existe même vide
+              }
+            }
+
+            // Debug: afficher l'objet complet avant envoi (seulement les premières propriétés)
+            const debugItem = { ...item };
+            if (debugItem.founders) {
+              debugItem.founders = `[${debugItem.founders.length} founders]`;
+            }
+            utils.writeLog(`🚀 Sending to API: ${JSON.stringify(debugItem)}`, table.field);
+            
+            await utils.addInField(table.field, item);
+          } catch (itemError) {
+            utils.writeLog(`❌ Error processing item ${item.id_legacy}: ${itemError}`, table.field);
+          }
+        }));
+        
+        // Pause plus longue entre les batches pour éviter la surcharge
+        if (i + BATCH_SIZE < newItems.length) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
       }
+
+      utils.writeLog(`✅ ${table.field} processing completed`, table.field);
     }
+    
+    utils.writeLog("🎉 Migration completed successfully", "config");
   } catch (error) {
-    utils.writeLog("❌ Error :" + error, "ancientDataBase");
+    utils.writeLog("❌ Critical error: " + error.message, "ancientDataBase");
+    throw error;
   }
 }
 
-workitout()
+workitout().catch(error => {
+  console.error("Migration failed:", error);
+  process.exit(1);
+});

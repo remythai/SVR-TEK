@@ -26,19 +26,13 @@ export async function create(sql, tableName, data) {
   const keys = Object.keys(data);
   const values = Object.values(data);
 
-  const columns = keys.join(', ');
-
-  const formattedValues = values.map(value => {
-    if (value === null || value === undefined) return 'NULL';
-    if (Array.isArray(value) || typeof value === 'object') return `'${JSON.stringify(value).replace(/'/g, "''")}'`;
-    if (typeof value === 'string') return `'${value.replace(/'/g, "''")}'`;
-    if (typeof value === 'boolean') return value ? 'TRUE' : 'FALSE';
-    return String(value);
-  }).join(', ');
-
-  return await sql`INSERT INTO ${sql.unsafe(tableName)} (${sql.unsafe(columns)}) VALUES (${sql.unsafe(formattedValues)}) RETURNING *;`;
+  // Create placeholders for values
+  const placeholders = keys.map((_, index) => `$${index + 1}`);
+  
+  const query = `INSERT INTO ${tableName} (${keys.join(', ')}) VALUES (${placeholders.join(', ')}) RETURNING *`;
+  
+  return await sql.query(query, values);
 }
-
 
 // ------------
 // -- Update --
@@ -77,4 +71,4 @@ export async function deleteById(sql, tableName, id) {
   return await sql`DELETE FROM ${sql.unsafe(tableName)} WHERE id = ${id}`;
 }
 
-export default { getAll, getById, getByField, create, update };
+export default { getAll, getById, getByField, getImageById, create, update, deleteById };
