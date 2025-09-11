@@ -1,6 +1,5 @@
 import { pgTable, text, timestamp, boolean, unique, integer, varchar, jsonb } from "drizzle-orm/pg-core";
 
-// Tables existantes de ta DB
 export const users = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity({ 
     name: "User_id_seq", 
@@ -135,7 +134,6 @@ export const founders = pgTable("founders", {
   startupId: integer("startup_id"),
 });
 
-// Tables Better Auth avec des noms différents pour éviter les conflits
 export const authUsers = pgTable("auth_users", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),

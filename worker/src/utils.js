@@ -2,12 +2,10 @@ import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
 
-// Configuration
 const ancient_api_key = process.env.ANCIENT_API_KEY;
 const ancient_api_url = process.env.ANCIENT_API_URL;
 const api_url = 'http://localhost:8000/';
 
-// Création du dossier de logs
 const logDir = path.resolve('./logs');
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, { recursive: true });
