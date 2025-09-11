@@ -73,7 +73,6 @@ export const updatePassword = async (
     if (!token) {
       return { success: false, message: "User not authenticated" };
     }
-    console.log("test - 2");
     const res = await fetch("http://localhost:8000/users/update-password", {
       method: "PUT",
       headers: {
@@ -82,7 +81,6 @@ export const updatePassword = async (
       },
       body: JSON.stringify({ oldPassword, newPassword, confirmNewPassword }),
     });
-    console.log("test - 3");
 
     const data = await res.json();
 
@@ -90,7 +88,6 @@ export const updatePassword = async (
       return { success: false, message: data.error || "Error changing password" };
     }
 
-    console.log("test - success");
     return {
       success: true,
       message: data.message || "Password changed successfully",
