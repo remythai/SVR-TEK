@@ -2,9 +2,9 @@
 
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Eye, Search, Filter } from 'lucide-react';
+import { Plus, Edit2, Trash2, Eye, Search } from 'lucide-react';
 
-import { getStartups, createStartup, updateStartup, deleteStartup, Startup } from '../requests/startups';
+import { getStartups, createStartup, updateStartup, deleteStartup, Startup, CreateStartupPayload } from '../requests/startups';
 import { getEvents, createEvent, updateEvent, deleteEvent, Event } from '../requests/events';
 import { getNews, createNews, updateNews, deleteNews, NewsItem } from '../requests/news';
 import { getUsers, createUser, updateUser, deleteUser, User } from '../requests/users';
@@ -13,11 +13,15 @@ import { getInvestors, Investor } from '../requests/investors';
 type EntityType = 'startups' | 'events' | 'news' | 'users' | 'investors';
 type DashboardItem = Startup | Event | NewsItem | User | Investor;
 
+type CreateEventPayload = Omit<Event, 'id'>;
+type CreateNewsPayload = Omit<NewsItem, 'id'>;
+type CreateUserPayload = Omit<User, 'id'>;
+
 const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<EntityType>('startups');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const [startups, setStartups] = useState<Startup[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [news, setNews] = useState<NewsItem[]>([]);
@@ -26,14 +30,6 @@ const Dashboard: React.FC = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<'create' | 'edit' | 'view'>('create');
-
-  type DashboardItemMap = {
-    startups: Startup;
-    events: Event;
-    news: NewsItem;
-    users: User;
-    investors: Investor;
-  };
 
   const [selectedItem, setSelectedItem] = useState<Partial<DashboardItem>>({});
 
@@ -153,7 +149,6 @@ const Dashboard: React.FC = () => {
     }
   }, [activeTab]);
 
-
   useEffect(() => {
     loadData();
   }, [loadData]);
@@ -177,16 +172,15 @@ const Dashboard: React.FC = () => {
   });
 
   const handleCreate = () => {
-  setModalType('create');
+    setModalType('create');
 
-  if (activeTab === 'startups') {
+    if (activeTab === 'startups') {
       setSelectedItem({
         name: '',
         sector: '',
         project_status: 'pending',
         maturity: '',
         email: '',
-        // founders: [],
         legal_status: '',
         address: '',
         phone: '',
@@ -195,7 +189,7 @@ const Dashboard: React.FC = () => {
         website_url: '',
         social_media_url: '',
         needs: '',
-        id: undefined,
+        founders: [], // Initialize with empty array
       } as Partial<Startup>);
     } else if (activeTab === 'events') {
       setSelectedItem({
@@ -203,7 +197,6 @@ const Dashboard: React.FC = () => {
         event_type: '',
         dates: '',
         location: '',
-        id: undefined,
       } as Partial<Event>);
     } else if (activeTab === 'news') {
       setSelectedItem({
@@ -212,7 +205,6 @@ const Dashboard: React.FC = () => {
         news_date: '',
         location: '',
         description: '',
-        id: undefined,
       } as Partial<NewsItem>);
     } else if (activeTab === 'users') {
       setSelectedItem({
@@ -221,7 +213,6 @@ const Dashboard: React.FC = () => {
         role: 'investor',
         founder_id: undefined,
         investor_id: undefined,
-        id: undefined,
       } as Partial<User>);
     } else if (activeTab === 'investors') {
       setSelectedItem({
@@ -229,13 +220,11 @@ const Dashboard: React.FC = () => {
         company: '',
         role: '',
         email: '',
-        id: undefined,
       } as Partial<Investor>);
     }
 
     setShowModal(true);
   };
-
 
   const handleEdit = (item: DashboardItem) => {
     setModalType('edit');
@@ -257,13 +246,13 @@ const Dashboard: React.FC = () => {
     try {
       let success = false;
 
-      if (activeTab === 'startups' && 'id' in item) {
+      if (activeTab === 'startups' && 'id' in item && typeof item.id === 'number') {
         success = await deleteStartup(item.id);
-      } else if (activeTab === 'events' && 'id' in item) {
+      } else if (activeTab === 'events' && 'id' in item && typeof item.id === 'number') {
         success = await deleteEvent(item.id);
-      } else if (activeTab === 'news' && 'id' in item) {
+      } else if (activeTab === 'news' && 'id' in item && typeof item.id === 'number') {
         success = await deleteNews(item.id);
-      } else if (activeTab === 'users' && 'id' in item) {
+      } else if (activeTab === 'users' && 'id' in item && typeof item.id === 'number') {
         success = await deleteUser(item.id);
       }
 
@@ -274,7 +263,11 @@ const Dashboard: React.FC = () => {
               ? 'Startup'
               : activeTab === 'events'
               ? 'Événement'
-              : 'Actualité'
+              : activeTab === 'news'
+              ? 'Actualité'
+              : activeTab === 'users'
+              ? 'Utilisateur'
+              : 'Investisseur'
           } supprimé(e) avec succès`
         );
         loadData();
@@ -284,8 +277,12 @@ const Dashboard: React.FC = () => {
             activeTab === 'startups'
               ? 'la startup'
               : activeTab === 'events'
-              ? "l’événement"
-              : "l’actualité"
+              ? "l'événement"
+              : activeTab === 'news'
+              ? "l'actualité"
+              : activeTab === 'users'
+              ? "l'utilisateur"
+              : "l'investisseur"
           }`
         );
       }
@@ -438,27 +435,72 @@ const Dashboard: React.FC = () => {
           onSave={async () => {
             try {
               if (activeTab === 'startups') {
-                const { id, ...payload } = selectedItem;
-                if (modalType === 'create') await createStartup(payload);
-                else if (modalType === 'edit') await updateStartup(id, payload);
-              } else if (activeTab === 'events') {
-                const { id, ...payload } = selectedItem;
-                if (modalType === 'create') await createEvent(payload);
-                else if (modalType === 'edit') await updateEvent(id, payload);
-              } else if (activeTab === 'news') {
-                const { id, ...payload } = selectedItem;
-                if (modalType === 'create') await createNews(payload);
-                else if (modalType === 'edit') await updateNews(id, payload);
-              } else if (activeTab === 'users') {
-                const { id, ...payload } = selectedItem;
-                if (modalType === 'create') await createUser(payload);
-                else if (modalType === 'edit') await updateUser(id, payload);
-              }
+                const startupItem = selectedItem as Partial<Startup>;
+                const { id, founders, ...payload } = startupItem;
+                
+                // Transform founders to match API expectations
+                const apiFounders = (founders || []).map(founder => ({
+                  name: founder.name || '',
+                  role: founder.role || 'Founder' // Provide default role if missing
+                }));
 
+                // Create the payload that matches CreateStartupPayload
+                const compatiblePayload: CreateStartupPayload = {
+                  name: payload.name || '',
+                  legal_status: payload.legal_status || '',
+                  address: payload.address || '',
+                  email: payload.email || '',
+                  phone: payload.phone || '',
+                  created_at: payload.created_at || new Date().toISOString(),
+                  description: payload.description || '',
+                  website_url: payload.website_url || null,
+                  social_media_url: payload.social_media_url || null,
+                  project_status: payload.project_status || 'pending',
+                  needs: payload.needs || '',
+                  sector: payload.sector || '',
+                  maturity: payload.maturity || '',
+                  founders: apiFounders
+                };
+                
+                if (modalType === 'create') {
+                  await createStartup(compatiblePayload);
+                } else if (modalType === 'edit' && typeof id === 'number') {
+                  await updateStartup(compatiblePayload, id);
+                }
+              } else if (activeTab === 'events') {
+                const eventItem = selectedItem as Partial<Event>;
+                const { id, ...payload } = eventItem;
+                
+                if (modalType === 'create') {
+                  await createEvent(payload as CreateEventPayload);
+                } else if (modalType === 'edit' && typeof id === 'number') {
+                  await updateEvent(payload as Event, id);
+                }
+              } else if (activeTab === 'news') {
+                const newsItem = selectedItem as Partial<NewsItem>;
+                const { id, ...payload } = newsItem;
+                
+                if (modalType === 'create') {
+                  await createNews(payload as CreateNewsPayload);
+                } else if (modalType === 'edit' && typeof id === 'number') {
+                  await updateNews(id, payload as NewsItem);
+                }
+              } else if (activeTab === 'users') {
+                const userItem = selectedItem as Partial<User>;
+                const { id, ...payload } = userItem;
+                
+                if (modalType === 'create') {
+                  await createUser(payload as CreateUserPayload);
+                } else if (modalType === 'edit' && typeof id === 'number') {
+                  await updateUser(id, payload as User);
+                }
+              }
+              
               setShowModal(false);
               loadData();
             } catch (err) {
               console.error('Erreur lors de la sauvegarde:', err);
+              alert('Erreur lors de la sauvegarde. Vérifiez la console pour plus de détails.');
             }
           }}
         />
@@ -484,44 +526,97 @@ const Modal = ({
   onClose: () => void;
   onSave: () => void;
 }) => {
+  const getFormFields = () => {
+    const fieldsToExclude = ['id', 'created_at', 'founders']; // Exclude complex and non-editable fields
+    return Object.keys(item).filter(key => !fieldsToExclude.includes(key));
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] overflow-y-auto">
         <h2 className="text-lg font-bold mb-4">
-          {type === 'create' ? 'Create' : type === 'edit' ? 'Update' : 'See'} {entityType}
+          {type === 'create' ? 'Create' : type === 'edit' ? 'Update' : 'View'} {entityType.slice(0, -1)}
         </h2>
+        
         {type !== 'view' ? (
-          <form className="space-y-2">
-            {Object.keys(item).map((key) => (
+          <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
+            {getFormFields().map((key) => (
               <div key={key} className="flex flex-col">
-                <label className="text-sm text-gray-600">{key}</label>
-                <input
-                  type="text"
-                  value={item[key] ?? ''}
-                  onChange={(e) =>
-                    setItem({ ...item, [key]: e.target.value })
-                  }
-                  className="border rounded px-2 py-1"
-                />
+                <label className="text-sm text-gray-600 mb-1 capitalize">
+                  {key.replace(/_/g, ' ')}
+                </label>
+                {key === 'description' ? (
+                  <textarea
+                    value={String(item[key as keyof DashboardItem] ?? '')}
+                    onChange={(e) =>
+                      setItem({ ...item, [key]: e.target.value })
+                    }
+                    className="border rounded px-2 py-1 resize-vertical min-h-[80px]"
+                    rows={3}
+                  />
+                ) : key === 'project_status' ? (
+                  <select
+                    value={String(item[key as keyof DashboardItem] ?? '')}
+                    onChange={(e) =>
+                      setItem({ ...item, [key]: e.target.value })
+                    }
+                    className="border rounded px-2 py-1"
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                ) : key === 'role' && entityType === 'users' ? (
+                  <select
+                    value={String(item[key as keyof DashboardItem] ?? '')}
+                    onChange={(e) =>
+                      setItem({ ...item, [key]: e.target.value })
+                    }
+                    className="border rounded px-2 py-1"
+                  >
+                    <option value="investor">Investor</option>
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
+                  </select>
+                ) : (
+                  <input
+                    type={key.includes('email') ? 'email' : key.includes('date') ? 'datetime-local' : 'text'}
+                    value={String(item[key as keyof DashboardItem] ?? '')}
+                    onChange={(e) =>
+                      setItem({ ...item, [key]: e.target.value })
+                    }
+                    className="border rounded px-2 py-1"
+                  />
+                )}
               </div>
             ))}
           </form>
         ) : (
-          <pre className="text-xs bg-gray-100 p-2 rounded mb-4">
-            {JSON.stringify(item, null, 2)}
-          </pre>
+          <div className="space-y-2">
+            {Object.entries(item).map(([key, value]) => (
+              <div key={key} className="flex flex-col">
+                <span className="text-sm text-gray-600 capitalize">
+                  {key.replace(/_/g, ' ')}:
+                </span>
+                <span className="text-sm bg-gray-100 p-2 rounded">
+                  {typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value || 'N/A')}
+                </span>
+              </div>
+            ))}
+          </div>
         )}
-        <div className="flex justify-end gap-2">
+        
+        <div className="flex justify-end gap-2 mt-6">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
           >
             Close
           </button>
           {type !== 'view' && (
             <button
               onClick={onSave}
-              className="px-4 py-2 bg-secondary-500/80 text-white rounded hover:bg-secondary-300"
+              className="px-4 py-2 bg-secondary-500 text-white rounded hover:bg-secondary-400 transition-colors"
             >
               Save
             </button>

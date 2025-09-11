@@ -199,7 +199,7 @@ export async function getFounderImage(startupId: string, founderId: string): Pro
   }
 }
 
-export async function updateStartup(startupData: Partial<Startup>, startupId: number): Promise<Startup | null> {
+export async function updateStartup(startupData: CreateStartupPayload, startupId: number): Promise<Startup | null> {
   try {
     const { ...payload } = startupData;
     const response = await axios.put<Startup>(
