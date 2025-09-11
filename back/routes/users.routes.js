@@ -19,7 +19,6 @@ const router = express.Router();
 // -- Read --
 // ----------
 
-// Route statique pour l'utilisateur connecté (doit être avant les dynamiques)
 router.get("/auth/me", authenticate, async (req, res) => {
   const sql = req.app.get("db");
   try {
@@ -34,11 +33,9 @@ router.get("/auth/me", authenticate, async (req, res) => {
   }
 });
 
-// Toutes les autres routes statiques
 router.get("/", getAll);
 router.get("/email/:email", getByEmail);
 
-// Routes dynamiques
 router.get("/:id/image", getUserImage);
 router.get("/:id", getById);
 router.put("/:id", update);
@@ -62,7 +59,6 @@ router.delete("/:id", deleteById);
 
 export default router;
 
-// Helper pour auth/me
 async function getByIdController(sql, id) {
   const user = await import("../models/users.model.js").then(m => m.default.getById(sql, id));
   return user[0] ?? null;

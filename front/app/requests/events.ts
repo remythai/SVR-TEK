@@ -128,7 +128,6 @@ export async function createEvent(eventData: CreateEventPayload): Promise<Event 
 // ----------
 export async function updateEvent(eventData: Partial<Event>, eventId: number): Promise<Event | null> {
   try {
-    // On supprime l'id pour éviter de le mettre à jour
     const { ...payload } = eventData;
 
     const response = await axios.put<Event>(

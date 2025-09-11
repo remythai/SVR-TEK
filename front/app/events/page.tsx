@@ -1,4 +1,4 @@
-// app/events/page.tsx (composant serveur)
+
 import { getEvents, getEventImage } from "../requests/events";
 import CalendarView from "./CalendarView";
 

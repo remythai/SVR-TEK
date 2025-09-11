@@ -64,7 +64,6 @@ const Dashboard: React.FC = () => {
     loadData();
   }, [loadData]);
 
-  // Move conditional rendering after all hooks
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -527,7 +526,6 @@ const Dashboard: React.FC = () => {
 
 export default Dashboard;
 
-// Modal component remains the same...
 
 const Modal = ({
   type,
@@ -545,7 +543,7 @@ const Modal = ({
   onSave: () => void;
 }) => {
   const getFormFields = () => {
-    const fieldsToExclude = ['id', 'created_at', 'founders']; // Exclude complex and non-editable fields
+    const fieldsToExclude = ['id', 'created_at', 'founders'];
     return Object.keys(item).filter(key => !fieldsToExclude.includes(key));
   };
 

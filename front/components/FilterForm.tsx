@@ -45,7 +45,6 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
     router.push(`?${params.toString()}`);
   };
 
-  // Debounce directement dans useCallback pour éviter le warning
   const debouncedLocationUpdate = useCallback((value: string) => {
     const handler = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
@@ -62,7 +61,7 @@ export default function FilterForm({ currentFilters }: FilterFormProps) {
 
   useEffect(() => {
     const cancel = debouncedLocationUpdate(localLocation);
-    return cancel; // cleanup
+    return cancel;
   }, [localLocation, debouncedLocationUpdate]);
 
   useEffect(() => {

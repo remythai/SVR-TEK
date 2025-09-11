@@ -101,21 +101,18 @@ const handleInputChange = (field: keyof StartupFormData, value: string) => {
       return;
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       alert('Please enter a valid email address.');
       return;
     }
 
-    // Founders validation
     const validFounders = formData.founders.filter(f => f.name.trim() && f.role.trim());
     if (validFounders.length === 0) {
       alert('At least one founder with complete name and role is required.');
       return;
     }
 
-    // URL validation
     const urlFields = [
       { field: formData.website_url, name: 'Website' },
       { field: formData.social_media_url, name: 'Social media' }
