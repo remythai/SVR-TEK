@@ -1,7 +1,8 @@
 import { getStartup, getFounderImage } from "@/app/requests/startups";
 import Image from "next/image";
-import { Mail, Phone, MapPin, Globe, Calendar, Users, Target, Building2, TrendingUp, AlertCircle } from "lucide-react";
+import { Mail, Phone, MapPin, Globe, Calendar, Users, Target, Building2, TrendingUp, AlertCircle, FileText, Upload, Download } from "lucide-react";
 import Link from "next/link";
+import PDFModalClient from "./PDFModalClient";
 
 export default async function ProjectPage({ params }: { params: { id: string } }) {
   const {id} = await params;
@@ -138,6 +139,11 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                 )}
               </div>
             </div>
+
+            <PDFModalClient 
+              projectId={project.id?.toString() || ''}
+              hasPdf={!!project.pdf}
+            />
           </div>
         </div>
 
