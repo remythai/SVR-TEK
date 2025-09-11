@@ -80,7 +80,7 @@ const handleAxiosError = (error: unknown, context: string) => {
     }
     
     if (axiosError.response?.status === 403) {
-      throw new Error('Accès refusé. Vérifiez vos permissions.');
+      throw new Error('Refused access. check your permissions.');
     }
     
     if (axiosError.response?.status === 404) {

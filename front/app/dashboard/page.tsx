@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit2, Trash2, Eye, Search } from 'lucide-react';
 
 import { getStartups, createStartup, updateStartup, deleteStartup, Startup, CreateStartupPayload } from '../requests/startups';
@@ -9,6 +9,7 @@ import { getEvents, createEvent, updateEvent, deleteEvent, Event } from '../requ
 import { getNews, createNews, updateNews, deleteNews, NewsItem } from '../requests/news';
 import { getUsers, createUser, updateUser, deleteUser, User } from '../requests/users';
 import { getInvestors, Investor } from '../requests/investors';
+import { useAuth } from '@/components/hooks/useAuth';
 
 type EntityType = 'startups' | 'events' | 'news' | 'users' | 'investors';
 type DashboardItem = Startup | Event | NewsItem | User | Investor;
@@ -21,17 +22,65 @@ const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<EntityType>('startups');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
-
   const [startups, setStartups] = useState<Startup[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [news, setNews] = useState<NewsItem[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [investors, setInvestors] = useState<Investor[]>([]);
-
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<'create' | 'edit' | 'view'>('create');
-
   const [selectedItem, setSelectedItem] = useState<Partial<DashboardItem>>({});
+
+  const { user, isLoading } = useAuth();
+
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    try {
+      switch (activeTab) {
+        case 'startups':
+          setStartups(await getStartups());
+          break;
+        case 'events':
+          setEvents(await getEvents());
+          break;
+        case 'news':
+          setNews(await getNews());
+          break;
+        case 'users':
+          setUsers(await getUsers());
+          break;
+        case 'investors':
+          setInvestors(await getInvestors());
+          break;
+      }
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  // Move conditional rendering after all hooks
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-secondary-100"></div>
+      </div>
+    );
+  }
+
+  if (!user || user.role !== 'admin') {
+    return (
+      <div className="flex flex-col justify-center items-center min-h-screen text-center px-4">
+        <h1 className="text-3xl font-bold text-red-600 mb-4">Refused access</h1>
+        <p className="text-gray-600">You cannot access this page.</p>
+      </div>
+    );
+  }
 
   const getTableHeaders = (): string[] => {
     switch (activeTab) {
@@ -122,37 +171,6 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const loadData = React.useCallback(async () => {
-    setLoading(true);
-    try {
-      switch (activeTab) {
-        case 'startups':
-          setStartups(await getStartups());
-          break;
-        case 'events':
-          setEvents(await getEvents());
-          break;
-        case 'news':
-          setNews(await getNews());
-          break;
-        case 'users':
-          setUsers(await getUsers());
-          break;
-        case 'investors':
-          setInvestors(await getInvestors());
-          break;
-      }
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [activeTab]);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
   const getCurrentData = () => {
     switch (activeTab) {
       case 'startups': return startups;
@@ -189,7 +207,7 @@ const Dashboard: React.FC = () => {
         website_url: '',
         social_media_url: '',
         needs: '',
-        founders: [], // Initialize with empty array
+        founders: [],
       } as Partial<Startup>);
     } else if (activeTab === 'events') {
       setSelectedItem({
@@ -438,13 +456,11 @@ const Dashboard: React.FC = () => {
                 const startupItem = selectedItem as Partial<Startup>;
                 const { id, founders, ...payload } = startupItem;
                 
-                // Transform founders to match API expectations
                 const apiFounders = (founders || []).map(founder => ({
                   name: founder.name || '',
-                  role: founder.role || 'Founder' // Provide default role if missing
+                  role: founder.role || 'Founder'
                 }));
 
-                // Create the payload that matches CreateStartupPayload
                 const compatiblePayload: CreateStartupPayload = {
                   name: payload.name || '',
                   legal_status: payload.legal_status || '',
@@ -510,6 +526,8 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
+
+// Modal component remains the same...
 
 const Modal = ({
   type,

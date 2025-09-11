@@ -38,18 +38,37 @@ export default function Login() {
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        setIsLoading(true);
-        const { success, message, token } = await signIn(values.email, values.password);
-        if (success) {
-            login(token);
-            toast.success("Logged successfully!");
-            router.push('/dashboard');
-            form.reset();
-        } else {
-            toast.error(`Error: ${message}`);
+    setIsLoading(true);
+    const { success, message, token } = await signIn(values.email, values.password);
+
+    if (success) {
+        // Stocker le token via le hook
+        login(token);
+
+        // Récupérer les infos de l'utilisateur connecté
+        try {
+            const res = await fetch("http://localhost:8000/users/auth/me", {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+            const user = await res.json();
+            console.log("User connecté :", user); // <-- ici ton console.log
+        } catch (err) {
+            console.error("Erreur fetch /auth/me :", err);
         }
-        setIsLoading(false);
+
+        toast.success("Logged successfully!");
+        router.push("/dashboard");
+        form.reset();
+    } else {
+        toast.error(`Error: ${message}`);
     }
+
+    setIsLoading(false);
+}
+
 
   return (
     <>
