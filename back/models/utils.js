@@ -26,7 +26,6 @@ export async function create(sql, tableName, data) {
   const keys = Object.keys(data);
   const values = Object.values(data);
 
-  // Create placeholders for values
   const placeholders = keys.map((_, index) => `$${index + 1}`);
   
   const query = `INSERT INTO ${tableName} (${keys.join(', ')}) VALUES (${placeholders.join(', ')}) RETURNING *`;
@@ -38,10 +37,8 @@ export async function create(sql, tableName, data) {
 // -- Update --
 // ------------
 
-// utils.js
 
 export async function update(sql, tableName, data, id) {
-  // Supprime id pour ne pas essayer de le mettre à jour
   const { id: _, ...dataWithoutId } = data;
 
   const keys = Object.keys(dataWithoutId);
@@ -49,18 +46,15 @@ export async function update(sql, tableName, data, id) {
 
   if (keys.length === 0) throw new Error("Aucun champ à mettre à jour");
 
-  // Crée dynamiquement la partie SET
   const setClause = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
 
-  // Ajoute l'id à la fin pour le WHERE
   values.push(id);
 
   const query = `UPDATE ${tableName} SET ${setClause} WHERE id = $${values.length} RETURNING *;`;
 
-  // Execute la requête
   const result = await sql.query(query, values);
 
-  return result[0]; // retourne l'objet mis à jour
+  return result[0];
 }
 
 // ------------

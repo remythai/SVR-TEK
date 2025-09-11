@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 
 export const authenticate = (req, res, next) => {
-  console.log("test - auth");
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith("Bearer ")) {
     return res.status(401).json({ error: "Unauthorized" });
