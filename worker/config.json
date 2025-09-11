@@ -10,5 +10,17 @@
   {
     "field": "startups",
     "image": false
+  },
+  {
+    "field": "news",
+    "image": true
+  },
+  {
+    "field": "investors",
+    "image": true
+  },
+  {
+    "field": "users",
+    "image": true
   }
 ]

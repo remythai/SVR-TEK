@@ -13,6 +13,8 @@ if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, { recursive: true });
 }
 
+const foreignKeyCache = {};
+
 // ----------
 // -- Logs --
 // ----------
@@ -50,7 +52,6 @@ function cleanObjectData(obj) {
   const cleaned = {};
   for (const [key, value] of Object.entries(obj)) {
     if (key === 'founders') {
-      // Ne pas nettoyer les founders, les garder tels quels
       cleaned[key] = value;
     } else if (typeof value === 'string') {
       cleaned[key] = cleanBase64(value);
@@ -87,6 +88,73 @@ async function makeRequest(url, options = {}) {
   return response;
 }
 
+// ---------------------------------
+// -- Foreign Key Resolution --
+// ---------------------------------
+
+async function getForeignKeyMapping(tableName) {
+  if (foreignKeyCache[tableName]) {
+    return foreignKeyCache[tableName];
+  }
+
+  try {
+    const response = await fetch(`${api_url}${tableName}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${tableName}: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    const mapping = {};
+    
+    data.forEach(item => {
+      if (item.id_legacy) {
+        mapping[item.id_legacy] = item.id;
+      }
+    });
+    
+    foreignKeyCache[tableName] = mapping;
+    writeLog(`🔄 Cached ${Object.keys(mapping).length} mappings for table ${tableName}`, 'foreign_keys');
+    
+    return mapping;
+  } catch (error) {
+    writeLog(`❌ Error getting foreign key mapping for ${tableName}: ${error.message}`, 'foreign_keys');
+    return {};
+  }
+}
+
+async function resolveForeignKeys(item, currentField) {
+  if (!item || typeof item !== 'object') {
+    return item;
+  }
+
+  const resolvedItem = { ...item };
+  
+  for (const [key, value] of Object.entries(resolvedItem)) {
+    if (key.endsWith('_id') && value !== null && value !== undefined) {
+      const fieldName = key.slice(0, -3);
+      const tableName = fieldName + 's';
+      
+      writeLog(`🔍 Found foreign key: ${key}=${value} -> looking in table ${tableName}`, 'foreign_keys');
+      
+      try {
+        const mapping = await getForeignKeyMapping(tableName);
+        
+        if (mapping[value]) {
+          const newId = mapping[value];
+          resolvedItem[key] = newId;
+          writeLog(`✅ Resolved FK: ${key} ${value} -> ${newId}`, 'foreign_keys');
+        } else {
+          writeLog(`⚠️ Could not resolve FK: ${key}=${value} not found in ${tableName}`, 'foreign_keys');
+        }
+      } catch (error) {
+        writeLog(`❌ Error resolving FK ${key}: ${error.message}`, 'foreign_keys');
+      }
+    }
+  }
+  
+  return resolvedItem;
+}
+
 // ----------------------
 // -- Core functions --
 // ----------------------
@@ -101,15 +169,20 @@ async function getByField(field) {
   }
 }
 
-async function getStartupDetails(startupId) {
+async function getDetailsByFieldId(field, id) {
   try {
-    const response = await makeRequest(`${ancient_api_url}startups/${startupId}`, { method: "GET" });
-    const startup = await response.json();
-    writeLog(`✅ Fetched details for startup ${startupId}: ${startup.name}`, 'startups');
-    return startup;
+    const response = await makeRequest(`${ancient_api_url}${field}/${id}`, { method: "GET" });
+    const details = await response.json();
+    writeLog(`✅ Fetched details for ${field} ${id}: ${details.name || 'N/A'}`, field);
+    return details;
   } catch (error) {
-    writeLog(`❌ Error fetching startup details for ID ${startupId}: ${error.message}`, 'startups');
-    throw error;
+    writeLog(`❌ Error fetching ${field} details for ID ${id}: ${error.message}`, field);
+    return {
+      id: id,
+      name: `${field}_${id}_ERROR`,
+      error: true,
+      errorMessage: error.message
+    };
   }
 }
 
@@ -117,7 +190,9 @@ async function getImageByFieldId(field, id) {
   try {
     const response = await makeRequest(`${ancient_api_url}${field}/${id}/image`, { method: "GET" });
     const imageData = await response.text();
-    return cleanBase64(imageData);
+    const cleanedImage = cleanBase64(imageData);
+    writeLog(`✅ Image retrieved for ${field} id=${id}: ${cleanedImage ? 'has data' : 'null/empty'}`, field);
+    return cleanedImage;
   } catch (error) {
     writeLog(`⚠️ Could not get image for ${field} id=${id}: ${error.message}`, field);
     return null;
@@ -131,7 +206,9 @@ async function getFounderImage(startupId, founderId) {
       { method: "GET" }
     );
     const imageData = await response.text();
-    return cleanBase64(imageData);
+    const cleanedImage = cleanBase64(imageData);
+    writeLog(`✅ Founder image retrieved for startup=${startupId}, founder=${founderId}: ${cleanedImage ? 'has data' : 'null/empty'}`, 'startups');
+    return cleanedImage;
   } catch (error) {
     writeLog(`⚠️ Could not get founder image for startup=${startupId}, founder=${founderId}: ${error.message}`, 'startups');
     return null;
@@ -143,40 +220,43 @@ async function processFounders(founders, startupId) {
     return [];
   }
 
-  const processedFounders = await Promise.all(
-    founders.map(async (founder) => {
-      if (!founder || !founder.id) {
-        writeLog(`⚠️ Founder without ID found for startup ${startupId}`, 'startups');
-        return null;
-      }
+  const processedFounders = [];
+  
+  for (let i = 0; i < founders.length; i++) {
+    const founder = founders[i];
+    
+    if (!founder || !founder.id) {
+      writeLog(`⚠️ Founder without ID found for startup ${startupId}`, 'startups');
+      continue;
+    }
 
-      // Créer le nouvel objet founder avec id_legacy et sans startup_id
-      const founderWithLegacyId = {
-        name: founder.name || 'Unknown',
-        id_legacy: founder.id
-        // On ne copie PAS startup_id
-      };
+    const founderWithLegacyId = {
+      name: founder.name || 'Unknown',
+      id_legacy: founder.id
+    };
 
-      // Récupération de l'image du founder
-      try {
-        const founderImage = await getFounderImage(startupId, founder.id);
-        founderWithLegacyId.image = founderImage; // null si pas d'image
-      } catch (error) {
-        writeLog(`❌ Error getting image for founder ${founder.id}: ${error.message}`, 'startups');
-        founderWithLegacyId.image = null;
-      }
+    try {
+      const founderImage = await getFounderImage(startupId, founder.id);
+      founderWithLegacyId.image = founderImage;
+    } catch (error) {
+      writeLog(`❌ Error getting image for founder ${founder.id}: ${error.message}`, 'startups');
+      founderWithLegacyId.image = null;
+    }
 
-      writeLog(`✅ Processed founder: ${JSON.stringify(founderWithLegacyId)}`, 'startups');
-      return founderWithLegacyId;
-    })
-  );
+    writeLog(`✅ Processed founder ${i+1}/${founders.length}: name=${founderWithLegacyId.name}, id_legacy=${founderWithLegacyId.id_legacy}, image=${founderWithLegacyId.image ? 'has data' : 'null'}`, 'startups');
+    processedFounders.push(founderWithLegacyId);
+    
+    if (i < founders.length - 1) {
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
+  }
 
-  // Filtrer les founders null
-  return processedFounders.filter(founder => founder !== null);
+  return processedFounders;
 }
 
 async function addInField(field, item) {
-  const cleanedItem = cleanObjectData(item);
+  const itemWithResolvedFKs = await resolveForeignKeys(item, field);
+  const cleanedItem = cleanObjectData(itemWithResolvedFKs);
   
   const requestOptions = {
     method: "POST",
@@ -205,9 +285,11 @@ async function addInField(field, item) {
 export default { 
   writeLog, 
   getByField,
-  getStartupDetails,
+  getDetailsByFieldId,
   addInField, 
   getImageByFieldId, 
   getFounderImage,
-  processFounders 
+  processFounders,
+  resolveForeignKeys,
+  getForeignKeyMapping
 };
