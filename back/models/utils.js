@@ -3,7 +3,19 @@
 // ----------
 
 export async function getAll(sql, tableName) {
-  return await sql`SELECT * FROM ${sql.unsafe(tableName)}`;
+  const columns = await sql`
+    SELECT column_name 
+    FROM information_schema.columns 
+    WHERE table_name = ${tableName}
+  `;
+
+  const filteredColumns = columns
+    .map(col => col.column_name)
+    .filter(colName => colName !== 'image' && colName !== 'password');
+
+  const columnsList = filteredColumns.join(', ');
+  
+  return await sql`SELECT ${sql.unsafe(columnsList)} FROM ${sql.unsafe(tableName)}`;
 }
 
 export async function getById(sql, tableName, id) {
